@@ -1,0 +1,52 @@
+# application.yml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/banking_db
+    username: banking_user
+    password: banking_pass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  mail:
+    host: smtp.example.com
+    port: 587
+    username: noreply@banking.com
+    password: mail_password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+
+banking:
+  app:
+    jwtSecret: yourJWTSecretKeyForBankingApplication1234567890
+    jwtExpirationMs: 86400000 # 24 hours
+    jwtRefreshExpirationMs: 604800000 # 7 days
+  frontend:
+    url: http://localhost:3000
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.banking: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+
+      # application.properties
