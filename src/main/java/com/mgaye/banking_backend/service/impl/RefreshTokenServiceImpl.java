@@ -1,11 +1,15 @@
-package com.mgaye.banking_backend.service;
+package com.mgaye.banking_backend.service.impl;
 
-<<<<<<< HEAD
+import com.mgaye.banking_backend.dto.response.TokenRefreshResponse;
 import com.mgaye.banking_backend.exception.ResourceNotFoundException;
 import com.mgaye.banking_backend.exception.TokenRefreshException;
 import com.mgaye.banking_backend.model.RefreshToken;
+import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.repository.RefreshTokenRepository;
 import com.mgaye.banking_backend.repository.UserRepository;
+import com.mgaye.banking_backend.security.jwt.JwtUtils;
+import com.mgaye.banking_backend.service.RefreshTokenService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -92,13 +96,15 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class RefreshTokenService {
+public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Value("${app.jwt.refreshExpirationMs}")
     private Long refreshTokenDurationMs;
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
+    private final JwtUtils jwtUtils;
 
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
@@ -130,21 +136,5 @@ public class RefreshTokenService {
         refreshTokenRepository.deleteByUser(userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User not found with id: " + userId)));
     }
-=======
-import java.util.Optional;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import com.mgaye.banking_backend.model.RefreshToken;
-
-public interface RefreshTokenService {
-    Optional<RefreshToken> findByToken(String token);
-
-    RefreshToken verifyExpiration(RefreshToken token);
-    // ... other methods ...
-
-    public RefreshToken createRefreshToken(String userId);
-
-    public void deleteByUserId(String userId);
->>>>>>> master
 }

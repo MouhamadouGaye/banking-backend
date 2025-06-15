@@ -40,6 +40,24 @@ public class JwtUtils {
                 .compact();
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Generates a JWT token from username (used during token refresh)
+     * 
+     * @param username the username/email to generate token for
+     * @return JWT token string
+     */
+    public String generateTokenFromUsername(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(key(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+>>>>>>> master
     public String generateRefreshToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
@@ -76,4 +94,8 @@ public class JwtUtils {
 
         return false;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 }

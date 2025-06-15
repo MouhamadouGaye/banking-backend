@@ -159,6 +159,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
         }
 
+<<<<<<< HEAD
         @Override
         protected ResponseEntity<Object> handleMethodArgumentNotValid(
                         MethodArgumentNotValidException ex,
@@ -181,6 +182,30 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                 errors);
                 return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
+=======
+        // @Override
+        // protected ResponseEntity<Object> handleMethodArgumentNotValid(
+        // MethodArgumentNotValidException ex,
+        // HttpHeaders headers,
+        // HttpStatus status,
+        // WebRequest request) {
+
+        // Map<String, String> errors = ex.getBindingResult()
+        // .getFieldErrors()
+        // .stream()
+        // .collect(Collectors.toMap(
+        // FieldError::getField,
+        // fieldError -> Optional.ofNullable(fieldError.getDefaultMessage())
+        // .orElse("Invalid value")));
+
+        // ApiError error = new ApiError(
+        // "VALIDATION_FAILED",
+        // "Input validation failed",
+        // "VALIDATION",
+        // errors);
+        // return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        // }
+>>>>>>> master
 
         @ExceptionHandler(Exception.class)
         public ResponseEntity<ApiError> handleGlobalException(Exception ex) {

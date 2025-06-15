@@ -6,10 +6,21 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+<<<<<<< HEAD
 import com.mgaye.banking_backend.model.AuditLog;
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.repository.UserRepository;
 
+=======
+import com.mgaye.banking_backend.dto.response.TokenRefreshResponse;
+import com.mgaye.banking_backend.model.AuditLog;
+import com.mgaye.banking_backend.model.RefreshToken;
+import com.mgaye.banking_backend.model.User;
+import com.mgaye.banking_backend.repository.UserRepository;
+import com.mgaye.banking_backend.security.jwt.JwtUtils;
+
+import jakarta.transaction.Transactional;
+>>>>>>> master
 import lombok.RequiredArgsConstructor;
 
 // service/AuditService.java
@@ -18,6 +29,10 @@ import lombok.RequiredArgsConstructor;
 public class AuditService {
     private final auditLogRepository auditLogRepository;
     private final UserRepository userRepository;
+<<<<<<< HEAD
+=======
+    private final JwtUtils jwtUtils;
+>>>>>>> master
 
     @Async
     public void logAction(String userId, AuditAction action, String entityType, String entityId) {
@@ -38,4 +53,26 @@ public class AuditService {
     public enum AuditAction {
         CREATE, UPDATE, DELETE, ACCESS, APPROVE, REJECT
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    @Transactional
+    public TokenRefreshResponse refreshToken(String refreshToken) {
+        // 1. Find and verify the old refresh token
+        RefreshToken oldToken = refreshTokenService.findByToken(refreshToken)
+                .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token not found"));
+        refreshTokenService.verifyExpiration(oldToken);
+
+        // 2. Create new refresh token (rotation)
+        User user = oldToken.getUser();
+        refreshTokenService.deleteByUserId(user.getId());
+        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+        // 3. Generate new access token
+        String newAccessToken = jwtUtils.generateTokenFromUsername(user.getEmail());
+
+        return new TokenRefreshResponse(newAccessToken, newRefreshToken.getToken());
+    }
+>>>>>>> master
 }

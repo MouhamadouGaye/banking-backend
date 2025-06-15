@@ -3,7 +3,13 @@ package com.mgaye.banking_backend.model;
 import java.time.Instant;
 import java.util.Map;
 
+<<<<<<< HEAD
 import org.hibernate.annotations.Type;
+=======
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
+>>>>>>> master
 
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
@@ -47,7 +53,11 @@ public class Notification {
     @Column(nullable = false)
     private Instant timestamp;
 
+<<<<<<< HEAD
     @Type(JsonType.class)
+=======
+    @JdbcTypeCode(SqlTypes.JSON)
+>>>>>>> master
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> metadata;
 

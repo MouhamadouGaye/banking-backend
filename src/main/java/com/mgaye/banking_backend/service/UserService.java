@@ -1,6 +1,7 @@
 package com.mgaye.banking_backend.service;
 
 import com.mgaye.banking_backend.dto.request.RegisterRequest;
+<<<<<<< HEAD
 import com.mgaye.banking_backend.model.Role;
 import com.mgaye.banking_backend.model.SecuritySettings;
 import com.mgaye.banking_backend.model.User;
@@ -67,4 +68,17 @@ public class UserService {
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
+=======
+import com.mgaye.banking_backend.dto.response.UserResponse;
+import com.mgaye.banking_backend.model.User;
+
+public interface UserService {
+    User createUser(RegisterRequest request);
+
+    UserResponse getUserDtoById(String userId);
+
+    boolean existsByEmail(String email);
+
+    UserResponse getCurrentUser(String userId);
+>>>>>>> master
 }

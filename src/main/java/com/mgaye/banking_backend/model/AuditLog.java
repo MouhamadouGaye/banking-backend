@@ -3,9 +3,18 @@ package com.mgaye.banking_backend.model;
 import java.time.Instant;
 import java.util.Map;
 
+<<<<<<< HEAD
 import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+=======
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
+
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+import com.vladmihalcea.hibernate.type.json.JsonType;
+>>>>>>> master
 
 import lombok.*;
 import jakarta.persistence.Column;
@@ -33,7 +42,15 @@ public class AuditLog {
     @Column(nullable = false)
     private String principal; // Username or system
 
+<<<<<<< HEAD
     @Type(JsonType.class)
+=======
+    // @Type(JsonTyp.class)
+    // @Column(columnDefinition = "jsonb")
+    // private Map<String, Object> parameters;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+>>>>>>> master
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> parameters;
 

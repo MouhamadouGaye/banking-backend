@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mgaye.banking_backend.dto.AuthResponse;
 import com.mgaye.banking_backend.dto.request.LoginRequest;
 import com.mgaye.banking_backend.dto.request.RegisterRequest;
+<<<<<<< HEAD
+=======
+import com.mgaye.banking_backend.dto.response.UserResponse;
+>>>>>>> master
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.service.UserService;
 
@@ -37,7 +41,11 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+<<<<<<< HEAD
         Authentication authentication = authService.authenticate(request.email(), request.password());
+=======
+        Authentication authentication = authService.authenticate(request.getEmail(), request.getPassword());
+>>>>>>> master
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(authService.createAuthSession(user));
     }

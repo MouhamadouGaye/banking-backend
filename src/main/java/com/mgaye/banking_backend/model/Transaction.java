@@ -22,15 +22,25 @@ import java.util.Map;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
+<<<<<<< HEAD
 import org.hibernate.annotations.TypeDef;
+=======
+>>>>>>> master
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
+<<<<<<< HEAD
 @Entity
 // @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @TypeDef(name = "json", typeClass = JsonType.class)
 
+=======
+// // @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+// @TypeDef(name = "json", typeClass = JsonType.class)
+
+@Entity
+>>>>>>> master
 @Getter
 @Setter
 @NoArgsConstructor
@@ -93,4 +103,8 @@ public class Transaction {
     public enum TransactionStatus {
         PENDING, COMPLETED, FAILED, CANCELLED, REVERSED
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> master
