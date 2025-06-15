@@ -1,9 +1,14 @@
 package com.mgaye.banking_backend.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.function.ServerResponse.Context;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+
+import com.mgaye.banking_backend.dto.StatementData;
 
 // util/PdfGenerator.java
 @Service

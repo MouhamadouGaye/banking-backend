@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.mgaye.banking_backend.model.SupportTicket;
 import com.mgaye.banking_backend.model.TicketResponse;
 import com.mgaye.banking_backend.model.User;
+import com.mgaye.banking_backend.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 

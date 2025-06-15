@@ -1,13 +1,17 @@
 package com.mgaye.banking_backend.service;
 
 import com.mgaye.banking_backend.dto.request.RegisterRequest;
+import com.mgaye.banking_backend.model.Role;
+import com.mgaye.banking_backend.model.SecuritySettings;
 import com.mgaye.banking_backend.model.User;
+import com.mgaye.banking_backend.model.UserSettings;
 import com.mgaye.banking_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import lombok.*;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

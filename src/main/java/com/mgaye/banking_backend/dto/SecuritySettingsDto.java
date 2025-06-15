@@ -4,7 +4,7 @@ import java.util.List;
 
 // SecuritySettingsDto.java
 public record SecuritySettingsDto(
-        boolean twoFactorEnabled,
-        boolean loginAlerts,
-        List<DeviceDto> devices) {
+                boolean twoFactorEnabled,
+                boolean loginAlerts,
+                List<DeviceDto> devices) {
 }

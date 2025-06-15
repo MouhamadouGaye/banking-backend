@@ -33,6 +33,8 @@ banking:
     jwtRefreshExpirationMs: 604800000 # 7 days
   frontend:
     url: http://localhost:3000
+  jwt: 
+    refreshExpirationMs: 86400000 # 24 hours
 
 logging:
   level:
@@ -50,3 +52,10 @@ management:
 
 
       # application.properties
+encryption:
+  secret: ${ENCRYPTION_SECRET:defaultEncryptionKey123} # Override in production
+
+credit-service:
+  url: https://api.creditservice.com/v1
+  api-key: ${CREDIT_SERVICE_API_KEY}
+

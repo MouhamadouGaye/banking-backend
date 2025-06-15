@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.mgaye.banking_backend.model.enums.CardStatus;
+
 // CardRepository.java
 public interface CardRepository extends JpaRepository<Card, String> {
 

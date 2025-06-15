@@ -2,6 +2,7 @@ package com.mgaye.banking_backend.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.mgaye.banking_backend.dto.TransactionDto;
 import com.mgaye.banking_backend.dto.request.TransactionRequest;

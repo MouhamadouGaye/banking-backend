@@ -2,6 +2,7 @@ package com.mgaye.banking_backend.util;
 
 import com.mgaye.banking_backend.model.Transaction;
 
+import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 // ValidTransactionType.java

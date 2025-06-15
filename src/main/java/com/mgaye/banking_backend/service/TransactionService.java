@@ -2,6 +2,14 @@ package com.mgaye.banking_backend.service;
 
 import org.springframework.stereotype.Service;
 
+import com.mgaye.banking_backend.dto.request.TransactionRequest;
+import com.mgaye.banking_backend.exception.AccountNotFoundException;
+import com.mgaye.banking_backend.model.BankAccount;
+import com.mgaye.banking_backend.model.Transaction;
+import com.mgaye.banking_backend.repository.BankAccountRepository;
+import com.mgaye.banking_backend.repository.TransactionRepository;
+
+import lombok.*;
 import jakarta.transaction.Transactional;
 
 // TransactionService.java

@@ -1,8 +1,19 @@
 package com.mgaye.banking_backend.repository;
 
-public class AccountRepository {
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
-}
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.mgaye.banking_backend.model.BankAccount;
+
+import jakarta.persistence.LockModeType;
 
 // repository/AccountRepository.java
 public interface AccountRepository extends JpaRepository<BankAccount, String> {

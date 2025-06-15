@@ -36,6 +36,8 @@ public class Device {
 
     private String location;
 
+    private String deviceType;
+
     @Column(nullable = false)
     private boolean trusted;
 

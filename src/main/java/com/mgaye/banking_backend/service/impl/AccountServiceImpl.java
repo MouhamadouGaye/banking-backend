@@ -1,8 +1,18 @@
 package com.mgaye.banking_backend.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.mgaye.banking_backend.dto.request.AccountCreateRequest;
+import com.mgaye.banking_backend.model.BankAccount;
+import com.mgaye.banking_backend.model.User;
+import com.mgaye.banking_backend.repository.AccountRepository;
+import com.mgaye.banking_backend.repository.UserRepository;
+import com.mgaye.banking_backend.util.AccountNumberGenerator;
+
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 // AccountServiceImpl.java
 @Service

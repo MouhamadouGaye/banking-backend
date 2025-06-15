@@ -1,5 +1,6 @@
 package com.mgaye.banking_backend.exception;
 
+import org.hibernate.TransactionException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,78 +21,142 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// @ControllerAdvice
+// public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+// @ExceptionHandler(ResourceNotFoundException.class)
+// public ResponseEntity<ApiError>
+// handleResourceNotFoundException(ResourceNotFoundException ex,
+// WebRequest request) {
+// ApiError apiError = new ApiError(
+// HttpStatus.NOT_FOUND.value(),
+// LocalDateTime.now(),
+// ex.getMessage(),
+// "Resource Not Found");
+// return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+// }
+
+// @ExceptionHandler(BadCredentialsException.class)
+// public ResponseEntity<ApiError>
+// handleBadCredentialsException(BadCredentialsException ex, WebRequest request)
+// {
+// ApiError apiError = new ApiError(
+// HttpStatus.UNAUTHORIZED.value(),
+// LocalDateTime.now(),
+// "Invalid username or password",
+// "Authentication Failed");
+// return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
+// }
+
+// @ExceptionHandler(AccessDeniedException.class)
+// public ResponseEntity<ApiError>
+// handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+// ApiError apiError = new ApiError(
+// HttpStatus.FORBIDDEN.value(),
+// LocalDateTime.now(),
+// ex.getMessage(),
+// "Access Denied");
+// return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
+// }
+
+// @ExceptionHandler(Exception.class)
+// public ResponseEntity<ApiError> handleGlobalException(Exception ex,
+// WebRequest request) {
+// ApiError apiError = new ApiError(
+// HttpStatus.INTERNAL_SERVER_ERROR.value(),
+// LocalDateTime.now(),
+// ex.getMessage(),
+// "Internal Server Error");
+// return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+// }
+
+// @ExceptionHandler(TransactionException.class)
+// public ResponseEntity<ErrorResponse>
+// handleTransactionException(TransactionException ex) {
+// ErrorResponse response = new ErrorResponse(
+// "TRANSACTION_ERROR",
+// ex.getMessage(),
+// Map.of("accountId", ex.getAccountId()));
+// return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+// }
+
+// @ExceptionHandler(InsufficientFundsException.class)
+// public ResponseEntity<ErrorResponse>
+// handleInsufficientFunds(InsufficientFundsException ex) {
+// ErrorResponse response = new ErrorResponse(
+// "INSUFFICIENT_FUNDS",
+// "Account has insufficient funds",
+// Map.of(
+// "accountId", ex.getAccountId(),
+// "availableBalance", ex.getAvailableBalance(),
+// "requestedAmount", ex.getRequestedAmount()));
+// return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(response);
+// }
+
+// @ExceptionHandler(BankingException.class)
+// protected ResponseEntity<ApiError> handleBankingException(BankingException
+// ex) {
+// ApiError error = new ApiError(
+// ex.getErrorCode(),
+// ex.getMessage(),
+// ex.getDetails());
+// return new ResponseEntity<>(error, ex.getStatus());
+// }
+
+// @Override
+// protected ResponseEntity<Object> handleMethodArgumentNotValid(
+// MethodArgumentNotValidException ex,
+// HttpHeaders headers,
+// HttpStatus status,
+// WebRequest request) {
+
+// Map<String, String> errors = ex.getBindingResult()
+// .getFieldErrors()
+// .stream()
+// .collect(Collectors.toMap(
+// FieldError::getField,
+// FieldError::getDefaultMessage));
+
+// ApiError error = new ApiError(
+// "VALIDATION_FAILED",
+// "Input validation failed",
+// errors);
+// return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+// }
+// }
+
+// exception/GlobalExceptionHandler.java
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         @ExceptionHandler(ResourceNotFoundException.class)
-        public ResponseEntity<ApiError> handleResourceNotFoundException(ResourceNotFoundException ex,
-                        WebRequest request) {
+        public ResponseEntity<ApiError> handleResourceNotFoundException(ResourceNotFoundException ex) {
                 ApiError apiError = new ApiError(
-                                HttpStatus.NOT_FOUND.value(),
-                                LocalDateTime.now(),
+                                "RESOURCE_NOT_FOUND",
                                 ex.getMessage(),
-                                "Resource Not Found");
+                                ex.getResourceName(),
+                                Map.of(
+                                                "field", ex.getFieldName(),
+                                                "value", ex.getFieldValue()));
                 return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
         }
 
         @ExceptionHandler(BadCredentialsException.class)
-        public ResponseEntity<ApiError> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+        public ResponseEntity<ApiError> handleBadCredentialsException(BadCredentialsException ex) {
                 ApiError apiError = new ApiError(
-                                HttpStatus.UNAUTHORIZED.value(),
-                                LocalDateTime.now(),
+                                "AUTHENTICATION_FAILED",
                                 "Invalid username or password",
-                                "Authentication Failed");
+                                "AUTHENTICATION");
                 return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
         }
 
         @ExceptionHandler(AccessDeniedException.class)
-        public ResponseEntity<ApiError> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        public ResponseEntity<ApiError> handleAccessDeniedException(AccessDeniedException ex) {
                 ApiError apiError = new ApiError(
-                                HttpStatus.FORBIDDEN.value(),
-                                LocalDateTime.now(),
+                                "ACCESS_DENIED",
                                 ex.getMessage(),
-                                "Access Denied");
+                                "AUTHORIZATION");
                 return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
-        }
-
-        @ExceptionHandler(Exception.class)
-        public ResponseEntity<ApiError> handleGlobalException(Exception ex, WebRequest request) {
-                ApiError apiError = new ApiError(
-                                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                                LocalDateTime.now(),
-                                ex.getMessage(),
-                                "Internal Server Error");
-                return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        @ExceptionHandler(TransactionException.class)
-        public ResponseEntity<ErrorResponse> handleTransactionException(TransactionException ex) {
-                ErrorResponse response = new ErrorResponse(
-                                "TRANSACTION_ERROR",
-                                ex.getMessage(),
-                                Map.of("accountId", ex.getAccountId()));
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-        }
-
-        @ExceptionHandler(InsufficientFundsException.class)
-        public ResponseEntity<ErrorResponse> handleInsufficientFunds(InsufficientFundsException ex) {
-                ErrorResponse response = new ErrorResponse(
-                                "INSUFFICIENT_FUNDS",
-                                "Account has insufficient funds",
-                                Map.of(
-                                                "accountId", ex.getAccountId(),
-                                                "availableBalance", ex.getAvailableBalance(),
-                                                "requestedAmount", ex.getRequestedAmount()));
-                return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(response);
-        }
-
-        @ExceptionHandler(BankingException.class)
-        protected ResponseEntity<ApiError> handleBankingException(BankingException ex) {
-                ApiError error = new ApiError(
-                                ex.getErrorCode(),
-                                ex.getMessage(),
-                                ex.getDetails());
-                return new ResponseEntity<>(error, ex.getStatus());
         }
 
         @Override
@@ -106,12 +171,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                 .stream()
                                 .collect(Collectors.toMap(
                                                 FieldError::getField,
-                                                FieldError::getDefaultMessage));
+                                                fieldError -> Optional.ofNullable(fieldError.getDefaultMessage())
+                                                                .orElse("Invalid value")));
 
                 ApiError error = new ApiError(
                                 "VALIDATION_FAILED",
                                 "Input validation failed",
+                                "VALIDATION",
                                 errors);
                 return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ApiError> handleGlobalException(Exception ex) {
+                ApiError apiError = new ApiError(
+                                "INTERNAL_ERROR",
+                                "An unexpected error occurred",
+                                "SYSTEM");
+                return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 }

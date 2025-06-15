@@ -8,11 +8,12 @@ import com.mgaye.banking_backend.dto.response.TokenRefreshResponse;
 import com.mgaye.banking_backend.exception.TokenRefreshException;
 import com.mgaye.banking_backend.dto.response.JwtResponse;
 import com.mgaye.banking_backend.dto.response.MessageResponse;
-import com.mgaye.banking_backend.security.services.RefreshTokenService;
-import com.mgaye.banking_backend.security.services.UserDetailsImpl;
+
 import com.mgaye.banking_backend.model.RefreshToken;
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.security.jwt.JwtUtils;
+import com.mgaye.banking_backend.security.service.UserDetailsImpl;
+import com.mgaye.banking_backend.service.RefreshTokenService;
 import com.mgaye.banking_backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -48,14 +49,14 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         String jwt = jwtUtils.generateJwtToken(authentication);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId()); // Now accepts String
 
         return ResponseEntity.ok(new JwtResponse(
                 jwt,
                 refreshToken.getToken(),
-                userDetails.getId(),
-                userDetails.getUsername(),
+                userDetails.getUserId(), // String ID
                 userDetails.getEmail(),
+                userDetails.getFirstName() + "" + userDetails.getLastName(),
                 userDetails.getAuthorities()));
     }
 
