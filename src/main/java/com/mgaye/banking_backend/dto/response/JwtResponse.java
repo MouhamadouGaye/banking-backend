@@ -88,28 +88,17 @@ import java.util.stream.Collectors;
 public class JwtResponse {
     private String accessToken;
     private String refreshToken;
-<<<<<<< HEAD
-=======
-    private String email;
->>>>>>> master
+    String email;
     private String id; // Only ID instead of full user data
     private String tokenType = "Bearer";
     private List<String> roles;
 
-<<<<<<< HEAD
-    public JwtResponse(String accessToken, String refreshToken,
-            String userId, Collection<? extends GrantedAuthority> authorities) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-        this.id = id;
-=======
     public JwtResponse(String accessToken, String refreshToken, String email,
             String userId, Collection<? extends GrantedAuthority> authorities) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.id = userId;
         this.email = email;
->>>>>>> master
         this.roles = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());

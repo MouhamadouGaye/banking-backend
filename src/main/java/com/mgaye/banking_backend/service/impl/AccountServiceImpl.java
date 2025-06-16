@@ -2,10 +2,8 @@ package com.mgaye.banking_backend.service.impl;
 
 import java.util.List;
 
-<<<<<<< HEAD
-=======
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
->>>>>>> master
+<<<<<<<HEAD=======
+import org.springframework.security.core.userdetails.UsernameNotFoundException;>>>>>>>master
 import org.springframework.stereotype.Service;
 
 import com.mgaye.banking_backend.dto.request.AccountCreateRequest;
@@ -30,11 +28,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public BankAccount createAccount(AccountCreateRequest request) {
         User user = userRepo.findById(request.userId())
-<<<<<<< HEAD
                 .orElseThrow(() -> new UserNotFoundException(request.userId()));
-=======
                 .orElseThrow(() -> new UsernameNotFoundException(request.userId()));
->>>>>>> master
 
         BankAccount account = BankAccount.builder()
                 .accountNumber(numberGenerator.generate())

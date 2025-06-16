@@ -29,13 +29,10 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, String
 
     @Query("SELECT a.balance FROM BankAccount a WHERE a.id = :accountId")
     Optional<BigDecimal> getBalance(@Param("accountId") String accountId);
-<<<<<<< HEAD
-=======
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT a FROM BankAccount a WHERE a.accountNumber = :accountNumber AND a.currency = :currency")
     Optional<BankAccount> findByAccountNumberWithCurrencyForUpdate(
             @Param("accountNumber") String accountNumber,
             @Param("currency") String currency);
->>>>>>> master
 }

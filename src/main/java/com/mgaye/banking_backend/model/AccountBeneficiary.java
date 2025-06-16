@@ -1,24 +1,16 @@
 package com.mgaye.banking_backend.model;
 
-<<<<<<< HEAD
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 // model/AccountBeneficiary.java
-@Entity
-public class AccountBeneficiary {
-    @Id
-    @GeneratedValue(strategy = UUID)
-    private String id;
-    @ManyToOne
-    private BankAccount account;
-    private String beneficiaryName;
-    private String accountNumber;
-    private String routingNumber;
-=======
-import jakarta.persistence.*;
 
 @Entity
 @Table(name = "account_beneficiaries")
@@ -45,6 +37,4 @@ public class AccountBeneficiary {
     public AccountBeneficiary() {
     }
 
-    // ... [rest of your code] ...
->>>>>>> master
 }

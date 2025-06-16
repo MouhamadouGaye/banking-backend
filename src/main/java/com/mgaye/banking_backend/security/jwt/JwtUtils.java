@@ -40,8 +40,6 @@ public class JwtUtils {
                 .compact();
     }
 
-<<<<<<< HEAD
-=======
     /**
      * Generates a JWT token from username (used during token refresh)
      * 
@@ -57,7 +55,6 @@ public class JwtUtils {
                 .compact();
     }
 
->>>>>>> master
     public String generateRefreshToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
@@ -94,8 +91,5 @@ public class JwtUtils {
 
         return false;
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> master
 }

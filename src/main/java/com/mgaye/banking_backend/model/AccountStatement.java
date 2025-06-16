@@ -1,29 +1,19 @@
 package com.mgaye.banking_backend.model;
 
-<<<<<<< HEAD
-import java.time.Instant;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-
-// model/AccountStatement.java
-@Entity
-public class AccountStatement {
-    @Id
-    @GeneratedValue(strategy = UUID)
-    private String id;
-    private String accountId;
-    private Instant generatedAt;
-    private Instant periodStart;
-    private Instant periodEnd;
-    @Lob
-    private byte[] pdfContent;
-=======
-import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Objects;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
+
+// model/AccountStatement.java
 
 @Entity
 @Table(name = "account_statements")
@@ -161,5 +151,4 @@ public class AccountStatement {
                 ", status=" + status +
                 '}';
     }
->>>>>>> master
 }

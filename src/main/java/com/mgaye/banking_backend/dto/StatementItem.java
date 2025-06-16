@@ -13,16 +13,6 @@ import com.mgaye.banking_backend.model.Transaction.TransactionType;
 
 import jakarta.validation.constraints.Positive;
 
-// public record StatementItem(
-//         LocalDate date,
-//         String description,
-//         String reference,
-//         BigDecimal amount,
-//         BigDecimal balance,
-//         Transaction.TransactionType type) {
-// }
-
-// dto/StatementItem.java
 public record StatementItem(
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant date,
         String description,
@@ -33,9 +23,10 @@ public record StatementItem(
         TransactionStatus status) {
     public String getFormattedAmount() {
         String sign = "";
-        if (type == Transaction.TransactionType.CREDIT) {
+        if (type == TransactionType.CREDIT) {
+
             sign = "+";
-        } else if (type == Transaction.TransactionType.DEBIT) {
+        } else if (type == TransactionType.DEBIT) {
             sign = "-";
         }
         return String.format("%s%.2f", sign, amount);

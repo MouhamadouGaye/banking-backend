@@ -1,16 +1,23 @@
 package com.mgaye.banking_backend.service;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.mgaye.banking_backend.dto.request.SecurityUpdateRequest;
+import com.mgaye.banking_backend.dto.response.CurrentUser;
+import com.mgaye.banking_backend.model.User;
+
 public interface SecurityService {
+    void updatePassword(String userId, String currentPassword, String newPassword);
 
-    void updatePassword(Long userId, String currentPassword, String newPassword);
+    void enableTwoFactorAuth(String userId);
 
-    void enableTwoFactorAuth(Long userId);
+    void disableTwoFactorAuth(String userId);
 
-    void disableTwoFactorAuth(Long userId);
+    void updateSecurityQuestions(String userId, SecurityUpdateRequest request);
 
-    void updateSecurityQuestions(Long userId, SecurityUpdateRequest request);
+    CurrentUser getCurrentUserDetails(String userId);
 
-    CurrentUser getCurrentUserDetails(String username);
+    void logSecurityEvent(String userId, String eventType, String description);
 
-    void logSecurityEvent(Long userId, String eventType, String description);
+    User getUserById(String userId);
 }

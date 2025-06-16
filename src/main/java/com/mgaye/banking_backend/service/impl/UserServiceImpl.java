@@ -1,6 +1,7 @@
 package com.mgaye.banking_backend.service.impl;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,7 +41,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(request.password()));
 
         Set<Role> roles = new HashSet<>();
-        roles.add(roleRepository.findByName(ERole.ROLE_USER)
+        roles.add(roleRepository.findByName(ERole.ROLE_USER.name())
+
                 .orElseThrow(() -> new RuntimeException("Error: Role not found.")));
         user.setRoles(roles);
 
@@ -66,4 +68,9 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return userMapper.toUserResponse(user);
     }
+
+    public Optional<User> findById(String userId) {
+        return userRepository.findById(userId);
+    }
+
 }

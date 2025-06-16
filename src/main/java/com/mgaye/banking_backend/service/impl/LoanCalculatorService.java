@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.mgaye.banking_backend.dto.LoanCalculationResult;
+import com.mgaye.banking_backend.model.PaymentSchedule;
+
 // LoanCalculatorService.java
 @Service
 public class LoanCalculatorService {

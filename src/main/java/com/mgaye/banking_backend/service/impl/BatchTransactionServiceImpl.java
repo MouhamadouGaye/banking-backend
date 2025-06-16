@@ -12,10 +12,8 @@ import java.util.concurrent.Executors;
 
 import org.springframework.stereotype.Service;
 
-<<<<<<< HEAD
 import com.mgaye.banking_backend.dto.BatchResult;
-=======
->>>>>>> master
+
 import com.mgaye.banking_backend.dto.TransferResult;
 import com.mgaye.banking_backend.dto.request.TransferRequest;
 import com.mgaye.banking_backend.model.BankAccount;

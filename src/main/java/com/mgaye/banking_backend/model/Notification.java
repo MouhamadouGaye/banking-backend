@@ -3,13 +3,10 @@ package com.mgaye.banking_backend.model;
 import java.time.Instant;
 import java.util.Map;
 
-<<<<<<< HEAD
 import org.hibernate.annotations.Type;
-=======
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
->>>>>>> master
 
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
@@ -23,15 +20,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import lombok.*;
-import com.vladmihalcea.hibernate.type.json.JsonType;
 
 @Entity
 @Table(name = "notifications")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -53,11 +49,7 @@ public class Notification {
     @Column(nullable = false)
     private Instant timestamp;
 
-<<<<<<< HEAD
-    @Type(JsonType.class)
-=======
     @JdbcTypeCode(SqlTypes.JSON)
->>>>>>> master
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> metadata;
 
