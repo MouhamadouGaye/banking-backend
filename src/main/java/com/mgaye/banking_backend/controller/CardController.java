@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-import org.springdoc.core.SecurityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +22,7 @@ import com.mgaye.banking_backend.dto.response.CardResponse;
 import com.mgaye.banking_backend.model.enums.CardStatus;
 import com.mgaye.banking_backend.security.CardSecurityService;
 import com.mgaye.banking_backend.service.CardService;
+import com.mgaye.banking_backend.service.SecurityService;
 
 import jakarta.validation.Valid;
 

@@ -19,3 +19,9 @@ public class InsufficientFundsException extends BankingException {
                         "requestedAmount", amount));
     }
 }
+
+// public class InsufficientFundsException extends RuntimeException {
+// public InsufficientFundsException() {
+// super("Insufficient funds for this transaction");
+// }
+// }

@@ -2,8 +2,7 @@ package com.mgaye.banking_backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-<<<<<<< HEAD
-=======
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -11,7 +10,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.MessageChannel;
->>>>>>> master
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -19,26 +17,21 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic", "/queue");
+        config.enableSimpleBroker("/topic", "/queue", "/user");
         config.setApplicationDestinationPrefixes("/app");
+        config.setUserDestinationPrefix("/user");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")
-                .withSockJS();
+                .withSockJS()
+                .setHeartbeatTime(30000);
     }
 
     @Bean
-<<<<<<< HEAD
-    public SimpMessagingTemplate simpMessagingTemplate(SimpMessageSendingOperations messagingTemplate) {
-        return new SimpMessagingTemplate(messagingTemplate);
+    public SimpUserRegistry simpUserRegistry() {
+        return new DefaultSimpUserRegistry();
     }
 }
-=======
-    public SimpMessagingTemplate simpMessagingTemplate(MessageChannel clientOutboundChannel) {
-        return new SimpMessagingTemplate(clientOutboundChannel);
-    }
-}
->>>>>>> master

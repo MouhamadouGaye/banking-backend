@@ -36,7 +36,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signin")
-    public ResponseEntity<AuthResponse> authenticateUser(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<Authentication> authenticateUser(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.authenticate(request.getEmail(), request.getPassword()));
     }
 

@@ -125,6 +125,14 @@ public class BankAccount {
         private BigDecimal monthlyTransactionLimit;
     }
 
+    public String getMaskedNumber() {
+        if (this.accountNumber == null || this.accountNumber.length() < 4) {
+            return "****";
+        }
+        String lastFour = this.accountNumber.substring(this.accountNumber.length() - 4);
+        return "****" + lastFour;
+    }
+
     // Business Logic Methods
     public boolean canWithdraw(BigDecimal amount) {
         BigDecimal availableBalance = balance.add(overdraftLimit != null ? overdraftLimit : BigDecimal.ZERO);
@@ -151,4 +159,5 @@ public class BankAccount {
             deposit(interest);
         }
     }
+
 }

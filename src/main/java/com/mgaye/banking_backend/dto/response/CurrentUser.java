@@ -18,6 +18,7 @@ public class CurrentUser {
     private String email; // Using as username
     private String firstName;
     private String lastName;
+    private String username;
     private boolean enabled;
     private boolean twoFactorEnabled;
     private boolean loginAlerts; // Added from SecuritySettings
@@ -37,4 +38,5 @@ public class CurrentUser {
     public enum ThemePreference {
         LIGHT, DARK, SYSTEM
     }
+
 }

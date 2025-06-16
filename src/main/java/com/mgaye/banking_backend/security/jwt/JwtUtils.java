@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.mgaye.banking_backend.security.service.UserDetailsImpl;
@@ -29,11 +30,42 @@ public class JwtUtils {
     @Value("${banking.app.jwtRefreshExpirationMs}")
     private int jwtRefreshExpirationMs;
 
-    public String generateJwtToken(Authentication authentication) {
-        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+    // public String generateJwtToken(Authentication authentication) {
+    // UserDetailsImpl userPrincipal = (UserDetailsImpl)
+    // authentication.getPrincipal();
+
+    // return Jwts.builder()
+    // .setSubject((userPrincipal.getUsername()))
+    // .setIssuedAt(new Date())
+    // .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+    // .signWith(key(), SignatureAlgorithm.HS256)
+    // .compact();
+    // }
+
+    // public String generateJwtToken(UserDetailsImpl userPrincipal) {
+    // return Jwts.builder()
+    // .setSubject(userPrincipal.getUsername())
+    // .setIssuedAt(new Date())
+    // .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+    // .signWith(key(), SignatureAlgorithm.HS256)
+    // .compact();
+    // }
+
+    public String generateJwtToken(Object principal) {
+        String username;
+
+        if (principal instanceof UserDetailsImpl) {
+            username = ((UserDetailsImpl) principal).getUsername();
+        } else if (principal instanceof String) {
+            username = (String) principal;
+        } else if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            throw new IllegalArgumentException("Unsupported principal type");
+        }
 
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
+                .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256)

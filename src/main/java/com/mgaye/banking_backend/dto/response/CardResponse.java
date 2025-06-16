@@ -16,6 +16,7 @@ import com.mgaye.banking_backend.model.enums.CardStatus;
 @AllArgsConstructor
 public class CardResponse {
     private String id;
+    private String CardId;
     private String cardNumber; // Masked
     private String cardHolderName;
     private String cardType;

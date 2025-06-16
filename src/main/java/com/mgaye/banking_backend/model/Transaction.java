@@ -87,6 +87,10 @@ public class Transaction {
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> metadata;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public enum TransactionType {
         DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT, FEE, REFUND, CHARGEBACK
     }
@@ -94,4 +98,39 @@ public class Transaction {
     public enum TransactionStatus {
         PENDING, COMPLETED, FAILED, CANCELLED, REVERSED
     }
+
+    public enum TransactionDirection {
+        INBOUND, OUTBOUND
+    }
 }
+
+// @RestController. this code is not taken into account
+// public class Transsaction {
+
+// private final TransactionService transactionService;
+
+// // In your controllers:
+// @PostMapping("/transactions")
+// public ResponseEntity<TransactionDto> createTransaction(
+// @Valid @RequestBody TransactionRequest request,
+// @CurrentUser User user) {
+// Transaction transaction = transactionService.create(request, user);
+// return ResponseEntity.ok(mapToDto(transaction));
+// }
+
+// private TransactionDto mapToDto(Transaction transaction) {
+// return new TransactionDto(
+// transaction.getId(),
+// transaction.getAccount().getId(),
+// transaction.getType().name(),
+// transaction.getAmount(),
+// transaction.getCurrency(),
+// transaction.getStatus().name(),
+// transaction.getTimestamp(),
+// transaction.getDescription(),
+// transaction.getReferenceId(),
+// mapMerchantToDto(transaction.getMerchant()),
+// transaction.getDirection().name());
+// }
+
+// }

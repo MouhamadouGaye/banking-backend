@@ -3,19 +3,15 @@ package com.mgaye.banking_backend.service.impl;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mgaye.banking_backend.dto.SecurityQuestionDTO;
 import com.mgaye.banking_backend.dto.request.SecurityUpdateRequest;
 import com.mgaye.banking_backend.dto.response.CurrentUser;
 import com.mgaye.banking_backend.exception.InvalidPasswordException;

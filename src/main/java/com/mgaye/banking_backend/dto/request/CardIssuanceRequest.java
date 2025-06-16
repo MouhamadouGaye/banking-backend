@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Pattern;
 public record CardIssuanceRequest(
         @NotBlank String userId,
         @NotBlank String accountId,
+
         @NotNull CardType cardType,
         @NotNull CardDesign design,
         @NotBlank @Pattern(regexp = "[A-Z]{2}") String currency,

@@ -9,6 +9,7 @@ import com.mgaye.banking_backend.model.UserSettings;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springdoc.core.SecurityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class SettingsController {
     private final SettingsSerice settingsService;
-    private final SecurityServvice securityService;
+    private final SecurityService securityService;
 
     @GetMapping
     @PreAuthorize("#userId == authentication.principal.id")
