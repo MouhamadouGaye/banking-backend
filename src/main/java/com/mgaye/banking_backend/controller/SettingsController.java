@@ -2,7 +2,6 @@
 package com.mgaye.banking_backend.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-
 import com.mgaye.banking_backend.dto.request.SecurityUpdateRequest;
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.model.UserSettings;

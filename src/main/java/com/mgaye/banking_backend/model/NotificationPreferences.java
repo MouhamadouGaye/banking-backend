@@ -1,28 +1,55 @@
 package com.mgaye.banking_backend.model;
 
+import java.time.Instant;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.*;
 
-@Embeddable
+@Entity
+@Table(name = "notification_preferences")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class NotificationPreferences {
-    @Column(name = "email_notifications", nullable = false)
-    private boolean email;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
-    @Column(name = "sms_notifications", nullable = false)
-    private boolean sms;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "push_notifications", nullable = false)
-    private boolean push;
+    @Column(nullable = false)
+    private boolean transactionEmails = true;
 
-    @Column(name = "security_alerts", nullable = false)
-    private boolean securityAlerts;
+    @Column(nullable = false)
+    private boolean marketingEmails = false;
 
-    @Column(name = "marketing_opt_in")
-    private boolean marketingOptIn;
+    @Column(nullable = false)
+    private boolean securityAlerts = true;
+
+    @Column(nullable = false)
+    private boolean pushNotifications = true;
+
+    @Column(nullable = false)
+    private boolean smsNotifications = false;
+
+    @CreationTimestamp
+    private Instant createdAt;
+
+    @UpdateTimestamp
+    private Instant updatedAt;
 }

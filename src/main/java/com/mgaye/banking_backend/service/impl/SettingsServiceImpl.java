@@ -5,10 +5,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mgaye.banking_backend.dto.SecuritySettingsDto;
 import com.mgaye.banking_backend.dto.UserSettingsDto;
+import com.mgaye.banking_backend.dto.mapper.SecuritySettingsMapper;
 import com.mgaye.banking_backend.dto.mapper.UserSettingsMapper;
 import com.mgaye.banking_backend.dto.request.UpdateSecuritySettingsRequest;
+import com.mgaye.banking_backend.exception.ResourceNotFoundException;
+import com.mgaye.banking_backend.model.SecuritySettings;
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.model.UserSettings;
+import com.mgaye.banking_backend.repository.SecuritySettingsRepository;
 import com.mgaye.banking_backend.repository.UserRepository;
 import com.mgaye.banking_backend.repository.UserSettingsRepository;
 import com.mgaye.banking_backend.service.SettingsService;
@@ -18,13 +22,15 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class SettingsServiceImpl implements SettingsService {
-
-    private final UserSettingsRepository userSettingsRepository;
     private final UserRepository userRepository;
+    private final UserSettingsRepository userSettingsRepository;
+    private final SecuritySettingsRepository securitySettingsRepository;
     private final UserSettingsMapper userSettingsMapper;
+    private final SecuritySettingsMapper securitySettingsMapper;
 
     @Override
-    public UserSettingsDto getUserSettings(Long userId) {
+    @Transactional(readOnly = true)
+    public UserSettingsDto getUserSettings(String userId) {
         UserSettings settings = userSettingsRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User settings not found"));
         return userSettingsMapper.toDto(settings);
@@ -32,40 +38,31 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     @Transactional
-    public UserSettingsDto updateUserSettings(Long userId, UserSettingsDto userSettingsDto) {
+    public UserSettingsDto updateUserSettings(String userId, UserSettingsDto userSettingsDto) {
         UserSettings settings = userSettingsRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User settings not found"));
+                .orElseGet(() -> UserSettings.builder().user(userRepository.getReferenceById(userId)).build());
 
-        userSettingsMapper.updateUserSettingsFromDto(userSettingsDto, settings);
-        UserSettings updatedSettings = userSettingsRepository.save(settings);
-
-        return userSettingsMapper.toDto(updatedSettings);
+        userSettingsMapper.updateFromDto(userSettingsDto, settings);
+        UserSettings savedSettings = userSettingsRepository.save(settings);
+        return userSettingsMapper.toDto(savedSettings);
     }
 
     @Override
-    public SecuritySettingsDto getSecuritySettings(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        return SecuritySettingsDto.builder()
-                .twoFactorEnabled(user.isTwoFactorEnabled())
-                .lastPasswordChangeDate(user.getLastPasswordChangeDate())
-                .failedLoginAttempts(user.getFailedLoginAttempts())
-                .accountLocked(user.isAccountLocked())
-                .build();
+    @Transactional(readOnly = true)
+    public SecuritySettingsDto getSecuritySettings(String userId) {
+        SecuritySettings settings = securitySettingsRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Security settings not found"));
+        return securitySettingsMapper.toDto(settings);
     }
 
     @Override
     @Transactional
-    public SecuritySettingsDto updateSecuritySettings(Long userId, UpdateSecuritySettingsRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public SecuritySettingsDto updateSecuritySettings(String userId, UpdateSecuritySettingsRequest request) {
+        SecuritySettings settings = securitySettingsRepository.findByUserId(userId)
+                .orElseGet(() -> SecuritySettings.builder().user(userRepository.getReferenceById(userId)).build());
 
-        user.setTwoFactorEnabled(request.isTwoFactorEnabled());
-        // Add other security updates as needed
-
-        userRepository.save(user);
-
-        return getSecuritySettings(userId);
+        securitySettingsMapper.updateFromRequest(request, settings);
+        SecuritySettings savedSettings = securitySettingsRepository.save(settings);
+        return securitySettingsMapper.toDto(savedSettings);
     }
 }
