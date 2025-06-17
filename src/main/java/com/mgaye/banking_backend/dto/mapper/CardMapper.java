@@ -9,7 +9,9 @@ import com.mgaye.banking_backend.model.User;
 
 @Mapper(componentModel = "spring")
 public interface CardMapper {
-    @Mapping(target = "cardHolderName", expression = "java(getCardHolderName(card.getUser()))")
+    // @Mapping(target = "cardHolderName", expression =
+    // "java(getCardHolderName(card.getUser()))")
+    @Mapping(target = "cardHolderName", expression = "java(card.getUser().getFirstName() + \" \" + card.getUser().getLastName())")
     @Mapping(target = "linkedAccountId", source = "linkedAccount.id")
     @Mapping(target = "expirationDate", source = "expirationDate")
     @Mapping(target = "cardType", source = "cardType")

@@ -3,11 +3,13 @@ package com.mgaye.banking_backend.dto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+
 import lombok.NoArgsConstructor;
 
 @Data
@@ -25,7 +27,7 @@ public class EmailMessage {
     private String body;
 
     @Builder.Default
-    private List<String> cc = new ArrayList()<>();  // Carbon copy
+    private List<String> cc = new ArrayList<>(); // Carbon copy
 
     @Builder.Default
     private List<String> bcc = new ArrayList<>(); // Blind carbon copy
@@ -33,6 +35,7 @@ public class EmailMessage {
     @Builder.Default
     private List<EmailAttachment> attachments = new ArrayList<>();
 
+    @Builder.Default
     private boolean isHtml = false; // HTML email flag
 
     @Builder.Default

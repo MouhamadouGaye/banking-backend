@@ -26,13 +26,3 @@ public interface CardService {
 
     boolean verifyCardOwnership(String userId, String cardId);
 }
-
-// public interface CardService {
-// CardResponse issueCard(CardIssuanceRequest request);
-// CardResponse updateStatus(String cardId, String status);
-// CardResponse getCardDetails(String cardId);
-// List<CardResponse> getUserCards(String userId);
-// void updatePin(String cardId, String currentPin, String newPin);
-// String maskCardNumber(String number);
-// boolean verifyCardOwnership(String userId, String cardId);
-// }

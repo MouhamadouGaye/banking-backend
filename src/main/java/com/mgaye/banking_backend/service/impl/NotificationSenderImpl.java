@@ -6,13 +6,16 @@ import com.mgaye.banking_backend.event.NotificationEvent;
 import com.mgaye.banking_backend.exception.NotificationException;
 import com.mgaye.banking_backend.service.EmailService;
 import com.mgaye.banking_backend.service.NotificationErrorHandler;
+import com.mgaye.banking_backend.service.NotificationSender;
+import com.mgaye.banking_backend.service.PushNotificationService;
+import com.mgaye.banking_backend.service.SmsService;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationSenderImpl implements NotificationSender {
     private final EmailService emailService;
     private final PushNotificationService pushService;
-    private final smsService smsService;
+    private final SmsService smsService;
     private final NotificationErrorHandler errorHandler;
 
     @Override

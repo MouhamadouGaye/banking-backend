@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.mgaye.banking_backend.event.NotificationEvent;
 import com.mgaye.banking_backend.model.FailedNotification;
+import com.mgaye.banking_backend.repository.FailedNotificationRepository;
 import com.mgaye.banking_backend.service.NotificationErrorHandler;
 
 import jakarta.transaction.Transactional;
@@ -14,7 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class NotificationErrorHandlerImpl implements NotificationErrorHandler {
-    private final failedNotificationRepository failedNotificationRepository;
+    private final FailedNotificationRepository failedNotificationRepository;
+
+    public NotificationErrorHandlerImpl(FailedNotificationRepository failedNotificationRepository) {
+        this.failedNotificationRepository = failedNotificationRepository;
+    }
 
     @Override
     @Transactional

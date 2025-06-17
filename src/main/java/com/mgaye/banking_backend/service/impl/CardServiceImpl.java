@@ -3,9 +3,10 @@ package com.mgaye.banking_backend.service.impl;
 import com.mgaye.banking_backend.service.CardService;
 import com.mgaye.banking_backend.type.CardNumberGenerator;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.security.access.AuthorizationServiceException;
@@ -27,6 +28,7 @@ import com.mgaye.banking_backend.repository.UserRepository;
 import com.mgaye.banking_backend.security.CardSecurityService;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardService {
     private final CardRepository cardRepository;
@@ -40,7 +42,7 @@ public class CardServiceImpl implements CardService {
     public CardResponse updateStatus(String cardId, String status) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new ResourceNotFoundException("Card not found"));
-        card.setStatus(status);
+        card.setStatus(CardStatus.valueOf(status));
         return cardMapper.toCardResponse(cardRepository.save(card));
     }
 
