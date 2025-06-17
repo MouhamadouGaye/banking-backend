@@ -30,3 +30,14 @@ public interface SettingsService {
 
     SecuritySettingsDto updateSecuritySettings(String userId, UpdateSecuritySettingsRequest request);
 }
+// public interface SettingsService {
+// UserSettingsDto getUserSettings(String userId);
+// UserSettingsDto updateUserSettings(String userId, UserSettingsDto
+// userSettingsDto);
+// SecuritySettingsDto getSecuritySettings(String userId); // Returns DTO, not
+// Mapper
+// SecuritySettingsDto updateSecuritySettings(String userId,
+// UpdateSecuritySettingsRequest request);
+// void updateNotificationPreferences(String userId, NotificationPreferencesDto
+// preferences);
+// }

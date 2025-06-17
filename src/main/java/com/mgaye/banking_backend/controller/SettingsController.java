@@ -2,10 +2,19 @@
 package com.mgaye.banking_backend.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mgaye.banking_backend.dto.NotificationPreferencesDto;
+import com.mgaye.banking_backend.dto.SecuritySettingsDto;
+import com.mgaye.banking_backend.dto.UserSettingsDto;
+import com.mgaye.banking_backend.dto.mapper.SecuritySettingsMapper;
 import com.mgaye.banking_backend.dto.request.SecurityUpdateRequest;
+import com.mgaye.banking_backend.dto.request.UpdateSecuritySettingsRequest;
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.model.UserSettings;
+import com.mgaye.banking_backend.service.NotificationService;
+import com.mgaye.banking_backend.service.SettingsService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springdoc.core.SecurityService;
@@ -21,20 +30,46 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api/settings")
 @RequiredArgsConstructor
 public class SettingsController {
-    private final SettingsSerice settingsService;
+    private final SettingsService settingsService;
     private final SecurityService securityService;
+    private final NotificationService notificationService;
 
-    @GetMapping
+    @GetMapping("/user")
     @PreAuthorize("#userId == authentication.principal.id")
-    public ResponseEntity<UserSettings> getSettings(@RequestParam String userId) {
-        return ResponseEntity.ok(settingsService.getSettings(userId));
+    public ResponseEntity<UserSettingsDto> getUserSettings(
+            @RequestParam String userId) {
+        return ResponseEntity.ok(settingsService.getUserSettings(userId));
+    }
+
+    @PutMapping("/user")
+    @PreAuthorize("#userId == authentication.principal.id")
+    public ResponseEntity<UserSettingsDto> updateUserSettings(
+            @RequestParam String userId,
+            @Valid @RequestBody UserSettingsDto userSettingsDto) {
+        return ResponseEntity.ok(settingsService.updateUserSettings(userId, userSettingsDto));
+    }
+
+    @GetMapping("/security")
+    @PreAuthorize("#userId == authentication.principal.id")
+    public ResponseEntity<SecuritySettingsDto> getSecuritySettings(
+            @RequestParam String userId) {
+        return ResponseEntity.ok(settingsService.getSecuritySettings(userId));
     }
 
     @PutMapping("/security")
-    public ResponseEntity<Void> updateSecuritySettings(
-            @RequestBody SecurityUpdateRequest request,
-            @CurrentUser User user) {
-        securityService.updateSettings(user.getId(), request);
+    @PreAuthorize("#userId == authentication.principal.id")
+    public ResponseEntity<SecuritySettingsDto> updateSecuritySettings(
+            @RequestParam String userId,
+            @Valid @RequestBody UpdateSecuritySettingsRequest request) {
+        return ResponseEntity.ok(settingsService.updateSecuritySettings(userId, request));
+    }
+
+    @PutMapping("/notifications")
+    @PreAuthorize("#userId == authentication.principal.id")
+    public ResponseEntity<Void> updateNotificationPreferences(
+            @RequestParam String userId,
+            @Valid @RequestBody NotificationPreferencesDto preferences) {
+        notificationService.updateNotificationPreferences(userId, preferences);
         return ResponseEntity.noContent().build();
     }
 }

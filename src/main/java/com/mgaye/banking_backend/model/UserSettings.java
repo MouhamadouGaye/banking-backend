@@ -42,6 +42,28 @@ public class UserSettings {
     @Column(nullable = false, length = 3)
     private String currency;
 
+    @Column(name = "transaction_notifications", nullable = false)
+    private boolean transactionNotificationsEnabled = true;
+
+    @Column(name = "security_alerts", nullable = false)
+    private boolean securityAlertsEnabled = true;
+
+    @Column(name = "marketing_notifications", nullable = false)
+    private boolean marketingNotificationsEnabled = false;
+
+    // Boolean getters for better readability
+    public boolean isTransactionNotificationsEnabled() {
+        return transactionNotificationsEnabled;
+    }
+
+    public boolean isSecurityAlertsEnabled() {
+        return securityAlertsEnabled;
+    }
+
+    public boolean isMarketingNotificationsEnabled() {
+        return marketingNotificationsEnabled;
+    }
+
     public enum ThemePreference {
         LIGHT, DARK, SYSTEM
     }

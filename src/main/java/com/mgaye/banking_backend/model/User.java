@@ -36,6 +36,9 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
     private String phone;
 
     @Column(nullable = false)
@@ -54,9 +57,6 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
     private boolean isEnable;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -66,8 +66,21 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserSettings userSettings;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private SecuritySettings securitySettings;
+
+    // In User.java
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private NotificationPreferences notificationPreferences;
+
+    // Helper method to ensure settings exist
+    public UserSettings getUserSettings() {
+        if (this.userSettings == null) {
+            this.userSettings = new UserSettings();
+            this.userSettings.setUser(this);
+        }
+        return this.userSettings;
+    }
 
     public enum KycStatus {
         VERIFIED, PENDING, REJECTED
