@@ -1,0 +1,32 @@
+package com.mgaye.banking_backend.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import com.mgaye.banking_backend.event.NotificationEvent;
+import com.mgaye.banking_backend.exception.NotificationException;
+import com.mgaye.banking_backend.service.EmailService;
+import com.mgaye.banking_backend.service.NotificationErrorHandler;
+
+@Service
+@RequiredArgsConstructor
+public class NotificationSenderImpl implements NotificationSender {
+    private final EmailService emailService;
+    private final PushNotificationService pushService;
+    private final smsService smsService;
+    private final NotificationErrorHandler errorHandler;
+
+    @Override
+    public void send(NotificationEvent event) throws NotificationException {
+        try {
+            switch (event.getChannel()) {
+                case EMAIL -> emailService.send(event);
+                case PUSH -> pushService.send(event);
+                case SMS -> smsService.send(event);
+                default -> throw new NotificationException(event, "Unsupported channel: " + event.getChannel());
+            }
+        } catch (Exception e) {
+            errorHandler.handleError(event, e);
+            throw new NotificationException(event, "Failed to send " + event.getChannel() + " notification", e);
+        }
+    }
+}

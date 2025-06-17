@@ -22,6 +22,11 @@ spring:
         smtp:
           auth: true
           starttls.enable: true
+    default-from: no-reply@yourdomain.com
+    default-reply-to: support@yourdomain.com
+    test-mode: false
+    test-recipient: test@yourdomain.com
+    
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true

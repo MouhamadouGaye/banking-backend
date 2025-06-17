@@ -21,6 +21,7 @@ import com.mgaye.banking_backend.repository.NotificationPreferencesRepository;
 import com.mgaye.banking_backend.repository.NotificationRepository;
 import com.mgaye.banking_backend.repository.UserRepository;
 import com.mgaye.banking_backend.repository.UserSettingsRepository;
+import com.mgaye.banking_backend.service.FailedNotificationService;
 import com.mgaye.banking_backend.service.NotificationDispatcher;
 import com.mgaye.banking_backend.service.NotificationSender;
 import com.mgaye.banking_backend.service.NotificationService;

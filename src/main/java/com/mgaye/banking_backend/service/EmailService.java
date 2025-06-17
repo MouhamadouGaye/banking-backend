@@ -2,6 +2,9 @@ package com.mgaye.banking_backend.service;
 
 import org.springframework.mail.SimpleMailMessage;
 
+import com.mgaye.banking_backend.dto.EmailMessage;
+import com.mgaye.banking_backend.exception.EmailException;
+
 public interface EmailService {
     void sendSimpleMessage(String to, String subject, String text);
 
@@ -12,4 +15,5 @@ public interface EmailService {
     void sendTicketConfirmation(Long ticketId, String email);
 
     void sendTicketUpdateNotification(Long ticketId, String email);
+
 }
