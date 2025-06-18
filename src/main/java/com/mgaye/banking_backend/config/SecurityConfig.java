@@ -4,7 +4,9 @@ package com.mgaye.banking_backend.config;
 import com.mgaye.banking_backend.security.jwt.AuthEntryPointJwt;
 import com.mgaye.banking_backend.security.jwt.AuthTokenFilter;
 import com.mgaye.banking_backend.security.services.UserDetailsServiceImpl;
-=======
+
+import jakarta.validation.Validator;
+
 import com.mgaye.banking_backend.security.UserDetailsServiceImpl;
 import com.mgaye.banking_backend.security.jwt.AuthTokenFilter;
 >>>>>>> master
@@ -20,24 +22,21 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-<<<<<<< HEAD
-=======
+
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
->>>>>>> master
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
-<<<<<<< HEAD
     private final AuthEntryPointJwt unauthorizedHandler;
-=======
     private final AuthEntryPointJwwt unauthorizedHandler;
->>>>>>> master
 
     public SecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler) {
         this.userDetailsService = userDetailsService;
@@ -105,5 +104,18 @@ public class SecurityConfig {
 
     JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(loadPublicKey()).build();
+    }
+
+
+    @Bean
+    public Validator validator() {
+        return new LocalValidatorFactoryBean();
+    }
+
+    @Bean
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
+        MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
+        processor.setValidator(validator());
+        return processor;
     }
 }

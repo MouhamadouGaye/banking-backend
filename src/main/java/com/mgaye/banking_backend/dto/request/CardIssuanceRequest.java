@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Pattern;
 public record CardIssuanceRequest(
         @NotBlank String userId,
         @NotBlank String accountId,
+        @NotBlank String username,
 
         @NotNull CardType cardType,
         @NotNull CardDesign design,

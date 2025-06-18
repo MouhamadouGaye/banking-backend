@@ -1,21 +1,26 @@
 package com.mgaye.banking_backend.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
+import java.time.Instant;
+
+import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import lombok.*;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 
 @Entity
 @Table(name = "loans")
@@ -27,43 +32,71 @@ import jakarta.persistence.Version;
 public class Loan {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private BankAccount linkedAccount;
 
     @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal principalAmount;
 
-    @Column(nullable = false, precision = 5, scale = 2)
+    @Column(nullable = false, precision = 19, scale = 4)
+    private BigDecimal outstandingBalance;
+
+    @Column(nullable = false, precision = 5, scale = 4)
     private BigDecimal interestRate;
 
     @Column(nullable = false)
     private Integer termMonths;
 
-    @Column(nullable = false, precision = 19, scale = 4)
-    private BigDecimal monthlyPayment;
-
-    @Column(nullable = false, precision = 19, scale = 4)
-    private BigDecimal outstandingBalance;
+    @Column(nullable = false)
+    private Integer remainingTermMonths;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private LoanStatus status;
 
     @Column(nullable = false)
-    private LocalDate issuedDate;
+    private Instant startDate;
 
-    @Column(nullable = false)
-    private LocalDate dueDate;
+    @Column
+    private Instant endDate;
 
-    @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL)
-    private List<LoanPayment> payments;
+    @Column(nullable = false, length = 3)
+    private String currency;
 
-    @Version
-    private Long version;
+    @CreationTimestamp
+    private Instant createdAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private LoanType type;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private LoanTerms terms;
 
     public enum LoanStatus {
-        PENDING_APPROVAL, ACTIVE, PAID, DEFAULTED, CANCELLED, COLLECTION
+        PENDING, ACTIVE, PAID_OFF, DEFAULTED, REFINANCED, CANCELLED, COLLECTION
+
+    }
+
+    public enum LoanType {
+        PERSONAL, MORTGAGE, AUTO, BUSINESS, LINE_OF_CREDIT
+    }
+
+    @Data
+    @Builder
+    public static class LoanTerms {
+        private BigDecimal earlyRepaymentFee;
+        private BigDecimal latePaymentFee;
+        private Integer gracePeriodDays;
+        private boolean allowsCoSigner;
+        private boolean requiresCollateral;
     }
 }

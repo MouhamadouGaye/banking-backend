@@ -10,6 +10,7 @@ import com.mgaye.banking_backend.dto.TransactionNotification;
 import com.mgaye.banking_backend.dto.request.TransactionNotificationRequest;
 import com.mgaye.banking_backend.model.Transaction;
 import com.mgaye.banking_backend.model.User;
+import com.mgaye.banking_backend.security.CurrentUser;
 import com.mgaye.banking_backend.service.TransactionService;
 import com.mgaye.banking_backend.service.UserService;
 

@@ -17,6 +17,7 @@ import com.mgaye.banking_backend.service.TransactionService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import com.mgaye.banking_backend.security.CurrentUser;
 
 @RestController
 @RequestMapping("/api/transactions")
