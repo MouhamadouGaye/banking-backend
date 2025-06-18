@@ -6,8 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-
-import com.mgaye.banking_backend.exception.InsufficientFundsException;
+import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
+
+import com.mgaye.banking_backend.exception.BankingException;
+import com.mgaye.banking_backend.exception.InsufficientFundsException;
 
 @Entity
 @Table(name = "bank_accounts", uniqueConstraints = {
@@ -158,6 +160,49 @@ public class BankAccount {
                     .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN);
             deposit(interest);
         }
+    }
+
+    // @Column(nullable = false, precision = 19, scale = 4)
+    // private BigDecimal balance;
+
+    // public void credit(BigDecimal amount) {
+    // if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+    // throw new IllegalArgumentException("Credit amount must be positive");
+    // }
+    // this.balance = this.balance.add(amount);
+    // }
+
+    // public void debit(BigDecimal amount) {
+    // if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+    // throw new IllegalArgumentException("Debit amount must be positive");
+    // }
+    // if (this.balance.compareTo(amount) < 0) {
+    // throw new InsufficientFundsException(id, balance, amount);
+    // }
+    // this.balance = this.balance.subtract(amount);
+    // }
+
+    public void debit(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BankingException(
+                    "INVALID_AMOUNT",
+                    "Debit amount must be positive",
+                    HttpStatus.BAD_REQUEST);
+        }
+        if (this.balance.compareTo(amount) < 0) {
+            throw new InsufficientFundsException(this.id, this.balance, amount);
+        }
+        this.balance = this.balance.subtract(amount);
+    }
+
+    public void credit(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BankingException(
+                    "INVALID_AMOUNT",
+                    "Credit amount must be positive",
+                    HttpStatus.BAD_REQUEST);
+        }
+        this.balance = this.balance.add(amount);
     }
 
 }

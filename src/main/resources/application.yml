@@ -41,6 +41,7 @@ banking:
   jwt: 
     refreshExpirationMs: 86400000 # 24 hours
 
+
 logging:
   level:
     org.springframework.security: DEBUG

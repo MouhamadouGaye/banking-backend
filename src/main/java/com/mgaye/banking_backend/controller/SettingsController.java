@@ -6,11 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mgaye.banking_backend.dto.NotificationPreferencesDto;
 import com.mgaye.banking_backend.dto.SecuritySettingsDto;
 import com.mgaye.banking_backend.dto.UserSettingsDto;
-import com.mgaye.banking_backend.dto.mapper.SecuritySettingsMapper;
-import com.mgaye.banking_backend.dto.request.SecurityUpdateRequest;
 import com.mgaye.banking_backend.dto.request.UpdateSecuritySettingsRequest;
-import com.mgaye.banking_backend.model.User;
-import com.mgaye.banking_backend.model.UserSettings;
+
 import com.mgaye.banking_backend.service.NotificationService;
 import com.mgaye.banking_backend.service.SettingsService;
 

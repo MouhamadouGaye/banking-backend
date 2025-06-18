@@ -240,6 +240,18 @@
             <version>1.7.0</version>
         </dependency>
 
+        <!--  -->
+
+   
+        <!-- Spring Boot Starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        
+        <!-- JCA (Java Cryptography Architecture) -->
+
+
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

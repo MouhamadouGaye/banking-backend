@@ -18,6 +18,8 @@ import jakarta.persistence.LockModeType;
 // repository/AccountRepository.java
 public interface AccountRepository extends JpaRepository<BankAccount, String> {
 
+    List<BankAccount> findByUserId(String userId);
+
     @EntityGraph(attributePaths = { "user" })
     Optional<BankAccount> findByAccountNumber(String accountNumber);
 

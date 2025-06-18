@@ -11,12 +11,14 @@ import jakarta.validation.constraints.Positive;
 
 // TransactionRequest.java
 public record TransactionRequest(
-                @NotBlank String accountId,
-                @Positive @NotNull BigDecimal amount,
-                @NotBlank String currency,
-                @NotNull TransactionType type,
-                @NotNull TransactionDirection direction,
-                String description,
-                String referenceId,
-                String merchantId) {
+        @NotBlank String accountId,
+        @Positive @NotNull BigDecimal amount,
+        @NotBlank String currency,
+        @NotNull TransactionType type,
+        @NotNull TransactionDirection direction,
+        String description,
+        String referenceId,
+        String merchantId,
+        String destinationAccountId // For transfers only
+) {
 }

@@ -8,24 +8,44 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 import java.time.LocalDate;
 
+import com.mgaye.banking_backend.dto.request.CardIssuanceRequest.CardDesign;
+import com.mgaye.banking_backend.dto.request.CardIssuanceRequest.CardType;
 import com.mgaye.banking_backend.model.enums.CardStatus;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class CardResponse {
-    private String id;
-    private String CardId;
-    private String cardNumber; // Masked
-    private String cardHolderName;
-    private String cardType;
-    private String status;
-    private LocalDate expirationDate;
-    private String provider;
-    private String linkedAccountId;
-    private Instant createdAt;
-    private boolean virtual;
-    private String design;
-    private String currency;
+// @Data
+// @Builder
+// @NoArgsConstructor
+// @AllArgsConstructor
+// public class CardResponse {
+//     private String id;
+//     private String CardId;
+//     private String cardNumber; // Masked
+//     private String cardHolderName;
+//     private CardType cardType;
+//     private CardDesign design;
+//     // private String cardType;
+//     // private String design;
+//     private String status;
+//     private LocalDate expirationDate;
+//     private String provider;
+//     private String linkedAccountId;
+//     private Instant createdAt;
+//     private boolean virtual;
+
+//     private String currency;
+// }
+
+// This part is when we working with record
+public record CardResponse(
+        String id,
+        String cardNumber, // masked
+        String cardHolderName,
+        CardType cardType,
+        CardDesign design,
+        String currency,
+        String status,
+        LocalDate expirationDate,
+        String provider,
+        String linkedAccountId,
+        boolean virtualCard) {
 }

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.mgaye.banking_backend.model.BankAccount;
+import com.mgaye.banking_backend.model.User;
 
 import jakarta.persistence.LockModeType;
 
@@ -18,6 +19,12 @@ import jakarta.persistence.LockModeType;
 public interface BankAccountRepository extends JpaRepository<BankAccount, String> {
 
     List<BankAccount> findByUser_id(String userId);
+
+    Optional<BankAccount> findById(String userId);
+
+    BankAccount findByIdAndUserId(String accountId, String userId);
+
+    BankAccount findByIdAndUser(String accountId, User user);
 
     @EntityGraph(attributePaths = { "user" })
     Optional<BankAccount> findByAccountNumber(String accountNumber);

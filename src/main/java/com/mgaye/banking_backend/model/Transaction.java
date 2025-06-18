@@ -91,6 +91,14 @@ public class Transaction {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "destination_account_id")
+    private BankAccount destinationAccount;
+
+    @OneToOne
+    @JoinColumn(name = "linked_transaction_id")
+    private Transaction linkedTransaction;
+
     public enum TransactionType {
         DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT, FEE, REFUND, CHARGEBACK
     }

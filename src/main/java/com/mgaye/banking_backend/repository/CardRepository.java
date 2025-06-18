@@ -1,8 +1,7 @@
 package com.mgaye.banking_backend.repository;
 
 import java.util.List;
-
-import javax.smartcardio.Card;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,12 +10,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.mgaye.banking_backend.dto.response.CardResponse;
+import com.mgaye.banking_backend.model.Card;
 import com.mgaye.banking_backend.model.enums.CardStatus;
 
 // CardRepository.java
 public interface CardRepository extends JpaRepository<Card, String> {
 
     List<Card> findByUserId(String userId);
+
+    Optional<Card> findById(String cardId);
+
+    Boolean existsByIdAndUserId(String cardId, String userId);
 
     @EntityGraph(attributePaths = { "linkedAccount" })
     List<Card> findByUserIdAndStatus(String userId, CardStatus status);
