@@ -3,6 +3,7 @@ package com.mgaye.banking_backend.service.impl;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import com.mgaye.banking_backend.exception.BankingException;
 import com.mgaye.banking_backend.exception.CurrencyMismatchException;
 import com.mgaye.banking_backend.exception.InsufficientFundsException;
 import com.mgaye.banking_backend.exception.TransactionNotFoundException;
+import com.mgaye.banking_backend.model.AuditLogEntry;
 import com.mgaye.banking_backend.model.BankAccount;
 import com.mgaye.banking_backend.model.Transaction;
 import com.mgaye.banking_backend.model.User;
@@ -46,7 +48,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         @Override // Add @Override annotation
         public Transaction create(TransactionRequest request, User user) {
-                BankAccount account = accountRepo.findByIdAndUser(request.accountId(), user)
+                BankAccount account = accountRepo.findByIdAndUser(UUID.fromString(request.accountId()), user)
                                 .orElseThrow(() -> new AccountNotFoundException(request.accountId()));
 
                 transactionValidator.validate(request, account);
@@ -59,6 +61,24 @@ public class TransactionServiceImpl implements TransactionService {
 
                 auditService.logTransaction(savedTransaction, user);
                 return savedTransaction;
+        }
+
+        @Override
+        public void recordAccountStatusChange(UUID accountId, String newStatus, String reason) {
+                BankAccount account = accountRepo.findById(accountId)
+                                .orElseThrow(() -> new AccountNotFoundException("Account not found" + accountId));
+
+                AuditLogEntry entry = AuditLogEntry.builder()
+                                .eventType("ACCOUNT_STATUS_CHANGE")
+                                .accountId(accountId)
+                                .userId(account.getUser().getId())
+                                .oldValue(account.getStatus().name())
+                                .newValue(newStatus)
+                                .description(reason)
+                                .timestamp(Instant.now())
+                                .build();
+
+                auditLogRepository.save(entry);
         }
 
         @Override // Add @Override annotation
@@ -122,7 +142,7 @@ public class TransactionServiceImpl implements TransactionService {
                 }
 
                 BankAccount sourceAccount = tx.getAccount();
-                BankAccount destinationAccount = accountRepo.findById(tx.getDestinationAccount().getId().toString())
+                BankAccount destinationAccount = accountRepo.findById(tx.getDestinationAccount().getId())
                                 .orElseThrow(() -> new AccountNotFoundException(
                                                 tx.getDestinationAccount().getId().toString()));
 

@@ -1,5 +1,7 @@
 package com.mgaye.banking_backend.service;
 
+import java.util.UUID;
+
 import com.mgaye.banking_backend.controller.TransactionNotificationController;
 import com.mgaye.banking_backend.dto.request.TransactionRequest;
 import com.mgaye.banking_backend.model.BankAccount;
@@ -25,5 +27,7 @@ public interface TransactionService {
     Transaction processTransaction(TransactionRequest request, User user);
 
     Transaction getTransactionForUser(String transactionId, String userId);
+
+    void recordAccountStatusChange(UUID accountId, String newStatus, String reason);
 
 }

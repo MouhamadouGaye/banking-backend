@@ -31,6 +31,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.mgaye.banking_backend.model.AuditLog;
+import com.mgaye.banking_backend.model.AuditLogEntry;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,4 +44,7 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
     Page<AuditLog> findByActionTimeBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
 
     List<AuditLog> findByActionType(String actionType);
+
+    List<AuditLogEntry> findByAccountIdOrderByTimestampDesc(long accountId);
+
 }

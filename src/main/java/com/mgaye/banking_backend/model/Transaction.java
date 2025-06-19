@@ -100,7 +100,7 @@ public class Transaction {
     private Transaction linkedTransaction;
 
     public enum TransactionType {
-        DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT, FEE, REFUND, CHARGEBACK
+        DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT, FEE, REFUND, CHARGEBACK, DEBIT
     }
 
     public enum TransactionStatus {

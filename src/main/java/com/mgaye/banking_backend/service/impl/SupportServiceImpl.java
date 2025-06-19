@@ -44,6 +44,71 @@ public class SupportServiceImpl implements SupportService {
     private final TransactionService transactionService;
 
     @Override
+    public SupportTicketResponse.TicketMessageResponse addMessage(
+            UUID ticketId,
+            String userId,
+            AddMessageRequest request) {
+
+        SupportTicket ticket = ticketRepository.findByIdAndUserId(ticketId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
+
+        User author = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        List<SupportTicketResponse.TicketMessageResponse.AttachmentResponse> attachmentResponses = processAttachments(
+                request.attachments().files());
+
+        TicketMessage message = TicketMessage.builder()
+                .ticket(ticket)
+                .author(author)
+                .content(request.content())
+                .createdAt(Instant.now())
+                .fromCustomer(!hasSupportRole(userId))
+                // .attachments(new TicketMessage.MessageAttachments(
+                // attachmentResponses.stream().map(a -> a.url()).toList(),
+                // attachmentResponses.stream().map(a -> a.name()).toList()))
+                // .build();
+                .attachments(TicketMessage.MessageAttachments.builder()
+                        .fileUrls(attachmentResponses.stream().map(a -> a.url()).toList())
+                        .fileNames(attachmentResponses.stream().map(a -> a.name()).toList())
+                        .build())
+                .build();
+
+        ticket.getMessages().add(message);
+        ticket.setUpdatedAt(Instant.now());
+        ticketRepository.save(ticket);
+
+        return new SupportTicketResponse.TicketMessageResponse(
+                message.getId(),
+                message.getContent(),
+                message.getCreatedAt(),
+                message.isFromCustomer(),
+                attachmentResponses);
+    }
+
+    private List<SupportTicketResponse.TicketMessageResponse.AttachmentResponse> processAttachments(
+            List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return files.stream()
+                .filter(file -> !file.isEmpty())
+                .map(file -> {
+                    try {
+                        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+                        String fileUrl = fileStorageService.store(file);
+                        return new SupportTicketResponse.TicketMessageResponse.AttachmentResponse(
+                                fileUrl,
+                                fileName);
+                    } catch (IOException e) {
+                        throw new FileStorageException("Failed to store file", e);
+                    }
+                })
+                .toList();
+    }
+
+    @Override
     public SupportTicketResponse createTicket(String userId, CreateTicketRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));

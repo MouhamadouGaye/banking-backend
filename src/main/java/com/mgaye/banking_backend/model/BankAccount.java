@@ -72,6 +72,12 @@ public class BankAccount {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    // @Column(nullable = false)
+    // private boolean active = true;
+
+    @Column(name = "is_active")
+    private boolean active;
+
     @Version
     private Long version;
 
@@ -110,6 +116,10 @@ public class BankAccount {
         AccountStatus(String description) {
             this.description = description;
         }
+    }
+
+    public boolean isActive() {
+        return this.active;
     }
 
     // Nested JSON structure

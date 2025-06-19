@@ -36,6 +36,25 @@ import com.mgaye.banking_backend.model.SupportTicket;
 
 public interface SupportTicketRepository
                 extends JpaRepository<SupportTicket, UUID>, JpaSpecificationExecutor<SupportTicket> {
+
+        @EntityGraph(attributePaths = { "responses" })
+        Optional<SupportTicket> findWithResponsesById(String id);
+
+        @Query("""
+                        SELECT t FROM SupportTicket t
+                        WHERE t.userId = :userId
+                        AND t.status IN ('OPEN', 'PENDING')
+                        ORDER BY t.updatedAt DESC
+                        """)
+        Page<SupportTicket> findUserTickets(
+                        @Param("userId") String userId,
+                        Pageable pageable);
+
+        @Query("SELECT COUNT(t) FROM SupportTicket t WHERE t.status = 'OPEN'")
+        long countOpenTickets();
+
+        // ------This-implementation-above-is-not-taken-into-account-for-this-moment--------//
+
         Optional<SupportTicket> findByIdAndUserId(UUID ticketId, String userId);
 
         @Query("SELECT t FROM SupportTicket t WHERE t.user.id = :userId ORDER BY t.createdAt DESC")

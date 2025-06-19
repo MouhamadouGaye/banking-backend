@@ -9,10 +9,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record AddMessageRequest(
-        @NotBlank @Size(max = 2000) String content,
-        MessageAttachments attachments) {
-    @Schema(description = "Attachments for the support ticket message")
-    public record MessageAttachments(
-            @Schema(description = "List of attachment files") List<MultipartFile> files) {
-    }
+                @NotBlank @Size(max = 2000) String content,
+                MessageAttachments attachments) {
+        @Schema(description = "Attachments for the support ticket message")
+        public record MessageAttachments(
+                        @Schema(description = "List of attachment files") List<MultipartFile> files) {
+        }
+
 }
