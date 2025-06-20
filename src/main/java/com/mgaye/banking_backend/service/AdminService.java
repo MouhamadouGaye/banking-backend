@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import com.mgaye.banking_backend.dto.AdminSearchCriteria;
 import com.mgaye.banking_backend.dto.request.FraudReviewRequest;
 import com.mgaye.banking_backend.dto.response.AdminUserResponse;
+import com.mgaye.banking_backend.dto.response.FraudCaseResponse;
 import com.mgaye.banking_backend.dto.response.SystemAlertResponse;
 
 public interface AdminService {
@@ -26,6 +27,6 @@ public interface AdminService {
 
     void freezeAccount(UUID accountId, String reason);
 
-    record FraudCaseResponse(UUID caseId, String severity, String status, Instant reportedAt) {
-    }
+    private String resolveUserEmail(FraudReviewRequest request);
+
 }

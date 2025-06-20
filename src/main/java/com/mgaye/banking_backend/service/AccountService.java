@@ -14,6 +14,8 @@ public interface AccountService {
 
     void validateAccountCreation(String userId, AccountCreateRequest request);
 
+    void validateAccountOwnership(UUID accountId, String userId);
+
     BankAccount.AccountFeatures mergeFeatures(BankAccount.AccountFeatures requestFeatures);
 
     AccountResponse convertToResponse(BankAccount account);
@@ -38,11 +40,8 @@ public interface AccountService {
 
     void applyMonthlyInterest(UUID accountId);
 
-    // BankAccount buildNewAccount(String userId, AccountCreateRequest request)
-    // List<BankAccount> getUserAccounts(String userId);
-    // BigDecimal getAccountBalance(UUID accountId, String userId);
-    // AccountResponse convertToAccountResponse(BankAccount account);
-    // BankAccount getAccountForUpdate(UUID accountId);
-    // boolean hasAccountType(String userId, BankAccount.AccountType type);
-    // BigDecimal getBalance(UUID accountId, String userId);
+    BankAccount findEmailByAccountNumber(String accountNumber);
+
+    BankAccount findByAccountNumber(String accountNumber);
+
 }

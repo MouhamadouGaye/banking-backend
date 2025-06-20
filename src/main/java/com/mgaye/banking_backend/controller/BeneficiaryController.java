@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Authentication;
+import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,68 +24,69 @@ import com.mgaye.banking_backend.service.BeneficiaryService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/beneficiaries")
 @RequiredArgsConstructor
 public class BeneficiaryController {
-    private final BeneficiaryService beneficiaryService;
+        private final BeneficiaryService beneficiaryService;
 
-    @PostMapping
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<BeneficiaryResponse> addBeneficiary(
-            @Valid @RequestBody BeneficiaryCreateRequest request,
-            Authentication authentication) {
-        Beneficiary beneficiary = beneficiaryService.addBeneficiary(
-                authentication.getName(),
-                request);
-        return ResponseEntity
-                .created(URI.create("/api/beneficiaries/" + beneficiary.getId()))
-                .body(new BeneficiaryResponse(beneficiary));
-    }
-
-    @GetMapping("/{beneficiaryId}/validate")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ValidationResponse> validateBeneficiary(
-            @PathVariable UUID beneficiaryId,
-            Authentication authentication) {
-        return ResponseEntity.ok(
-                beneficiaryService.validateBeneficiary(
-                        beneficiaryId,
-                        authentication.getName()));
-    }
-
-    @GetMapping
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<BeneficiaryResponse>> getUserBeneficiaries(
-            Authentication authentication) {
-        return ResponseEntity.ok(
-                beneficiaryService.getUserBeneficiaries(authentication.getName())
-                        .stream()
-                        .map(BeneficiaryResponse::new)
-                        .toList());
-    }
-
-    @DeleteMapping("/{beneficiaryId}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> removeBeneficiary(
-            @PathVariable UUID beneficiaryId,
-            Authentication authentication) {
-        beneficiaryService.removeBeneficiary(beneficiaryId, authentication.getName());
-        return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping("/{beneficiaryId}/limits")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<BeneficiaryResponse> updateLimits(
-            @PathVariable UUID beneficiaryId,
-            @Valid @RequestBody BeneficiaryLimitsRequest limits,
-            Authentication authentication) {
-        return ResponseEntity.ok(
-                new BeneficiaryResponse(
-                        beneficiaryService.updateLimits(
-                                beneficiaryId,
+        @PostMapping
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<BeneficiaryResponse> addBeneficiary(
+                        @Valid @RequestBody BeneficiaryCreateRequest request,
+                        Authentication authentication) {
+                Beneficiary beneficiary = beneficiaryService.addBeneficiary(
                                 authentication.getName(),
-                                limits)));
-    }
+                                request);
+                return ResponseEntity
+                                .created(URI.create("/api/beneficiaries/" + beneficiary.getId()))
+                                .body(new BeneficiaryResponse(beneficiary));
+        }
+
+        @GetMapping("/{beneficiaryId}/validate")
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<ValidationResponse> validateBeneficiary(
+                        @PathVariable UUID beneficiaryId,
+                        Authentication authentication) {
+                return ResponseEntity.ok(
+                                beneficiaryService.validateBeneficiary(
+                                                beneficiaryId,
+                                                authentication.getName()));
+        }
+
+        @GetMapping
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<List<BeneficiaryResponse>> getUserBeneficiaries(
+                        Authentication authentication) {
+                return ResponseEntity.ok(
+                                beneficiaryService.getUserBeneficiaries(authentication.getName())
+                                                .stream()
+                                                .map(BeneficiaryResponse::new)
+                                                .toList());
+        }
+
+        @DeleteMapping("/{beneficiaryId}")
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<Void> removeBeneficiary(
+                        @PathVariable UUID beneficiaryId,
+                        Authentication authentication) {
+                beneficiaryService.removeBeneficiary(beneficiaryId, authentication.getName());
+                return ResponseEntity.noContent().build();
+        }
+
+        @PatchMapping("/{beneficiaryId}/limits")
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<BeneficiaryResponse> updateLimits(
+                        @PathVariable UUID beneficiaryId,
+                        @Valid @RequestBody BeneficiaryLimitsRequest limits,
+                        Authentication authentication) {
+                return ResponseEntity.ok(
+                                new BeneficiaryResponse(
+                                                beneficiaryService.updateLimits(
+                                                                beneficiaryId,
+                                                                authentication.getName(),
+                                                                limits)));
+        }
 }

@@ -89,6 +89,14 @@ public class BankAccount {
     @OrderBy("timestamp DESC")
     private List<Transaction> transactions = new ArrayList<>();
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     // Enum Definitions
     public enum AccountType {
         CHECKING("Checking Account"),

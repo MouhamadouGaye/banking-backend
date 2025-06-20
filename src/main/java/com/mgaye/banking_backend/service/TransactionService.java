@@ -1,5 +1,7 @@
 package com.mgaye.banking_backend.service;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import com.mgaye.banking_backend.controller.TransactionNotificationController;
@@ -16,18 +18,20 @@ public interface TransactionService {
 
     Transaction create(TransactionRequest request, User user);
 
-    Transaction buildTransaction(TransactionRequest request, BankAccount account);
+    List<Transaction> getAccountTransactions(UUID accountId, LocalDate startDate, LocalDate endDate);
+
+    void recordAccountStatusChange(UUID accountId, String newStatus, String reason);
 
     Transaction getTransaction(String id);
 
-    void processDoubleEntry(Transaction tx, BankAccount account);
-
-    void processTransfer(Transaction tx);
+    Transaction getTransactionForUser(String transactionId, String userId);
 
     Transaction processTransaction(TransactionRequest request, User user);
 
-    Transaction getTransactionForUser(String transactionId, String userId);
+    Transaction buildTransaction(TransactionRequest request, BankAccount account);
 
-    void recordAccountStatusChange(UUID accountId, String newStatus, String reason);
+    void processDoubleEntry(Transaction tx, BankAccount account);
+
+    void cancelTransaction(String transactionId, String userId);
 
 }

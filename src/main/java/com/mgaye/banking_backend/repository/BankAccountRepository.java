@@ -71,41 +71,43 @@ import jakarta.persistence.LockModeType;
 
 public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> {
 
-    // Standard queries
-    List<BankAccount> findByUserId(String userId);
+        // Standard queries
+        List<BankAccount> findByUserId(String userId);
 
-    @EntityGraph(attributePaths = { "user" })
-    Optional<BankAccount> findById(UUID accountId);
+        @EntityGraph(attributePaths = { "user" })
+        Optional<BankAccount> findById(UUID accountId);
 
-    @EntityGraph(attributePaths = { "user" })
-    Optional<BankAccount> findByAccountNumber(String accountNumber);
+        boolean existsByIdAndUserId(UUID accountId, String userId);
 
-    // Security-sensitive queries
-    Optional<BankAccount> findByIdAndUserId(UUID accountId, String userId);
+        @EntityGraph(attributePaths = { "user" })
+        Optional<BankAccount> findByAccountNumber(String accountNumber);
 
-    @EntityGraph(attributePaths = { "user" })
-    Optional<BankAccount> findByIdAndUser(UUID accountId, User user);
+        // Security-sensitive queries
+        Optional<BankAccount> findByIdAndUserId(UUID accountId, String userId);
 
-    // Specialized queries
-    @Query("SELECT a FROM BankAccount a WHERE a.user.id = :userId AND a.status = 'ACTIVE'")
-    List<BankAccount> findActiveAccountsByUserId(@Param("userId") String userId);
+        @EntityGraph(attributePaths = { "user" })
+        Optional<BankAccount> findByIdAndUser(UUID accountId, User user);
 
-    // Locking queries
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT a FROM BankAccount a WHERE a.accountNumber = :accountNumber")
-    Optional<BankAccount> findByAccountNumberForUpdate(@Param("accountNumber") String accountNumber);
+        // Specialized queries
+        @Query("SELECT a FROM BankAccount a WHERE a.user.id = :userId AND a.status = 'ACTIVE'")
+        List<BankAccount> findActiveAccountsByUserId(@Param("userId") String userId);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT a FROM BankAccount a WHERE a.id = :accountId")
-    Optional<BankAccount> findByIdForUpdate(@Param("accountId") UUID accountId);
+        // Locking queries
+        @Lock(LockModeType.PESSIMISTIC_WRITE)
+        @Query("SELECT a FROM BankAccount a WHERE a.accountNumber = :accountNumber")
+        Optional<BankAccount> findByAccountNumberForUpdate(@Param("accountNumber") String accountNumber);
 
-    // Utility queries
-    @Query("SELECT a.balance FROM BankAccount a WHERE a.id = :accountId")
-    Optional<BigDecimal> getBalanceById(@Param("accountId") UUID accountId);
+        @Lock(LockModeType.PESSIMISTIC_WRITE)
+        @Query("SELECT a FROM BankAccount a WHERE a.id = :accountId")
+        Optional<BankAccount> findByIdForUpdate(@Param("accountId") UUID accountId);
 
-    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
-            "FROM BankAccount a WHERE a.user.id = :userId AND a.accountType = :accountType")
-    boolean existsByUserAndAccountType(
-            @Param("userId") String userId,
-            @Param("accountType") BankAccount.AccountType accountType);
+        // Utility queries
+        @Query("SELECT a.balance FROM BankAccount a WHERE a.id = :accountId")
+        Optional<BigDecimal> getBalanceById(@Param("accountId") UUID accountId);
+
+        @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
+                        "FROM BankAccount a WHERE a.user.id = :userId AND a.accountType = :accountType")
+        boolean existsByUserAndAccountType(
+                        @Param("userId") String userId,
+                        @Param("accountType") BankAccount.AccountType accountType);
 }

@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mgaye.banking_backend.dto.AdminSearchCriteria;
 import com.mgaye.banking_backend.dto.request.FraudReviewRequest;
 import com.mgaye.banking_backend.dto.response.AdminUserResponse;
+import com.mgaye.banking_backend.dto.response.FraudCaseResponse;
 import com.mgaye.banking_backend.dto.response.SystemAlertResponse;
 import com.mgaye.banking_backend.service.AdminService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/admin")

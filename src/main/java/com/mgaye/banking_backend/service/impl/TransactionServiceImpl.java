@@ -2,6 +2,9 @@
 package com.mgaye.banking_backend.service.impl;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,6 +34,7 @@ import com.mgaye.banking_backend.service.AuditService;
 import com.mgaye.banking_backend.service.TransactionService;
 import com.mgaye.banking_backend.validation.TransactionValidator;
 
+import jakarta.transaction.InvalidTransactionException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -46,39 +50,61 @@ public class TransactionServiceImpl implements TransactionService {
         private final TransactionValidator transactionValidator;
         private final TransactionNotificationController notificationController;
 
-        @Override // Add @Override annotation
+        @Override
         public Transaction create(TransactionRequest request, User user) {
-                BankAccount account = accountRepo.findByIdAndUser(UUID.fromString(request.accountId()), user)
+                // Step 1: Fetch the user's account
+                BankAccount account = accountRepo.findByIdAndUser(
+                                UUID.fromString(request.accountId()), user)
                                 .orElseThrow(() -> new AccountNotFoundException(request.accountId()));
 
-                transactionValidator.validate(request, account);
+                // Step 2: Validate the transaction
+                try {
+                        transactionValidator.validate(request, account);
+                } catch (InvalidTransactionException e) {
+                        throw new BankingException(
+                                        "INVALID_TRANSACTION",
+                                        e.getMessage(),
+                                        HttpStatus.BAD_REQUEST,
+                                        e);
+                }
 
+                // Step 3: Build and process the transaction
                 Transaction transaction = buildTransaction(request, account);
                 processDoubleEntry(transaction, account);
 
+                // Step 4: Persist the transaction and update account
                 Transaction savedTransaction = transactionRepo.save(transaction);
                 accountRepo.save(account);
 
+                // Step 5: Audit logging
                 auditService.logTransaction(savedTransaction, user);
+
+                // Step 6: Return the created transaction
                 return savedTransaction;
+        }
+
+        @Override
+        public List<Transaction> getAccountTransactions(UUID accountId, LocalDate startDate, LocalDate endDate) {
+                BankAccount account = accountRepo.findById(accountId)
+                                .orElseThrow(() -> new AccountNotFoundException(accountId.toString()));
+
+                Instant startInstant = startDate.atStartOfDay().toInstant(ZoneOffset.UTC);
+                Instant endInstant = endDate.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC); // inclusive end date
+
+                return transactionRepo.findByAccountAndTimestampBetween(account, startInstant, endInstant);
         }
 
         @Override
         public void recordAccountStatusChange(UUID accountId, String newStatus, String reason) {
                 BankAccount account = accountRepo.findById(accountId)
-                                .orElseThrow(() -> new AccountNotFoundException("Account not found" + accountId));
+                                .orElseThrow(() -> new AccountNotFoundException("Account not found: " + accountId));
 
-                AuditLogEntry entry = AuditLogEntry.builder()
-                                .eventType("ACCOUNT_STATUS_CHANGE")
-                                .accountId(accountId)
-                                .userId(account.getUser().getId())
-                                .oldValue(account.getStatus().name())
-                                .newValue(newStatus)
-                                .description(reason)
-                                .timestamp(Instant.now())
-                                .build();
-
-                auditLogRepository.save(entry);
+                // Use auditService instead of directly using repository
+                auditService.recordAccountStatusChange(
+                                accountId,
+                                newStatus,
+                                "Changed from: " + account.getStatus() + ". Reason: " + reason,
+                                account.getUser());
         }
 
         @Override // Add @Override annotation
@@ -118,7 +144,8 @@ public class TransactionServiceImpl implements TransactionService {
                                                 request.merchantId() != null ? merchantRepo
                                                                 .findById(request.merchantId()).orElse(null) : null)
                                 .destinationAccount(request.destinationAccountId() != null
-                                                ? accountRepo.getReferenceById(request.destinationAccountId())
+                                                ? accountRepo.getReferenceById(
+                                                                UUID.fromString(request.destinationAccountId()))
                                                 : null)
                                 .timestamp(Instant.now())
                                 .build();
@@ -186,6 +213,28 @@ public class TransactionServiceImpl implements TransactionService {
                 transactionRepo.save(mirrorTx);
                 tx.setLinkedTransaction(mirrorTx);
                 tx.setStatus(TransactionStatus.COMPLETED);
+        }
+
+        @Override
+        public void cancelTransaction(String transactionId, String userId) {
+                Transaction transaction = transactionRepo.findByIdAndUserId(transactionId, userId)
+                                .orElseThrow(() -> new TransactionNotFoundException(transactionId));
+
+                if (transaction.getStatus() == TransactionStatus.CANCELLED) {
+                        throw new BankingException("ALREADY_CANCELLED", "Transaction already cancelled",
+                                        HttpStatus.CONFLICT);
+                }
+
+                if (transaction.getStatus() != TransactionStatus.PENDING) {
+                        throw new BankingException("CANNOT_CANCEL", "Only pending transactions can be cancelled",
+                                        HttpStatus.BAD_REQUEST);
+                }
+
+                transaction.setStatus(TransactionStatus.CANCELLED);
+                transactionRepo.save(transaction);
+
+                User user = transaction.getAccount().getUser(); // assuming BankAccount → User relationship exists
+                auditService.logTransactionCancellation(transaction, user);
         }
 
 }

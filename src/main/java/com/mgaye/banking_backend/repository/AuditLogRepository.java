@@ -47,4 +47,6 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
 
     List<AuditLogEntry> findByAccountIdOrderByTimestampDesc(long accountId);
 
+    List<AuditLog> findByEventTypeAndUserIdOrderByTimestampDesc(String eventType, String userId);
+
 }

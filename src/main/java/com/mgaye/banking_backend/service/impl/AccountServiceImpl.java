@@ -12,6 +12,7 @@ import com.mgaye.banking_backend.dto.request.AccountCreateRequest;
 import com.mgaye.banking_backend.dto.response.AccountResponse;
 import com.mgaye.banking_backend.exception.AccountLimitException;
 import com.mgaye.banking_backend.exception.AccountNotFoundException;
+import com.mgaye.banking_backend.exception.AccountOwnershipException;
 import com.mgaye.banking_backend.exception.InsufficientFundsException;
 import com.mgaye.banking_backend.exception.InvalidAccountRequestException;
 import com.mgaye.banking_backend.exception.ResourceNotFoundException;
@@ -82,6 +83,14 @@ public class AccountServiceImpl implements AccountService {
                 accountId,
                 "FROZEN",
                 "Previous status: " + previousStatus + ". Reason: " + (reason != null ? reason : "Not specified"));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateAccountOwnership(UUID accountId, String userId) {
+        if (!accountRepository.existsByIdAndUserId(accountId, userId)) {
+            throw new AccountOwnershipException(accountId, userId);
+        }
     }
 
     @Override
