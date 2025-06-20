@@ -1,10 +1,12 @@
 package com.mgaye.banking_backend.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.mgaye.banking_backend.dto.LoanCalculationResult;
+import com.mgaye.banking_backend.model.LoanApplication;
 import com.mgaye.banking_backend.model.PaymentSchedule;
 
 // LoanCalculatorService.java
@@ -31,7 +33,7 @@ public class LoanCalculatorService {
     }
 
     private List<PaymentSchedule> generateSchedule(double principal, double rate, int term, double payment) {
-        List<PaymentSchedule> schedule = new ArrayList<>();
+        List<PaymentSchedule> schedule = new ArrayList()<>();
         double remaining = principal;
 
         for (int i = 1; i <= term; i++) {
