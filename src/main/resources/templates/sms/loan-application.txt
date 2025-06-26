@@ -1,0 +1,1 @@
+Dear [[${user.firstName}]], we received your loan application [[${loan.id}]] on [[${loan.applicationDate}]]. We'll notify you when processed.
