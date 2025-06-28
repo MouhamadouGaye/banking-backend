@@ -1,5 +1,5 @@
 package com.mgaye.banking_backend.service;
 
-public class PushNotificationService {
-
+public interface PushNotificationService {
+    void sendPushNotification(String deviceToken, String title, String message);
 }

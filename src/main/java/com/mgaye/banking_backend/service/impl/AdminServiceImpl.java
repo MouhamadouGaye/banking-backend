@@ -16,10 +16,12 @@ import com.mgaye.banking_backend.dto.response.FraudCaseResponse;
 import com.mgaye.banking_backend.dto.response.SystemAlertResponse;
 import com.mgaye.banking_backend.model.BankAccount;
 import com.mgaye.banking_backend.model.User;
+import com.mgaye.banking_backend.repository.BankAccountRepository;
 import com.mgaye.banking_backend.repository.UserRepository;
 import com.mgaye.banking_backend.security.AdminUserDetails;
 import com.mgaye.banking_backend.service.AccountService;
 import com.mgaye.banking_backend.service.AdminService;
+import com.mgaye.banking_backend.exception.AccountNotFoundException;
 
 import java.time.Instant;
 import java.util.*;
@@ -36,6 +38,7 @@ public class AdminServiceImpl implements AdminService {
     private final List<FraudCaseResponse> fraudCases = new ArrayList<>();
     private final List<SystemAlertResponse> activeAlerts = new ArrayList<>();
     private final UserRepository userRepository;
+
     private final AccountService accountService;
 
     public AdminServiceImpl(UserRepository userRepository, AccountService accountService) {

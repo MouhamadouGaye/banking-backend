@@ -5,8 +5,9 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public record TransferRequest(
-                String fromAccountNumber,
-                String toAccountNumber,
+                String id,
+                String fromAccount,
+                String toAccount,
                 BigDecimal amount,
                 String currency,
                 String referenceId) {
@@ -16,3 +17,10 @@ public record TransferRequest(
         }
 
 }
+// public record TransferRequest(
+// String id,
+// String fromAccount,
+// String toAccount,
+// BigDecimal amount,
+// String reference
+// ) {}

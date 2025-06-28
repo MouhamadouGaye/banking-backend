@@ -11,6 +11,7 @@ public interface CardSecurityService {
     // String encrypt(String data);
 
     // boolean verifyPin(String encryptedPin, String rawPin);
+    String encryptCvv();
 
     String generateCVV();
 

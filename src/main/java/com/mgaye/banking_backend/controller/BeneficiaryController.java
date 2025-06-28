@@ -21,6 +21,7 @@ import com.mgaye.banking_backend.dto.response.BeneficiaryResponse;
 import com.mgaye.banking_backend.dto.response.ValidationResponse;
 import com.mgaye.banking_backend.model.Beneficiary;
 import com.mgaye.banking_backend.service.BeneficiaryService;
+import com.mgaye.banking_backend.service.BeneficiaryValidator;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BeneficiaryController {
         private final BeneficiaryService beneficiaryService;
+        private final BeneficiaryValidator beneficiaryValidator;
 
         @PostMapping
         @PreAuthorize("hasRole('USER')")
@@ -88,5 +90,11 @@ public class BeneficiaryController {
                                                                 beneficiaryId,
                                                                 authentication.getName(),
                                                                 limits)));
+        }
+
+        @GetMapping("/{id}/validate")
+        public ValidationResponse validateBeneficiary(@PathVariable UUID id) {
+                Beneficiary beneficiary = beneficiaryService.getById(id);
+                return beneficiaryValidator.validateBeneficiaryDetails(beneficiary);
         }
 }

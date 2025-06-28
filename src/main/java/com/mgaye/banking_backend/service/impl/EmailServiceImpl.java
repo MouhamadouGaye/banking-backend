@@ -22,6 +22,9 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
 
+    // Set your sender email address here or inject via @Value
+    private final String senderEmail = "no-reply@example.com";
+
     @Override
     public void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -51,6 +54,16 @@ public class EmailServiceImpl implements EmailService {
         context.setVariable("ticketId", ticketId);
         String htmlContent = templateEngine.process("ticket-confirmation", context);
         sendHtmlMessage(email, "Your Support Ticket #" + ticketId, htmlContent);
+    }
+
+    @Override
+    public void sendEmail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(senderEmail);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
     }
 
     // Implement other methods...

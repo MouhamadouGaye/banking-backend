@@ -15,6 +15,13 @@ public class NotificationException extends RuntimeException {
         this.failedEvent = event;
     }
 
+    // Constructor with context (for cases where event isn't available)
+    public NotificationException(String message, Throwable cause) {
+        super(message, cause);
+        this.failedEvent = null;
+        this.context = null;
+    }
+
     public NotificationEvent getFailedEvent() {
         return failedEvent;
     }

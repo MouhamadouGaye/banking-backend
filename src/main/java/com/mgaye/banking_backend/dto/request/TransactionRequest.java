@@ -9,7 +9,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-// TransactionRequest.java
 public record TransactionRequest(
                 @NotBlank String accountId,
                 @Positive @NotNull BigDecimal amount,
@@ -21,13 +20,25 @@ public record TransactionRequest(
                 String merchantId,
                 String destinationAccountId // For transfers only
 ) {
-
-        // Optional: Add helper methods
         public boolean isTransfer() {
-                return type == TransactionType.TRANSFER;
+                return type == TransactionType.TRANSFER && destinationAccountId != null;
         }
 
         public boolean isDebit() {
                 return direction == TransactionDirection.INBOUND;
+        }
+
+        // Helper method for creating modified copies
+        public TransactionRequest withDescription(String newDescription) {
+                return new TransactionRequest(
+                                accountId,
+                                amount,
+                                currency,
+                                type,
+                                direction,
+                                newDescription,
+                                referenceId,
+                                merchantId,
+                                destinationAccountId);
         }
 }

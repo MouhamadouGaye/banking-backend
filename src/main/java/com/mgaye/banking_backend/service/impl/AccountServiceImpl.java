@@ -36,6 +36,7 @@ public class AccountServiceImpl implements AccountService {
     private final UserRepository userRepository;
     private final AccountNumberGenerator numberGenerator;
     private final TransactionService transactionService;
+    private final BankAccountRepository bankAccountRepository; // Assuming you have a JPA repository
 
     @Transactional(readOnly = true)
     public BankAccount getAccountForUpdate(UUID accountId) {
@@ -210,6 +211,12 @@ public class AccountServiceImpl implements AccountService {
                         ? requestFeatures.getMonthlyTransactionLimit()
                         : defaultFeatures.getMonthlyTransactionLimit())
                 .build();
+    }
+
+    @Override
+    public BankAccount findByAccountNumber(String accountNumber) {
+        return bankAccountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException(accountNumber));
     }
 
 }

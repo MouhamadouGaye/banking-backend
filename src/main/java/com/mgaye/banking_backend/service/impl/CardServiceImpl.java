@@ -45,42 +45,6 @@ public class CardServiceImpl implements CardService {
         return cardMapper.toCardResponse(cardRepository.save(card));
     }
 
-    // @Override
-    // @Transactional
-    // public CardResponse issueCard(CardIssuanceRequest request) {
-    // // Validate user and account
-    // User user = userRepository.findById(request.userId())
-    // .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-    // BankAccount account = accountRepository.findById(request.accountId())
-    // .filter(a -> a.getUser().getId().equals(request.userId()))
-    // .orElseThrow(() -> new AuthorizationServiceException("Account not found or
-    // inaccessible"));
-
-    // // Generate card details
-    // String fullCardNumber = cardNumberGenerator.generate(request.cardType(),
-    // request.design());
-    // String cvv = cardSecurityService.generateCVV();
-    // String pin = request.virtualCard() ? null :
-    // cardSecurityService.generatePIN();
-
-    // // Create and save card
-    // Card card = Card.builder()
-    // .user(user)
-    // .cardNumber(cardSecurityService.encrypt(fullCardNumber))
-    // .cardNumberMasked(maskCardNumber(fullCardNumber))
-    // .cardType(request.cardType())
-    // .status(request.virtualCard() ? CardStatus.ACTIVE : CardStatus.PENDING)
-    // .expirationDate(request.expiryDate())
-    // .cvvEncrypted(cardSecurityService.encrypt(cvv))
-    // .linkedAccount(account)
-    // .provider(determineCardProvider(fullCardNumber))
-    // .build();
-
-    // Card savedCard = cardRepository.save(card);
-    // return cardMapper.toCardResponse(savedCard);
-    // }
-
     @Override
     public CardResponse issueCard(CardIssuanceRequest request) {
         // Validate user and account
@@ -105,20 +69,20 @@ public class CardServiceImpl implements CardService {
         // Create and save card
         Card card = Card.builder()
                 .user(user)
-                .cardNumber(cardSecurityService.encryptCvv(fullCardNumber))
+                .cardNumber(cardSecurityService.encrypt(fullCardNumber))
                 .cardNumberMasked(maskCardNumber(fullCardNumber))
                 .cardType(Card.CardType.valueOf(request.cardType().toString()))
                 .design(Card.CardDesign.valueOf(request.design().toString()))
                 .currency(request.currency())
                 .status(request.virtualCard() ? Card.CardStatus.ACTIVE : Card.CardStatus.PENDING)
                 .expirationDate(request.expiryDate())
-                .cvvEncrypted(cardSecurityService.encryptCvv(cvv))
-                .pinEncrypted(pin != null ? cardSecurityService.encryptCvv(pin) : null)
+                .cvvEncrypted(cardSecurityService.encrypt(cvv))
+                .pinEncrypted(pin != null ? cardSecurityService.encrypt(pin) : null)
                 .linkedAccount(account)
                 .provider(determineCardProvider(fullCardNumber))
                 .virtual(request.virtualCard())
                 .cardNumber(cardSecurityService.encrypt(fullCardNumber)) // Encrypt PAN
-                .cvvEncrypted(cardSecurityService.encryptCvv(cvv))
+                .cvvEncrypted(cardSecurityService.encrypt(cvv))
                 .pinEncrypted(pin != null ? cardSecurityService.encrypt(pin) : null)
                 .build();
 

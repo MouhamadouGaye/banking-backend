@@ -89,12 +89,39 @@ public class BankAccount {
     @OrderBy("timestamp DESC")
     private List<Transaction> transactions = new ArrayList<>();
 
+    // Add these new fields to your BankAccount class
+    @Column(name = "daily_transfer_total", precision = 19, scale = 4)
+    private BigDecimal dailyTransferTotal = BigDecimal.ZERO;
+
+    @Column(name = "daily_transfer_limit", precision = 19, scale = 4)
+    private BigDecimal dailyTransferLimit;
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    // Add these methods
+    public BigDecimal getDailyTransferTotal() {
+        return dailyTransferTotal != null ? dailyTransferTotal : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getDailyTransferLimit() {
+        return dailyTransferLimit;
+    }
+
+    public void addToDailyTransferTotal(BigDecimal amount) {
+        this.dailyTransferTotal = getDailyTransferTotal().add(amount);
+        this.updatedAt = Instant.now();
+    }
+
+    // Reset daily totals (call this via scheduled job)
+    public void resetDailyTransferTotal() {
+        this.dailyTransferTotal = BigDecimal.ZERO;
+        this.updatedAt = Instant.now();
     }
 
     // Enum Definitions

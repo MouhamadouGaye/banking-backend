@@ -1,3 +1,5 @@
+package com.mgaye.banking_backend.model;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;

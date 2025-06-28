@@ -9,6 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.mgaye.banking_backend.dto.request.BeneficiaryLimitsRequest;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -76,18 +78,14 @@ public class Beneficiary {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private BeneficiaryLimits limits;
+    private BeneficiaryLimitsRequest limits;
 
     public enum BeneficiaryType {
         INTERNAL, EXTERNAL, INTERNATIONAL
     }
 
-    @Data
-    @Builder
-    public static class BeneficiaryLimits {
-        private BigDecimal maxTransactionAmount;
-        private BigDecimal dailyLimit;
-        private List<String> allowedPurposes;
+    public BeneficiaryLimitsRequest getLimits() {
+        return limits;
     }
 
 }

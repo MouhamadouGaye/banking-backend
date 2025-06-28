@@ -18,6 +18,18 @@ public class InsufficientFundsException extends BankingException {
                         "availableBalance", balance,
                         "requestedAmount", amount));
     }
+
+    public InsufficientFundsException(String accountNumber, BigDecimal balance, BigDecimal amount) {
+        super(
+                "INSUFFICIENT_FUNDS",
+                String.format("Insufficient funds in account %s. Balance: %s, Attempted withdrawal: %s", accountNumber,
+                        balance, amount),
+                HttpStatus.BAD_REQUEST,
+                Map.of(
+                        "accountNumber", accountNumber,
+                        "availableBalance", balance,
+                        "requestedAmount", amount));
+    }
 }
 
 // public class InsufficientFundsException extends RuntimeException {

@@ -72,7 +72,7 @@ import jakarta.persistence.LockModeType;
 public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> {
 
         // Standard queries
-        List<BankAccount> findByUserId(String userId);
+        List<BankAccount> findByUserId(UUID userId);
 
         @EntityGraph(attributePaths = { "user" })
         Optional<BankAccount> findById(UUID accountId);
@@ -82,8 +82,10 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> 
         @EntityGraph(attributePaths = { "user" })
         Optional<BankAccount> findByAccountNumber(String accountNumber);
 
-        // Security-sensitive queries
-        Optional<BankAccount> findByIdAndUserId(UUID accountId, String userId);
+        // // Security-sensitive queries
+        // Optional<BankAccount> findByIdAndUserId(UUID accountId, String userId);
+
+        BankAccount findByIdAndUserId(String accountId, String userId);
 
         @EntityGraph(attributePaths = { "user" })
         Optional<BankAccount> findByIdAndUser(UUID accountId, User user);

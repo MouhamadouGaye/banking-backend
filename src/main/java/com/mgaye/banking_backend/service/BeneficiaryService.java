@@ -11,6 +11,8 @@ import com.mgaye.banking_backend.model.Beneficiary;
 public interface BeneficiaryService {
     Beneficiary addBeneficiary(String userId, BeneficiaryCreateRequest request);
 
+    Beneficiary getById(UUID id);
+
     ValidationResponse validateBeneficiary(UUID beneficiaryId, String userId);
 
     List<Beneficiary> getUserBeneficiaries(String userId);

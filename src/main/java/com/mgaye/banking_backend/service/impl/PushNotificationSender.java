@@ -18,4 +18,5 @@ public class PushNotificationSender implements NotificationSender {
     public void send(NotificationEvent event) throws NotificationException {
         // Implementation using pushService
     }
+
 }

@@ -11,6 +11,7 @@ import com.mgaye.banking_backend.dto.request.FraudReviewRequest;
 import com.mgaye.banking_backend.dto.response.AdminUserResponse;
 import com.mgaye.banking_backend.dto.response.FraudCaseResponse;
 import com.mgaye.banking_backend.dto.response.SystemAlertResponse;
+import com.mgaye.banking_backend.model.BankAccount;
 
 public interface AdminService {
     Page<AdminUserResponse> searchUsers(AdminSearchCriteria criteria);

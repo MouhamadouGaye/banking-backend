@@ -1,7 +1,7 @@
 # application.yml
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/banking_db
+    url: jdbc:postgresql://localhost:5432/bankingcore
     username: banking_user
     password: banking_pass
     driver-class-name: org.postgresql.Driver

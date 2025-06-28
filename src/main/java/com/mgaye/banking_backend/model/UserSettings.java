@@ -1,6 +1,7 @@
 package com.mgaye.banking_backend.model;
 
 import lombok.*;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -30,13 +31,14 @@ public class UserSettings {
     private User user;
 
     @Column(nullable = false, length = 5)
-    private String language;
+    private String language = "en";
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ThemePreference theme;
+    private ThemePreference theme = ThemePreference.LIGHT;
 
-    @Embedded
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "notification_preferences_id")
     private NotificationPreferences notificationPreferences;
 
     @Column(nullable = false, length = 3)

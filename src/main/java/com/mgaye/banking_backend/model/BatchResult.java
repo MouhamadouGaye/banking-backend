@@ -30,14 +30,14 @@ public record BatchResult(
         List<TransferResult> transfers,
         String batchId,
         Instant processedAt,
-        long successCount,
-        long failureCount) {
-    public BatchResult(List<TransferResult> transfers, String batchId, Instant processedAt) {
-        this(
-                transfers,
-                batchId,
-                processedAt,
-                transfers.stream().filter(t -> "COMPLETED".equals(t.status())).count(),
-                transfers.stream().filter(t -> !"COMPLETED".equals(t.status())).count());
+        Long successCount,
+        Long failureCount) {
+    public BatchResult(List<TransferResult> transfers, String batchId, Instant processedAt,
+            Long successCount, Long failureCount) {
+        this.transfers = transfers;
+        this.batchId = batchId;
+        this.processedAt = processedAt;
+        this.successCount = transfers.stream().filter(t -> "COMPLETED".equals(t.status())).count();
+        this.failureCount = transfers.stream().filter(t -> !"COMPLETED".equals(t.status())).count();
     }
 }
