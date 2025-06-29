@@ -59,6 +59,8 @@ public class User {
     @Column(nullable = false)
     private boolean isEnable;
 
+    private String deviceToken;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
@@ -73,6 +75,14 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private NotificationPreferences notificationPreferences;
 
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
     // Helper method to ensure settings exist
     public UserSettings getUserSettings() {
         if (this.userSettings == null) {
@@ -85,4 +95,5 @@ public class User {
     public enum KycStatus {
         VERIFIED, PENDING, REJECTED
     }
+
 }

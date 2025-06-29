@@ -2,6 +2,8 @@ package com.mgaye.banking_backend.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -33,4 +35,6 @@ public interface LoanRepository extends JpaRepository<Loan, String> {
         @Query("UPDATE Loan l SET l.status = 'DEFAULTED' " +
                         "WHERE l.status = 'ACTIVE' AND l.dueDate < CURRENT_DATE")
         void markDefaultedLoans();
+
+        Optional<Loan> findById(UUID loanId);
 }

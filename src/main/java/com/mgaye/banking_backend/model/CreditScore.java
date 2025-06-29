@@ -1,5 +1,6 @@
 package com.mgaye.banking_backend.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import lombok.*;
@@ -16,6 +17,7 @@ public class CreditScore {
     private CreditRating rating;
     private LocalDate reportDate;
     private boolean fraudAlert;
+    private final BigDecimal interestRate;
 
     public enum CreditRating {
         EXCELLENT(800, 850),
@@ -37,5 +39,31 @@ public class CreditScore {
                     .findFirst()
                     .orElse(POOR);
         }
+    }
+
+    public boolean isEligibleForLoan(BigDecimal amount) {
+        // Example logic: assume a minimum score of 600 is required for loan eligibility
+        return this.score >= 600 && !this.fraudAlert;
+    }
+
+    public boolean isFraudAlert() {
+        return fraudAlert;
+    }
+
+    // // Example implementation, adjust logic as needed
+    // public boolean isEligibleForLoan(BigDecimal amount) {
+    // // Assume there is a method or field getMaxEligibleAmount()
+    // // Replace with your actual eligibility logic
+    // return getMaxEligibleAmount().compareTo(amount) >= 0;
+    // }
+
+    // Dummy method for illustration; replace or remove if already present
+    public BigDecimal getMaxEligibleAmount() {
+        // Return a default value or your actual logic
+        return new BigDecimal("10000");
+    }
+
+    public BigDecimal getInterestRate() {
+        return interestRate;
     }
 }

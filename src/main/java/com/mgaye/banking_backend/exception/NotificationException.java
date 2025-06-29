@@ -19,7 +19,7 @@ public class NotificationException extends RuntimeException {
     public NotificationException(String message, Throwable cause) {
         super(message, cause);
         this.failedEvent = null;
-        this.context = null;
+        // this.context = null;
     }
 
     public NotificationEvent getFailedEvent() {

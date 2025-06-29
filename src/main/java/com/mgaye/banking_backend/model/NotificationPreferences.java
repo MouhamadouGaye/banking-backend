@@ -32,6 +32,10 @@ public class NotificationPreferences {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // Email Notifications
+    @Column(name = "email_notifications_enabled", nullable = false)
+    private boolean emailNotificationsEnabled = true;
+
     @Column(nullable = false)
     private boolean transactionEmails = true;
 
@@ -52,4 +56,29 @@ public class NotificationPreferences {
 
     @UpdateTimestamp
     private Instant updatedAt;
+
+    // Helper methods
+    public boolean isEmailNotificationsEnabled() {
+        return emailNotificationsEnabled;
+    }
+
+    public boolean isTransactionEmailsEnabled() {
+        return transactionEmails;
+    }
+
+    public boolean isSecurityAlertsEnabled() {
+        return securityAlerts;
+    }
+
+    public boolean isMarketingEmailsEnabled() {
+        return marketingEmails;
+    }
+
+    public boolean isPushNotificationsEnabled() {
+        return pushNotifications;
+    }
+
+    public boolean isSmsNotificationsEnabled() {
+        return smsNotifications;
+    }
 }

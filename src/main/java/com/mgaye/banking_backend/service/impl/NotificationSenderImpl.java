@@ -10,6 +10,8 @@ import com.mgaye.banking_backend.service.NotificationSender;
 import com.mgaye.banking_backend.service.PushNotificationService;
 import com.mgaye.banking_backend.service.SmsService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationSenderImpl implements NotificationSender {
@@ -22,8 +24,8 @@ public class NotificationSenderImpl implements NotificationSender {
     public void send(NotificationEvent event) throws NotificationException {
         try {
             switch (event.getChannel()) {
-                case EMAIL -> emailService.send(event);
-                case PUSH -> pushService.send(event);
+                case EMAIL -> emailService.sendSimpleMessage(null, null, event.getMessage());
+                case PUSH -> pushService.sendPushNotification(null, null, event.getMessage());
                 case SMS -> smsService.send(event);
                 default -> throw new NotificationException(event, "Unsupported channel: " + event.getChannel());
             }

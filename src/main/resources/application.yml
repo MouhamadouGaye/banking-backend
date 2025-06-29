@@ -65,3 +65,8 @@ credit-service:
   url: https://api.creditservice.com/v1
   api-key: ${CREDIT_SERVICE_API_KEY}
 
+notification:
+  sms:
+    sender-id: BANK_ALERTS
+    default-country-code: "+1"
+

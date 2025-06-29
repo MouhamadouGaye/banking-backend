@@ -1,8 +1,11 @@
 package com.mgaye.banking_backend.service.impl;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import com.mgaye.banking_backend.dto.LoanCalculationResult;
@@ -10,16 +13,28 @@ import com.mgaye.banking_backend.dto.request.LoanApplicationRequest;
 import com.mgaye.banking_backend.dto.response.LoanApplicationResponse;
 import com.mgaye.banking_backend.dto.response.LoanProductResponse;
 import com.mgaye.banking_backend.dto.response.LoanScheduleResponse;
+import com.mgaye.banking_backend.dto.response.PaymentScheduleItem;
+import com.mgaye.banking_backend.exception.InvalidLoanStateException;
+import com.mgaye.banking_backend.exception.LoanNotFoundException;
+import com.mgaye.banking_backend.exception.LoanRejectedException;
 import com.mgaye.banking_backend.exception.UserNotFoundException;
 import com.mgaye.banking_backend.model.CreditScore;
 import com.mgaye.banking_backend.model.Loan;
+import com.mgaye.banking_backend.model.LoanProduct;
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.model.Loan.LoanStatus;
+import com.mgaye.banking_backend.model.Loan.LoanType;
+import com.mgaye.banking_backend.repository.LoanProductRepository;
 import com.mgaye.banking_backend.repository.LoanRepository;
 import com.mgaye.banking_backend.repository.UserRepository;
+import com.mgaye.banking_backend.service.CreditScoreService;
 import com.mgaye.banking_backend.service.LoanService;
+import com.mgaye.banking_backend.service.NotificationService;
 
-import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.transaction.annotation.Transactional;
 
 // public interface LoanService {
 //     LoanApplicationResponse submitApplication(String userId, LoanApplicationRequest request);
@@ -49,7 +64,7 @@ public class LoanServiceImpl implements LoanService {
 
                 // Check credit score
                 CreditScore score = creditScoreService.getCreditScore(userId);
-                if (!score.isEligible(request.amount())) {
+                if (!score.isEligibleForLoan(request.amount())) {
                         throw new LoanRejectedException("Insufficient credit score for requested amount");
                 }
 
@@ -79,12 +94,28 @@ public class LoanServiceImpl implements LoanService {
 
                 return new LoanApplicationResponse(
                                 savedLoan.getId(),
-                                savedLoan.getAmount(),
-                                savedLoan.getTermMonths(),
-                                savedLoan.getInterestRate(),
-                                savedLoan.getMonthlyPayment(),
+                                savedLoan.getType(),
+                                savedLoan.getPrincipalAmount(),
+                                savedLoan.getCurrency(),
                                 savedLoan.getStatus(),
-                                savedLoan.getApplicationDate());
+                                savedLoan.getTermMonths(),
+                                savedLoan.getApplicationDate(),
+                                savedLoan.getAmount(),
+                                savedLoan.getInterestRate(),
+                                savedLoan.getMonthlyPayment()
+
+                );
+
+                // UUID loanId,
+                // LoanType type,
+                // BigDecimal requestedAmount,
+                // String currency,
+                // Integer termMonths,
+                // LoanStatus status,
+                // Instant applicationDate,
+                // BigDecimal amount,
+                // BigDecimal interestRate,
+                // BigDecimal monthlyPayment
         }
 
         @Override
@@ -97,14 +128,16 @@ public class LoanServiceImpl implements LoanService {
                                 .map(product -> new LoanProductResponse(
                                                 product.getId(),
                                                 product.getName(),
+                                                product.getDescription(),
                                                 product.getType(),
                                                 product.getMinAmount(),
                                                 product.getMaxAmount(),
                                                 product.getInterestRate(),
                                                 product.getMinTerm(),
                                                 product.getMaxTerm(),
-                                                product.getDescription()))
+                                                product.getEligibilityCriteria()))
                                 .toList();
+
         }
 
         @Override

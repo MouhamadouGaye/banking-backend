@@ -12,11 +12,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import com.mgaye.banking_backend.dto.request.CardIssuanceRequest;
-import com.mgaye.banking_backend.dto.request.CardIssueRequest;
 import com.mgaye.banking_backend.dto.request.PinUpdateRequest;
 import com.mgaye.banking_backend.dto.response.CardResponse;
 import com.mgaye.banking_backend.model.enums.CardStatus;
@@ -34,26 +32,6 @@ public class CardController {
     private final CardSecurityService cardSecurityService;
     private final SecurityService securityService;
     private final SimpMessagingTemplate messagingTemplate;
-
-    // @PostMapping
-    // @PreAuthorize("#request.userId == authentication.principal.id")
-    // public ResponseEntity<CardResponse> issueCard(@Valid @RequestBody
-    // CardIssuanceRequest request) {
-    // CardResponse response = cardService.issueCard(request);
-
-    // // Notify user via WebSocket
-    // messagingTemplate.convertAndSendToUser(
-    // securityService.getCurrentUserDetails(request.userId()).getUsername(),
-    // "/queue/cards",
-    // Map.of(
-    // "eventType", "CARD_ISSUED",
-    // "cardId", response.getCardId(),
-    // "maskedNumber", response.getCardNumber(),
-    // "cardType", response.getCardType(),
-    // "status", response.getStatus()));
-
-    // return ResponseEntity.ok(response);
-    // }
 
     @PostMapping
     @PreAuthorize("#request.userId == authentication.principal.id")

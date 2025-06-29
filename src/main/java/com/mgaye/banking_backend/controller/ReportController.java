@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mgaye.banking_backend.dto.ReportDownload;
 import com.mgaye.banking_backend.dto.request.StatementRequest;
 import com.mgaye.banking_backend.dto.request.TransactionHistoryRequest;
 import com.mgaye.banking_backend.dto.response.ReportHistoryResponse;
@@ -85,7 +86,7 @@ public class ReportController {
                                 authentication.getName());
 
                 return ResponseEntity.ok()
-                                .contentType(MediaType.parseMediaType(download.contentType()))
+                                .conteeéntType(MediaType.parseMediaType(download.contentType()))
                                 .header(HttpHeaders.CONTENT_DISPOSITION,
                                                 "attachment; filename=\"" + download.filename() + "\"")
                                 .body(download.resource());

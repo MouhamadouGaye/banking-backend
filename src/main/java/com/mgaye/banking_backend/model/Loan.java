@@ -81,6 +81,17 @@ public class Loan {
     @Column(columnDefinition = "jsonb")
     private LoanTerms terms;
 
+    private BigDecimal requestedAmount;
+
+    private Instant applicationDate;
+    private BigDecimal amount;
+
+    @Column(precision = 19, scale = 4)
+    private BigDecimal totalInterest;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal monthlyPayment;
+
     public enum LoanStatus {
         PENDING, ACTIVE, PAID_OFF, DEFAULTED, REFINANCED, CANCELLED, COLLECTION
 
@@ -89,6 +100,48 @@ public class Loan {
     public enum LoanType {
         PERSONAL, MORTGAGE, AUTO, BUSINESS, LINE_OF_CREDIT
     }
+
+    public BigDecimal getMonthlyPayment() {
+        return this.monthlyPayment;
+    }
+
+    // Add this method to your Loan class
+    public BigDecimal getTotalInterest() {
+        // Example calculation: total interest = principalAmount * interestRate *
+        // termMonths / 12
+        // Adjust this logic as per your actual interest calculation
+        if (principalAmount == null || interestRate == null || termMonths == null) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal months = new BigDecimal(termMonths);
+        BigDecimal yearlyInterest = principalAmount.multiply(interestRate);
+        BigDecimal totalInterest = yearlyInterest.multiply(months).divide(new BigDecimal(12), BigDecimal.ROUND_HALF_UP);
+        return totalInterest;
+    }
+
+    /**
+     * Calculates the monthly payment using the loan's principal, interest rate, and
+     * term.
+     * Formula: M = P * r * (1 + r)^n / ((1 + r)^n - 1)
+     */
+    // public BigDecimal getMonthlyPayment() {
+    // if (principalAmount == null || interestRate == null || termMonths == null ||
+    // termMonths == 0) {
+    // return BigDecimal.ZERO;
+    // }
+    // // Convert annual interest rate (e.g., 0.05 for 5%) to monthly rate
+    // BigDecimal monthlyRate = interestRate.divide(BigDecimal.valueOf(12), 10,
+    // BigDecimal.ROUND_HALF_UP);
+    // BigDecimal onePlusRatePowN =
+    // (BigDecimal.ONE.add(monthlyRate)).pow(termMonths);
+    // BigDecimal numerator =
+    // principalAmount.multiply(monthlyRate).multiply(onePlusRatePowN);
+    // BigDecimal denominator = onePlusRatePowN.subtract(BigDecimal.ONE);
+    // if (denominator.compareTo(BigDecimal.ZERO) == 0) {
+    // return BigDecimal.ZERO;
+    // }
+    // return numerator.divide(denominator, 2, BigDecimal.ROUND_HALF_UP);
+    // }
 
     @Data
     @Builder
