@@ -6,11 +6,11 @@ import java.util.Objects;
 
 public record TransferRequest(
                 String id,
-                String fromAccount,
-                String toAccount,
+                String fromAccountNumber,
+                String toAccountNumber,
                 BigDecimal amount,
                 String currency,
-                String referenceId) {
+                String referenceNumber) {
         public TransferRequest {
                 Objects.requireNonNull(amount, "Amount cannot be null");
                 Objects.requireNonNull(currency, "Currency cannot be null");

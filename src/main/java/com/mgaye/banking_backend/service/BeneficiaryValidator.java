@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import com.mgaye.banking_backend.dto.request.BeneficiaryCreateRequest;
 import com.mgaye.banking_backend.dto.request.BeneficiaryLimitsRequest;
 import com.mgaye.banking_backend.dto.response.ValidationResponse;
+import com.mgaye.banking_backend.exception.ValidationException;
 import com.mgaye.banking_backend.model.Beneficiary;
 import com.mgaye.banking_backend.model.Beneficiary.BeneficiaryType;
 import com.mgaye.banking_backend.repository.BeneficiaryRepository;
@@ -22,33 +23,41 @@ public class BeneficiaryValidator {
 
     public void validateCreateRequest(BeneficiaryCreateRequest request) {
         if (request.type() == BeneficiaryType.INTERNATIONAL) {
-            @requireNonNull(request.routingNumber(), 
-                "Routing number required for international transfers");
-            
+            java.util.Objects.requireNonNull(request.routingNumber(),
+                    "Routing number required for international transfers");
+
             ValidationResponse validation = bankCodeService.getDetailedValidation(
-                request.getAccountNumber(),
-                request.getRoutingNumber()
-            );
-            
+                    request.accountNumber(),
+                    request.routingNumber());
+
             if (!validation.isValid()) {
                 throw new ValidationException(
-                    String.format("Invalid bank details: %s", validation.message()));
+                        String.format("Invalid bank details: %s", validation.message()));
             }
-            
-            if (!request.getName().equalsIgnoreCase(validation.accountHolderName())) {
+
+            if (!request.name().equalsIgnoreCase(validation.accountHolderName())) {
                 throw new ValidationException(
-                    "Beneficiary name doesn't match account holder name");
+                        "Beneficiary name doesn't match account holder name");
             }
+        }
+    }
+
+    public void validateLimits(BeneficiaryLimitsRequest limits) {
+        if (limits.maxTransactionAmount().signum() < 0 ||
+                limits.dailyLimit().signum() < 0) {
+            throw new ValidationException("Limits cannot be negative");
+        }
+        if (limits.allowedPurposes() == null || limits.allowedPurposes().isEmpty()) {
+            throw new ValidationException("Allowed purposes cannot be empty");
         }
     }
 
     public ValidationResponse validateBeneficiaryDetails(Beneficiary beneficiary) {
         return beneficiary.getType() == BeneficiaryType.INTERNAL
-                ? new ValidationResponse(true, beneficiary.getName(), "Internal Transfer", "Valid")
+                ? new ValidationResponse(true, "Internal Transfer", beneficiary.getName(), "Valid internal transfer")
                 : bankCodeService.getDetailedValidation(
                         beneficiary.getAccountNumber(),
                         beneficiary.getRoutingNumber());
     }
 
-    // ... rest of the methods unchanged
 }

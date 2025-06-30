@@ -20,6 +20,9 @@ public class TransactionFee {
     @Column(name = "fee_amount")
     private BigDecimal amount;
 
+    @Column(name = "transfer_fee")
+    private String feeType;
+
     @Column(name = "fee_currency", length = 3)
     private String currency;
 

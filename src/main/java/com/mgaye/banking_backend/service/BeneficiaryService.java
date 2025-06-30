@@ -20,4 +20,5 @@ public interface BeneficiaryService {
     void removeBeneficiary(UUID beneficiaryId, String userId);
 
     Beneficiary updateLimits(UUID beneficiaryId, String userId, BeneficiaryLimitsRequest limits);
+
 }

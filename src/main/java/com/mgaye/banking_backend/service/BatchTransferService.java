@@ -145,15 +145,16 @@ package com.mgaye.banking_backend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mgaye.banking_backend.dto.TransferResult;
 import com.mgaye.banking_backend.dto.request.TransferRequest;
+import com.mgaye.banking_backend.dto.response.BatchResult;
 import com.mgaye.banking_backend.model.BankAccount;
-import com.mgaye.banking_backend.model.BatchResult;
 import com.mgaye.banking_backend.model.Transaction;
 import com.mgaye.banking_backend.model.TransactionFee;
+import com.mgaye.banking_backend.model.Transaction.TransactionDirection;
+import com.mgaye.banking_backend.model.Transaction.TransactionStatus;
 import com.mgaye.banking_backend.model.Transaction.TransactionType;
 import com.mgaye.banking_backend.repository.BankAccountRepository;
 import com.mgaye.banking_backend.repository.TransactionRepository;
@@ -190,7 +191,9 @@ public class BatchTransferService {
                 return new BatchResult(
                                 results,
                                 UUID.randomUUID().toString(),
-                                Instant.now());
+                                Instant.now(),
+                                results.stream().filter(t -> "COMPLETED".equals(t.status())).count(),
+                                results.stream().filter(t -> !"COMPLETED".equals(t.status())).count());
         }
 
         private TransferResult processSingleTransfer(TransferRequest request) {
@@ -221,7 +224,7 @@ public class BatchTransferService {
                                         request.amount().negate(),
                                         TransactionType.TRANSFER,
                                         TransactionStatus.COMPLETED,
-                                        request.referenceId(),
+                                        request.referenceNumber(),
                                         "Outgoing transfer to " + request.toAccountNumber(),
                                         Map.of("batchTransfer", true));
 
@@ -230,7 +233,7 @@ public class BatchTransferService {
                                         request.amount(),
                                         TransactionType.TRANSFER,
                                         TransactionStatus.COMPLETED,
-                                        request.referenceId(),
+                                        request.referenceNumber(),
                                         "Incoming transfer from " + request.fromAccountNumber(),
                                         Map.of("batchTransfer", true));
 
@@ -249,7 +252,7 @@ public class BatchTransferService {
                                         request.currency(),
                                         "COMPLETED",
                                         Instant.now(),
-                                        request.referenceId());
+                                        request.referenceNumber());
                 } catch (Exception e) {
                         return createFailedResult(request, "FAILED: " + e.getMessage());
                 }
@@ -292,10 +295,10 @@ public class BatchTransferService {
                                 .currency(account.getCurrency())
                                 .status(status)
                                 .timestamp(Instant.now())
-                                .referenceId(referenceId)
+                                .referenceNumber(referenceId)
                                 .description(description)
-                                .direction(amount.compareTo(BigDecimal.ZERO) > 0 ? TransactionDirection.CREDIT
-                                                : TransactionDirection.DEBIT)
+                                .direction(amount.compareTo(BigDecimal.ZERO) > 0 ? TransactionDirection.OUTBOUND
+                                                : TransactionDirection.INBOUND)
                                 .metadata(metadata)
                                 .build();
         }
@@ -309,6 +312,6 @@ public class BatchTransferService {
                                 request.currency(),
                                 status,
                                 Instant.now(),
-                                request.referenceId());
+                                request.referenceNumber());
         }
 }

@@ -53,6 +53,9 @@ public class Transaction {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    @Column(nullable = false, precision = 19, scale = 4)
+    private BigDecimal balance;
+
     @Column(nullable = false, length = 3)
     private String currency;
 
@@ -66,7 +69,7 @@ public class Transaction {
     private String description;
 
     @Column(name = "reference_id")
-    private String referenceId;
+    private String referenceNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_id")
@@ -100,7 +103,7 @@ public class Transaction {
     private Transaction linkedTransaction;
 
     public enum TransactionType {
-        DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT, FEE, REFUND, CHARGEBACK, DEBIT
+        DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT, FEE, REFUND, CHARGEBACK, DEBIT, CREDIT
     }
 
     public enum TransactionStatus {

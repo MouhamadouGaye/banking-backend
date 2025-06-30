@@ -71,6 +71,11 @@ import jakarta.persistence.LockModeType;
 
 public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> {
 
+        @EntityGraph(attributePaths = { "user" })
+        Optional<BankAccount> findByIdWithUser(String accountId);
+
+        boolean existsByIdAndUser(String accountId, User user);
+
         // Standard queries
         List<BankAccount> findByUserId(UUID userId);
 
@@ -103,6 +108,12 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> 
         @Query("SELECT a FROM BankAccount a WHERE a.id = :accountId")
         Optional<BankAccount> findByIdForUpdate(@Param("accountId") UUID accountId);
 
+        @Lock(LockModeType.PESSIMISTIC_WRITE)
+        @Query("SELECT a FROM BankAccount a WHERE a.accountNumber = :accountNumber AND a.currency = :currency")
+        Optional<BankAccount> findByAccountNumberWithCurrencyForUpdate(
+                        @Param("accountNumber") String accountNumber,
+                        @Param("currency") String currency);
+
         // Utility queries
         @Query("SELECT a.balance FROM BankAccount a WHERE a.id = :accountId")
         Optional<BigDecimal> getBalanceById(@Param("accountId") UUID accountId);
@@ -112,4 +123,9 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> 
         boolean existsByUserAndAccountType(
                         @Param("userId") String userId,
                         @Param("accountType") BankAccount.AccountType accountType);
+
+        @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
+                        "FROM Transaction t WHERE t.beneficiaryAccountNumber = :accountNumber " +
+                        "AND t.status = 'PENDING'")
+        boolean existsPendingTransactionsForBeneficiary(@Param("accountNumber") String accountNumber);
 }

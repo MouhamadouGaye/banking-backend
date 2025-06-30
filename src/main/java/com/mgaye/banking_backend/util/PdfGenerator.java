@@ -4,22 +4,29 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.function.ServerResponse.Context;
+import org.thymeleaf.context.Context;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import com.mgaye.banking_backend.dto.StatementData;
+
+// iText imports
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.html2pdf.ConverterProperties;
+import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.layout.font.FontProvider;
 
 // util/PdfGenerator.java
 @Service
 public class PdfGenerator {
 
     private final TemplateEngine templateEngine;
-    private final PdfFontProvider fontProvider;
+    private final FontProvider fontProvider;
 
     public PdfGenerator() {
         this.templateEngine = new TemplateEngine();
-        this.fontProvider = new PdfFontProvider();
+        this.fontProvider = new FontProvider();
         configureTemplateEngine();
     }
 
@@ -48,9 +55,6 @@ public class PdfGenerator {
     }
 
     // Inner class for font handling
-    private static class PdfFontProvider extends DefaultFontProvider {
-        public PdfFontProvider() {
-            addFont("fonts/arial.ttf");
-        }
-    }
+    // Optionally, add custom fonts if needed
+    // fontProvider.addFont("fonts/arial.ttf");
 }

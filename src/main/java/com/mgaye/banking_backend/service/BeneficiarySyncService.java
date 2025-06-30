@@ -25,7 +25,7 @@ public class BeneficiarySyncService {
 
     public void syncInternalBeneficiaries(User user) {
         // Replace this with the actual way to get user's accounts
-        List<BankAccount> accounts = user.getBankAccounts();
+        List<BankAccount> accounts = user.getAccounts();
 
         accounts.forEach(account -> {
             beneficiaryRepo.findByUserAndType(user, BeneficiaryType.INTERNAL)

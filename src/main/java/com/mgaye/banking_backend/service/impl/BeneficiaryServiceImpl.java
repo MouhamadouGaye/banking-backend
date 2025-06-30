@@ -9,10 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mgaye.banking_backend.dto.request.BeneficiaryCreateRequest;
 import com.mgaye.banking_backend.dto.request.BeneficiaryLimitsRequest;
 import com.mgaye.banking_backend.dto.response.ValidationResponse;
+import com.mgaye.banking_backend.exception.BusinessRuleException;
+import com.mgaye.banking_backend.exception.ConflictException;
 import com.mgaye.banking_backend.exception.ResourceNotFoundException;
 import com.mgaye.banking_backend.exception.UserNotFoundException;
 import com.mgaye.banking_backend.model.Beneficiary;
-import com.mgaye.banking_backend.model.Beneficiary.BeneficiaryLimits;
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.model.Beneficiary.BeneficiaryType;
 import com.mgaye.banking_backend.repository.BankAccountRepository;
@@ -62,10 +63,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                 .bankAddress(request.bankAddress())
                 .email(request.email())
                 .verified(false)
-                .limits(new Beneficiary.BeneficiaryLimitsRequest(
-                        request.limits().maxTransactionAmount(),
-                        request.limits().dailyLimit(),
-                        request.limits().allowedPurposes()))
+                .limits(request.limits())
                 .build();
 
         Beneficiary savedBeneficiary = beneficiaryRepository.save(beneficiary);
@@ -77,18 +75,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         log.info("Added new beneficiary {} for user {}", savedBeneficiary.getId(), userId);
         return savedBeneficiary;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public ValidationResponse validateBeneficiary(UUID beneficiaryId, String userId) {
-        Beneficiary beneficiary = beneficiaryRepository.findByIdAndUserId(beneficiaryId, UUID.fromString(userId))
-                .orElseThrow(() -> new ResourceNotFoundException("Beneficiary not found"));
-
-        boolean isValid = beneficiaryValidator.validateBeneficiaryDetails(beneficiary);
-        String message = isValid ? "Beneficiary details are valid" : "Beneficiary validation failed";
-
-        return new ValidationResponse(isValid, message, beneficiary.getAccountNumber());
     }
 
     @Override
@@ -112,6 +98,20 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         log.info("Removed beneficiary {} for user {}", beneficiaryId, userId);
     }
 
+    public Beneficiary getById(UUID id) {
+        return beneficiaryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Beneficiary not found with id: " + id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ValidationResponse validateBeneficiary(UUID beneficiaryId, String userId) {
+        Beneficiary beneficiary = beneficiaryRepository.findByIdAndUserId(beneficiaryId, UUID.fromString(userId))
+                .orElseThrow(() -> new ResourceNotFoundException("Beneficiary not found"));
+
+        return beneficiaryValidator.validateBeneficiaryDetails(beneficiary);
+    }
+
     @Override
     @Transactional
     public Beneficiary updateLimits(UUID beneficiaryId, String userId, BeneficiaryLimitsRequest limits) {
@@ -122,21 +122,11 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         beneficiaryValidator.validateLimits(limits);
 
         // Update limits
-        Beneficiary.BeneficiaryLimits newLimits = new Beneficiary.BeneficiaryLimits(
-                limits.maxTransactionAmount(),
-                limits.dailyLimit(),
-                limits.dllowedPurposes());
-
-        beneficiary.setLimits(newLimits);
+        beneficiary.setLimits(limits);
         Beneficiary updatedBeneficiary = beneficiaryRepository.save(beneficiary);
 
         log.info("Updated limits for beneficiary {} for user {}", beneficiaryId, userId);
         return updatedBeneficiary;
-    }
-
-    public Beneficiary getById(UUID id) {
-        return beneficiaryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Beneficiary not found with id: " + id));
     }
 
 }

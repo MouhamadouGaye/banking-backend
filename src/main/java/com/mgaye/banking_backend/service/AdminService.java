@@ -28,6 +28,4 @@ public interface AdminService {
 
     void freezeAccount(UUID accountId, String reason);
 
-    private String resolveUserEmail(FraudReviewRequest request);
-
 }

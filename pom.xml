@@ -186,6 +186,24 @@
             <version>3.1.0</version>
         </dependency>
 
+
+<!-- Add your other dependencies above or below -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>html2pdf</artifactId>
+            <version>4.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext7-core</artifactId>
+            <version>7.2.5</version>
+            <type>pom</type>
+        </dependency>
+
+
+
+
         <!-- For Hibernate (if using UuidGenerator) -->
         <!-- <dependency>
             <groupId>org.hibernate.orm</groupId>
@@ -240,7 +258,12 @@
             <version>1.7.0</version>
         </dependency>
 
-        <!--  -->
+        <!-- Google's Guava library -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-jre</version> <!-- or latest version -->
+        </dependency>
 
    
         <!-- Spring Boot Starter -->
@@ -250,6 +273,11 @@
         </dependency>
         
         <!-- JCA (Java Cryptography Architecture) -->
+<!-- Spring's task execution dependency -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
 
 
         <!-- Testing -->

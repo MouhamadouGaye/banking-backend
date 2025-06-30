@@ -1,4 +1,4 @@
-package com.mgaye.banking_backend.model;
+package com.mgaye.banking_backend.dto.response;
 
 import java.time.Instant;
 import java.util.List;
@@ -9,8 +9,8 @@ import com.mgaye.banking_backend.dto.TransferResult;
 // public record BatchResult(
 
 //         List<TransferResult> results,
-//         long successCount,
-//         long failureCount,
+//         Long successCount,
+//         Long failureCount,
 //         String batchId) {
 //     public BatchResult(List<TransferResult> results) {
 //         this(
@@ -21,12 +21,13 @@ import com.mgaye.banking_backend.dto.TransferResult;
 //     }
 // }
 // new BatchResult(
-//                 results,
-//                 UUID.randomUUID().toString(),
-//                 Instant.now());
+// results,
+// UUID.randomUUID().toString(),
+// Instant.now());
 // import java.util.UUID;
 
 public record BatchResult(
+
         List<TransferResult> transfers,
         String batchId,
         Instant processedAt,
@@ -40,4 +41,5 @@ public record BatchResult(
         this.successCount = transfers.stream().filter(t -> "COMPLETED".equals(t.status())).count();
         this.failureCount = transfers.stream().filter(t -> !"COMPLETED".equals(t.status())).count();
     }
+
 }

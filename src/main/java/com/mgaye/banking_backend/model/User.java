@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -56,6 +57,9 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column(name = "bank_account")
+    private List<BankAccount> accounts;
+
     @Column(nullable = false)
     private boolean isEnable;
 
@@ -81,6 +85,10 @@ public class User {
 
     public void setDeviceToken(String deviceToken) {
         this.deviceToken = deviceToken;
+    }
+
+    public String getFullName() {
+        return this.firstName + this.lastName;
     }
 
     // Helper method to ensure settings exist
