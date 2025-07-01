@@ -1,6 +1,9 @@
 package com.mgaye.banking_backend.model;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -45,6 +48,14 @@ public class AccountStatement {
     @Column(nullable = false)
     private StatementStatus status = StatementStatus.GENERATED;
 
+    // Additional fields for statement details
+    private String accountNumber;
+    private String accountHolderName;
+    private LocalDate from;
+    private LocalDate to;
+    private List<com.mgaye.banking_backend.dto.StatementItem> items;
+    private BigDecimal balance;
+
     // Constructors
     public AccountStatement() {
     }
@@ -66,7 +77,7 @@ public class AccountStatement {
         return accountId;
     }
 
-    public void setAccountId(String accountId) {
+    public void setAccountId(String accountNumber) {
         this.accountId = accountId;
     }
 
@@ -122,6 +133,16 @@ public class AccountStatement {
         ARCHIVED
     }
 
+    public AccountStatement(String accountNumber, String accountHolderName, LocalDate from, LocalDate to,
+            List<com.mgaye.banking_backend.dto.StatementItem> items, BigDecimal balance) {
+        this.accountNumber = accountNumber;
+        this.accountHolderName = accountHolderName;
+        this.from = from;
+        this.to = to;
+        this.items = items;
+        this.balance = balance;
+    }
+
     // equals and hashCode
     @Override
     public boolean equals(Object o) {
@@ -151,4 +172,5 @@ public class AccountStatement {
                 ", status=" + status +
                 '}';
     }
+
 }

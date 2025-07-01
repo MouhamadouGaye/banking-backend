@@ -3,6 +3,7 @@ package com.mgaye.banking_backend.service.impl;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -14,6 +15,8 @@ import com.mgaye.banking_backend.dto.ReportDownload;
 import com.mgaye.banking_backend.dto.StatementData;
 import com.mgaye.banking_backend.dto.StatementItem;
 import com.mgaye.banking_backend.dto.request.StatementRequest;
+import com.mgaye.banking_backend.dto.request.TransactionHistoryRequest;
+import com.mgaye.banking_backend.dto.response.ReportHistoryResponse;
 import com.mgaye.banking_backend.dto.response.ReportStatusResponse;
 import com.mgaye.banking_backend.exception.AuthorizationException;
 import com.mgaye.banking_backend.exception.BusinessRuleException;
@@ -24,6 +27,7 @@ import com.mgaye.banking_backend.model.ReportRequest;
 import com.mgaye.banking_backend.model.Transaction;
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.model.Transaction.TransactionStatus;
+import com.mgaye.banking_backend.model.Transaction.TransactionType;
 import com.mgaye.banking_backend.repository.AccountRepository;
 import com.mgaye.banking_backend.repository.ReportRequestRepository;
 import com.mgaye.banking_backend.repository.TransactionRepository;
@@ -39,192 +43,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.Resource;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Async;
-
-// // service/ReportServiceImpl.java
-// @Servi@Service
-// @RequiredArgsConstructor
-// @Slf4j
-// public class ReportServiceImpl implements ReportService {
-//     private final TransactionRepository txRepo;
-//     private final PdfGenerator pdfGenerator;
-//     private final ReportRequestRepository reportRequestRepo;
-//     private final AccountRepository accountRepo;
-//     private final UserRepository userRepo;
-//     private final StorageService storageService;
-
-//     @Override
-//     @Transactional
-//     public ReportStatusResponse requestStatement(String userId, StatementRequest request) {
-//         // Validate user and account ownership
-//         User user = userRepo.findById(userId)
-//                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-//         BankAccount account = accountRepo.findById(request.accountId())
-//                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
-
-//         if (!account.getUser().equals(user)) {
-//             throw new AuthorizationException("Account does not belong to user");
-//         }
-
-//         // Determine date range based on period
-//         DateRange dateRange = resolveDateRange(request.period(), request.customStart(), request.customEnd());
-
-//         // Create and save report request
-//         ReportRequest reportRequest = new ReportRequest(
-//                 UUID.randomUUID(),
-//                 userId,
-//                 request.accountId(),
-//                 "STATEMENT",
-//                 request.period(),
-//                 dateRange.start(),
-//                 dateRange.end(),
-//                 request.format(),
-//                 request.timezone(),
-//                 Instant.now(),
-//                 "PENDING",
-//                 null,
-//                 null,
-//                 null
-//         );
-
-//         ReportRequest savedRequest = reportRequestRepo.save(reportRequest);
-
-//         // Process asynchronously
-//         CompletableFuture.runAsync(() -> processStatementGeneration(savedRequest));
-
-//         return new ReportStatusResponse(
-//                 savedRequest.getId(),
-//                 "STATEMENT",
-//                 savedRequest.getStatus(),
-//                 savedRequest.getRequestedAt(),
-//                 null,
-//                 null
-//         );
-//     }
-
-//     @Async
-//     protected void processStatementGeneration(ReportRequest request) {
-//         try {
-//             // Generate the statement
-//             AccountStatement statement = generateStatement(
-//                     request.getAccountId(),
-//                     request.getStartDate(),
-//                     request.getEndDate(),
-//                     request.getTimezone());
-
-//             // Upload to storage
-//             String storageKey = storageService.upload(
-//                     statement.content(),
-//                     "statements/" + request.getId() + "." + request.getFormat().toLowerCase());
-
-//             // Update request status
-//             request.setStatus("COMPLETED");
-//             request.setCompletedAt(Instant.now());
-//             request.setStorageKey(storageKey);
-//             request.setDownloadUrl(generateDownloadUrl(storageKey));
-//             reportRequestRepo.save(request);
-
-//         } catch (Exception e) {
-//             log.error("Failed to generate statement for request {}", request.getId(), e);
-//             request.setStatus("FAILED");
-//             request.setErrorMessage(e.getMessage());
-//             reportRequestRepo.save(request);
-//         }
-//     }
-
-//     @Override
-//     @Transactional(readOnly = true)
-//     public ReportDownload downloadReport(UUID requestId, String userId) {
-//         ReportRequest request = reportRequestRepo.findByIdAndUserId(requestId, userId)
-//                 .orElseThrow(() -> new ResourceNotFoundException("Report request not found"));
-
-//         if (!"COMPLETED".equals(request.getStatus())) {
-//             throw new BusinessRuleException("Report is not ready for download");
-//         }
-
-//         if (request.getStorageKey() == null) {
-//             throw new IllegalStateException("Report file not available");
-//         }
-
-//         Resource resource = storageService.download(request.getStorageKey());
-//         String filename = String.format("statement-%s-%s.%s",
-//                 request.getAccountId(),
-//                 request.getRequestedAt().toString(),
-//                 request.getFormat().toLowerCase());
-
-//         return new ReportDownload(
-//                 resource,
-//                 determineContentType(request.getFormat()),
-//                 filename
-//         );
-//     }
-
-//     @Override
-//     @Transactional(readOnly = true)
-//     public ReportStatusResponse getReportStatus(UUID requestId, String userId) {
-//         ReportRequest request = reportRequestRepo.findByIdAndUserId(requestId, userId)
-//                 .orElseThrow(() -> new ResourceNotFoundException("Report request not found"));
-
-//         return new ReportStatusResponse(
-//                 request.getId(),
-//                 request.getReportType(),
-//                 request.getStatus(),
-//                 request.getRequestedAt(),
-//                 request.getCompletedAt(),
-//                 request.getDownloadUrl()
-//         );
-//     }
-
-//     private AccountStatement generateStatement(String accountId, LocalDate start, LocalDate end, String timezone) {
-//         // Implementation similar to previous version but with timezone support
-//         ZoneId zoneId = timezone != null ? ZoneId.of(timezone) : ZoneId.systemDefault();
-
-//         // ... rest of the implementation ...
-//     }
-
-//     private DateRange resolveDateRange(String period, LocalDate customStart, LocalDate customEnd) {
-//         return switch (period) {
-//             case "MONTHLY" -> {
-//                 LocalDate end = LocalDate.now();
-//                 LocalDate start = end.withDayOfMonth(1);
-//                 yield new DateRange(start, end);
-//             }
-//             case "QUARTERLY" -> {
-//                 LocalDate end = LocalDate.now();
-//                 LocalDate start = end.with(end.getMonth().firstMonthOfQuarter())
-//                                      .withDayOfMonth(1);
-//                 yield new DateRange(start, end);
-//             }
-//             case "YEARLY" -> {
-//                 LocalDate end = LocalDate.now();
-//                 LocalDate start = end.withDayOfYear(1);
-//                 yield new DateRange(start, end);
-//             }
-//             case "CUSTOM" -> {
-//                 if (customStart == null || customEnd == null) {
-//                     throw new IllegalArgumentException("Custom dates required for CUSTOM period");
-//                 }
-//                 yield new DateRange(customStart, customEnd);
-//             }
-//             default -> throw new IllegalArgumentException("Invalid period type: " + period);
-//         };
-//     }
-
-//     private String determineContentType(String format) {
-//         return switch (format.toUpperCase()) {
-//             case "PDF" -> "application/pdf";
-//             case "CSV" -> "text/csv";
-//             case "JSON" -> "application/json";
-//             default -> "application/octet-stream";
-//         };
-//     }
-
-//     private String generateDownloadUrl(String storageKey) {
-//         return "/api/reports/download/" + storageKey;
-//     }
-
-//     private record DateRange(LocalDate start, LocalDate end) {}
-// }
 
 @Service
 @RequiredArgsConstructor
@@ -398,4 +216,176 @@ public class ReportServiceImpl implements ReportService {
                         default -> throw new IllegalArgumentException("Invalid period: " + period);
                 };
         }
+
+        @Override
+        @Transactional
+        public ReportStatusResponse requestTransactionHistory(String userId, TransactionHistoryRequest request) {
+                User user = userRepo.findById(userId)
+                                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+                // Validate account ownership if accountId is specified
+                if (request.accountId() != null) {
+                        BankAccount account = accountRepo.findById(request.accountId())
+                                        .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+                        if (!account.getUser().getId().equals(userId)) {
+                                throw new AuthorizationException("Account does not belong to user");
+                        }
+                }
+
+                DateRange dateRange = resolveDateRange(request.period(), request.customStart(), request.customEnd());
+
+                ReportRequest reportRequest = ReportRequest.builder()
+                                .id(UUID.randomUUID())
+                                .userId(userId)
+                                .accountId(request.accountId())
+                                .reportType("TRANSACTION_HISTORY")
+                                .period(request.period())
+                                .startDate(dateRange.start())
+                                .endDate(dateRange.end())
+                                .format(request.format())
+                                .timezone(request.timezone())
+                                .status("PENDING")
+                                .requestedAt(Instant.now())
+                                .transactionType(request.transactionType())
+                                .build();
+
+                ReportRequest savedRequest = reportRequestRepo.save(reportRequest);
+
+                taskExecutor.execute(() -> processTransactionHistoryGeneration(savedRequest));
+
+                return new ReportStatusResponse(
+                                savedRequest.getId(),
+                                savedRequest.getReportType(),
+                                savedRequest.getStatus(),
+                                savedRequest.getRequestedAt(),
+                                null,
+                                null);
+        }
+
+        private void processTransactionHistoryGeneration(ReportRequest request) {
+                try {
+                        byte[] content = generateTransactionHistoryContent(
+                                        request.getUserId(),
+                                        request.getAccountId(),
+                                        request.getStartDate(),
+                                        request.getEndDate(),
+                                        ZoneId.of(request.getTimezone()),
+                                        request.getTransactionType());
+
+                        String fileExtension = request.getFormat().toLowerCase();
+                        String storageKey = String.format("reports/%s/%s.%s",
+                                        request.getUserId(),
+                                        request.getId(),
+                                        fileExtension);
+
+                        storageService.upload(content, storageKey);
+
+                        request.setStatus("COMPLETED");
+                        request.setCompletedAt(Instant.now());
+                        request.setStorageKey(storageKey);
+                        request.setDownloadUrl(generateDownloadUrl(request.getId()));
+                        reportRequestRepo.save(request);
+                } catch (Exception e) {
+                        log.error("Failed to generate transaction history for request {}", request.getId(), e);
+                        request.setStatus("FAILED");
+                        request.setErrorMessage(e.getMessage());
+                        reportRequestRepo.save(request);
+                }
+        }
+
+        private byte[] generateTransactionHistoryContent(String userId, String accountId,
+                        LocalDate start, LocalDate end, ZoneId zoneId, TransactionType filterType) {
+
+                List<Transaction> transactions;
+                if (accountId != null) {
+                        transactions = txRepo.findByAccountIdAndDateBetweenAndStatusAndType(
+                                        accountId, start, end, TransactionStatus.COMPLETED, filterType);
+                } else {
+                        transactions = txRepo.findByUserIdAndDateBetweenAndStatusAndType(
+                                        userId, start, end, TransactionStatus.COMPLETED, filterType);
+                }
+
+                List<TransactionItem> items = transactions.stream()
+                                .map(tx -> new TransactionItem(
+                                                tx.getId(),
+                                                tx.getDate().atZone(zoneId).instant(),
+                                                tx.getType(),
+                                                tx.getAmount(),
+                                                tx.getDescription(),
+                                                tx.getAccount().getAccountNumber(),
+                                                tx.getStatus()))
+                                .toList();
+
+                TransactionHistoryData historyData = new TransactionHistoryData(
+                                userId,
+                                accountId,
+                                start,
+                                end,
+                                items);
+
+                return pdfGenerator.generateTransactionHistoryPdf(historyData);
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public ReportStatusResponse getReportStatus(UUID requestId, String userId) {
+                ReportRequest request = reportRequestRepo.findByIdAndUserId(requestId, userId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Report request not found"));
+
+                return new ReportStatusResponse(
+                                request.getId(),
+                                request.getReportType(),
+                                request.getStatus(),
+                                request.getRequestedAt(),
+                                request.getCompletedAt(),
+                                request.getDownloadUrl());
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<ReportHistoryResponse> getReportHistory(String userId, int days) {
+                Instant cutoff = Instant.now().minus(days, ChronoUnit.DAYS);
+                return reportRequestRepo.findByUserIdAndRequestedAtAfter(userId, cutoff)
+                                .stream()
+                                .map(request -> new ReportHistoryResponse(
+                                                request.getId(),
+                                                request.getReportType(),
+                                                request.getStatus(),
+                                                request.getRequestedAt(),
+                                                request.getCompletedAt(),
+                                                request.getAccountId(),
+                                                request.getPeriod(),
+                                                request.getStartDate(),
+                                                request.getEndDate()))
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public AccountStatement generateStatement(String accountId, LocalDate from, LocalDate to) {
+                BankAccount account = accountRepo.findById(accountId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+
+                List<Transaction> transactions = txRepo.findByAccountIdAndDateBetweenAndStatus(
+                                accountId, from, to, TransactionStatus.COMPLETED);
+
+                List<StatementItem> items = transactions.stream()
+                                .map(tx -> new StatementItem(
+                                                tx.getId(),
+                                                tx.getDate(),
+                                                tx.getType(),
+                                                tx.getAmount(),
+                                                tx.getDescription(),
+                                                tx.getStatus()))
+                                .toList();
+
+                return new AccountStatement(
+                                account.getAccountNumber(),
+                                account.getUser().getFullName(),
+                                from,
+                                to,
+                                items,
+                                account.getBalance());
+        }
+
 }

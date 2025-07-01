@@ -1,6 +1,6 @@
 package com.mgaye.banking_backend.config;
 
-import org.apache.catalina.util.RateLimiter;
+import com.google.common.util.concurrent.RateLimiter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

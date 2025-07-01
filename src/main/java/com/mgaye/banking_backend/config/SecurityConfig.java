@@ -1,15 +1,11 @@
 package com.mgaye.banking_backend.config;
 
-<<<<<<< HEAD
-import com.mgaye.banking_backend.security.jwt.AuthEntryPointJwt;
 import com.mgaye.banking_backend.security.jwt.AuthTokenFilter;
-import com.mgaye.banking_backend.security.services.UserDetailsServiceImpl;
 
 import jakarta.validation.Validator;
 
 import com.mgaye.banking_backend.security.UserDetailsServiceImpl;
 import com.mgaye.banking_backend.security.jwt.AuthTokenFilter;
->>>>>>> master
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,12 +31,10 @@ import org.springframework.validation.beanvalidation.MethodValidationPostProcess
 @EnableMethodSecurity
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
-    private final AuthEntryPointJwt unauthorizedHandler;
-    private final AuthEntryPointJwwt unauthorizedHandler;
 
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler) {
+    // private final AuthEntryPointJwt unauthorizedHandler;
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
         this.userDetailsService = userDetailsService;
-        this.unauthorizedHandler = unauthorizedHandler;
     }
 
     @Bean
@@ -70,7 +64,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandle))
+                // .exceptionHandling(exception ->
+                // exception.authenticationEntryPoint(unauthorizedHandle))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
@@ -103,9 +98,19 @@ public class SecurityConfig {
     }
 
     JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(loadPublicKey()).build();
+        java.security.PublicKey publicKey = loadPublicKey();
+        if (!(publicKey instanceof java.security.interfaces.RSAPublicKey)) {
+            throw new IllegalArgumentException("Public key must be an instance of RSAPublicKey");
+        }
+        return NimbusJwtDecoder.withPublicKey((java.security.interfaces.RSAPublicKey) publicKey).build();
     }
 
+    private java.security.PublicKey loadPublicKey() {
+        // TODO: Replace with your actual public key loading logic
+        // Example: Load from a file, classpath, or environment variable
+        // Here is a simple placeholder that throws an exception
+        throw new UnsupportedOperationException("Public key loading not implemented");
+    }
 
     @Bean
     public Validator validator() {

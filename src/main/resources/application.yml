@@ -1,72 +1,72 @@
 # application.yml
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bankingcore
-    username: banking_user
-    password: banking_pass
+    url: jdbc:postgresql://localhost:5433/bankingcore
+    username: gaye
+    password: Postgres.2424
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-  mail:
-    host: smtp.example.com
-    port: 587
-    username: noreply@banking.com
-    password: mail_password
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls.enable: true
-    default-from: no-reply@yourdomain.com
-    default-reply-to: support@yourdomain.com
-    test-mode: false
-    test-recipient: test@yourdomain.com
+#   mail:
+#     host: smtp.example.com
+#     port: 587
+#     username: noreply@banking.com
+#     password: mail_password
+#     properties:
+#       mail:
+#         smtp:
+#           auth: true
+#           starttls.enable: true
+#     default-from: no-reply@yourdomain.com
+#     default-reply-to: support@yourdomain.com
+#     test-mode: false
+#     test-recipient: test@yourdomain.com
     
-  liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
-    enabled: true
+#   liquibase:
+#     change-log: classpath:db/changelog/db.changelog-master.xml
+#     enabled: true
 
-banking:
-  app:
-    jwtSecret: yourJWTSecretKeyForBankingApplication1234567890
-    jwtExpirationMs: 86400000 # 24 hours
-    jwtRefreshExpirationMs: 604800000 # 7 days
-  frontend:
-    url: http://localhost:3000
-  jwt: 
-    refreshExpirationMs: 86400000 # 24 hours
-
-
-logging:
-  level:
-    org.springframework.security: DEBUG
-    com.banking: DEBUG
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: always
+# banking:
+#   app:
+#     jwtSecret: yourJWTSecretKeyForBankingApplication1234567890
+#     jwtExpirationMs: 86400000 # 24 hours
+#     jwtRefreshExpirationMs: 604800000 # 7 days
+#   frontend:
+#     url: http://localhost:3000
+#   jwt: 
+#     refreshExpirationMs: 86400000 # 24 hours
 
 
-      # application.properties
-encryption:
-  secret: ${ENCRYPTION_SECRET:defaultEncryptionKey123} # Override in production
+# logging:
+#   level:
+#     org.springframework.security: DEBUG
+#     com.banking: DEBUG
 
-credit-service:
-  url: https://api.creditservice.com/v1
-  api-key: ${CREDIT_SERVICE_API_KEY}
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         include: health,info,metrics
+#   endpoint:
+#     health:
+#       show-details: always
 
-notification:
-  sms:
-    sender-id: BANK_ALERTS
-    default-country-code: "+1"
+
+#       # application.properties
+# encryption:
+#   secret: ${ENCRYPTION_SECRET:defaultEncryptionKey123} # Override in production
+
+# credit-service:
+#   url: https://api.creditservice.com/v1
+#   api-key: ${CREDIT_SERVICE_API_KEY}
+
+# notification:
+#   sms:
+#     sender-id: BANK_ALERTS
+#     default-country-code: "+1"
 
