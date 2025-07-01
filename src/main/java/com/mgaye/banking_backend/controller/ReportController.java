@@ -3,8 +3,8 @@ package com.mgaye.banking_backend.controller;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.tomcat.util.file.ConfigurationSource.Resource;
-import org.apache.tomcat.util.http.parser.MediaType;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +25,7 @@ import com.mgaye.banking_backend.service.ReportService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/reports")
@@ -86,7 +87,7 @@ public class ReportController {
                                 authentication.getName());
 
                 return ResponseEntity.ok()
-                                .conteeéntType(MediaType.parseMediaType(download.contentType()))
+                                .contentType(MediaType.parseMediaType(download.contentType()))
                                 .header(HttpHeaders.CONTENT_DISPOSITION,
                                                 "attachment; filename=\"" + download.filename() + "\"")
                                 .body(download.resource());

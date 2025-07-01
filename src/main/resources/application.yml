@@ -70,3 +70,16 @@ spring:
 #     sender-id: BANK_ALERTS
 #     default-country-code: "+1"
 
+# spring:
+#   profiles:
+#     active: dev # or 'prod' for production
+
+# # Production configuration (would contain real API keys)
+# acme:
+#   kyc:
+#     api-key: ${KYC_API_KEY}
+#     base-url: https://api.acmekyc.com/v1
+
+# worldcheck:
+#   api-key: ${SANCTION_API_KEY}
+#   base-url: https://api.worldcheck.com/v2

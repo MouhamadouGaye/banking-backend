@@ -1,5 +1,6 @@
 package com.mgaye.banking_backend.service.impl;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mgaye.banking_backend.dto.ReportDownload;
 import com.mgaye.banking_backend.dto.StatementData;
 import com.mgaye.banking_backend.dto.StatementItem;
+import com.mgaye.banking_backend.dto.TransactionHistoryData;
+import com.mgaye.banking_backend.dto.TransactionItem;
 import com.mgaye.banking_backend.dto.request.StatementRequest;
 import com.mgaye.banking_backend.dto.request.TransactionHistoryRequest;
 import com.mgaye.banking_backend.dto.response.ReportHistoryResponse;
@@ -32,7 +35,7 @@ import com.mgaye.banking_backend.repository.AccountRepository;
 import com.mgaye.banking_backend.repository.ReportRequestRepository;
 import com.mgaye.banking_backend.repository.TransactionRepository;
 import com.mgaye.banking_backend.repository.UserRepository;
-import com.mgaye.banking_backend.service.ReportService;
+import com.mgaye.banking_backend.service.RepostService;
 import com.mgaye.banking_backend.service.StorageService;
 import com.mgaye.banking_backend.util.PdfGenerator;
 
@@ -47,7 +50,7 @@ import org.springframework.scheduling.annotation.Async;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ReportServiceImpl implements ReportService {
+public class ReportServiceImpl implements RepostService {
         private final TransactionRepository txRepo;
         private final PdfGenerator pdfGenerator;
         private final ReportRequestRepository reportRequestRepo;
@@ -132,32 +135,41 @@ public class ReportServiceImpl implements ReportService {
         }
 
         private byte[] generateStatementContent(String accountId, LocalDate start, LocalDate end, ZoneId zoneId) {
-                // Fetch account and transactions
                 BankAccount account = accountRepo.findById(accountId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
-                List<Transaction> transactions = txRepo.findByAccountIdAndDateBetweenAndStatus(
-                                accountId, start, end, TransactionStatus.COMPLETED);
 
-                // Map transactions to StatementItem DTOs
+                List<Transaction> transactions = txRepo.findByAccountIdAndDateBetweenAndStatus(
+                                accountId,
+                                start,
+                                end,
+                                TransactionStatus.COMPLETED);
+
                 List<StatementItem> items = transactions.stream()
                                 .map(tx -> new StatementItem(
                                                 tx.getId(),
-                                                tx.getDate().atZone(zoneId).instant(),
-                                                tx.getType(),
+                                                tx.getTimestamp(),
+                                                tx.getReferenceNumber(),
                                                 tx.getAmount(),
                                                 tx.getDescription(),
-                                                tx.getStatus()))
+                                                tx.getType(),
+                                                tx.getStatus(),
+                                                tx.getDirection()))
                                 .toList();
 
-                // Build StatementData DTO
                 StatementData statementData = new StatementData(
                                 account.getAccountNumber(),
                                 account.getUser().getFullName(),
                                 start,
                                 end,
-                                items);
+                                items,
+                                account.getBalance(),
+                                account.getCurrency());
 
-                return pdfGenerator.generatePdf(statementData);
+                try {
+                        return pdfGenerator.generatePdf(statementData);
+                } catch (IOException e) {
+                        throw new RuntimeException("Failed to generate PDF", e);
+                }
         }
 
         private String generateDownloadUrl(UUID requestId) {
@@ -246,7 +258,6 @@ public class ReportServiceImpl implements ReportService {
                                 .timezone(request.timezone())
                                 .status("PENDING")
                                 .requestedAt(Instant.now())
-                                .transactionType(request.transactionType())
                                 .build();
 
                 ReportRequest savedRequest = reportRequestRepo.save(reportRequest);
@@ -270,7 +281,7 @@ public class ReportServiceImpl implements ReportService {
                                         request.getStartDate(),
                                         request.getEndDate(),
                                         ZoneId.of(request.getTimezone()),
-                                        request.getTransactionType());
+                                        request.getReportType());
 
                         String fileExtension = request.getFormat().toLowerCase();
                         String storageKey = String.format("reports/%s/%s.%s",
@@ -294,25 +305,33 @@ public class ReportServiceImpl implements ReportService {
         }
 
         private byte[] generateTransactionHistoryContent(String userId, String accountId,
-                        LocalDate start, LocalDate end, ZoneId zoneId, TransactionType filterType) {
+                        LocalDate start, LocalDate end, ZoneId zoneId, String filterType) {
 
                 List<Transaction> transactions;
                 if (accountId != null) {
                         transactions = txRepo.findByAccountIdAndDateBetweenAndStatusAndType(
-                                        accountId, start, end, TransactionStatus.COMPLETED, filterType);
+                                        accountId,
+                                        start,
+                                        end,
+                                        TransactionStatus.COMPLETED,
+                                        filterType);
                 } else {
                         transactions = txRepo.findByUserIdAndDateBetweenAndStatusAndType(
-                                        userId, start, end, TransactionStatus.COMPLETED, filterType);
+                                        userId,
+                                        start,
+                                        end,
+                                        TransactionStatus.COMPLETED,
+                                        filterType);
                 }
 
                 List<TransactionItem> items = transactions.stream()
                                 .map(tx -> new TransactionItem(
                                                 tx.getId(),
-                                                tx.getDate().atZone(zoneId).instant(),
+                                                tx.getDate().atZone(zoneId).toInstant(),
                                                 tx.getType(),
                                                 tx.getAmount(),
                                                 tx.getDescription(),
-                                                tx.getAccount().getAccountNumber(),
+                                                tx.getReferenceNumber(),
                                                 tx.getStatus()))
                                 .toList();
 
@@ -321,9 +340,14 @@ public class ReportServiceImpl implements ReportService {
                                 accountId,
                                 start,
                                 end,
-                                items);
+                                items,
+                                filterType);
 
-                return pdfGenerator.generateTransactionHistoryPdf(historyData);
+                try {
+                        return pdfGenerator.generateTransactionHistoryPdf(historyData);
+                } catch (IOException e) {
+                        throw new RuntimeException("Failed to generate transaction history PDF", e);
+                }
         }
 
         @Override
@@ -373,10 +397,12 @@ public class ReportServiceImpl implements ReportService {
                                 .map(tx -> new StatementItem(
                                                 tx.getId(),
                                                 tx.getDate(),
-                                                tx.getType(),
+                                                tx.getReferenceNumber(),
                                                 tx.getAmount(),
                                                 tx.getDescription(),
-                                                tx.getStatus()))
+                                                tx.getType(),
+                                                tx.getStatus(),
+                                                tx.getDirection()))
                                 .toList();
 
                 return new AccountStatement(

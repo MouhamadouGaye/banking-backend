@@ -16,6 +16,9 @@ public record StatementData(
         String currency,
         LocalDate generatedDate) {
 
+    // StatementData(String, String, LocalDate, LocalDate, List<StatementItem>,
+    // BigDecimal, String) is undefinedJava(134217858)
+
     public StatementData {
         generatedDate = LocalDate.now();
     }
@@ -31,7 +34,7 @@ public record StatementData(
     }
 
     public StatementData(String accountNumber, String accountType, LocalDate statementFrom, LocalDate statementTo,
-            List<StatementItem> items) {
+            List<StatementItem> items, BigDecimal ok, String something) {
         this(
                 items,
                 BigDecimal.ZERO, // or another default value for currentBalance

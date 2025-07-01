@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Transaction History</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Transaction History</h1>
+    <p th:if="${history.accountId}">
+      Account: <span th:text="${history.accountId}"></span>
+    </p>
+    <p>
+      Period: <span th:text="${history.startDate}"></span> to
+      <span th:text="${history.endDate}"></span>
+    </p>
+    <p th:if="${history.filterType}">
+      Filter: <span th:text="${history.filterType}"></span>
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Account</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="item : ${history.transactions}">
+          <td
+            th:text="${#temporals.format(item.date, 'yyyy-MM-dd HH:mm')}"
+          ></td>
+          <td th:text="${item.accountNumber}"></td>
+          <td th:text="${item.description}"></td>
+          <td th:text="${item.type}"></td>
+          <td th:text="${item.amount}"></td>
+          <td th:text="${item.status}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

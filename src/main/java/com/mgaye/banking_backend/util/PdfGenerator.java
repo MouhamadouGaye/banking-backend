@@ -9,7 +9,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import com.mgaye.banking_backend.dto.StatementData;
-
+import com.mgaye.banking_backend.dto.TransactionHistoryData;
 // iText imports
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -40,21 +40,25 @@ public class PdfGenerator {
     public byte[] generatePdf(StatementData data) throws IOException {
         Context context = new Context();
         context.setVariable("statement", data);
-
         String html = templateEngine.process("account-statement", context);
+        return convertHtmlToPdf(html);
+    }
 
+    public byte[] generateTransactionHistoryPdf(TransactionHistoryData data) throws IOException {
+        Context context = new Context();
+        context.setVariable("history", data);
+        String html = templateEngine.process("transaction-history", context);
+        return convertHtmlToPdf(html);
+    }
+
+    private byte[] convertHtmlToPdf(String html) throws IOException {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             PdfWriter writer = new PdfWriter(outputStream);
             PdfDocument pdf = new PdfDocument(writer);
             ConverterProperties props = new ConverterProperties();
             props.setFontProvider(fontProvider);
-
             HtmlConverter.convertToPdf(html, pdf, props);
             return outputStream.toByteArray();
         }
     }
-
-    // Inner class for font handling
-    // Optionally, add custom fonts if needed
-    // fontProvider.addFont("fonts/arial.ttf");
 }

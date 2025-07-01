@@ -1,168 +1,164 @@
-package com.mgaye.banking_backend.service.impl;
+// package com.mgaye.banking_backend.service.impl;
 
-import com.mgaye.banking_backend.dto.response.ReportStatusResponse;
-import com.mgaye.banking_backend.dto.ReportDownload;
-import com.mgaye.banking_backend.dto.request.StatementRequest;
-import com.mgaye.banking_backend.dto.request.TransactionHistoryRequest;
-import com.mgaye.banking_backend.dto.response.ReportHistoryResponse;
-import com.mgaye.banking_backend.service.ReportService;
+// import com.mgaye.banking_backend.dto.response.ReportStatusResponse;
+// import com.mgaye.banking_backend.model.BankAccount;
+// import com.mgaye.banking_backend.model.ReportRequest;
+// import com.mgaye.banking_backend.model.User;
+// import com.mgaye.banking_backend.dto.ReportDownload;
+// import com.mgaye.banking_backend.dto.request.StatementRequest;
+// import com.mgaye.banking_backend.dto.request.TransactionHistoryRequest;
+// import com.mgaye.banking_backend.dto.response.ReportHistoryResponse;
+// import com.mgaye.banking_backend.service.ReportService;
 
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+// import org.springframework.core.io.Resource;
+// import org.springframework.core.io.UrlResource;
+// import org.springframework.stereotype.Service;
+// import org.springframework.transaction.annotation.Transactional;
+// import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+// import java.io.IOException;
+// import java.net.MalformedURLException;
+// import java.nio.file.Files;
+// import java.nio.file.Path;
+// import java.nio.file.Paths;
+// import java.time.Instant;
+// import java.time.LocalDateTime;
+// import java.time.temporal.ChronoUnit;
+// import java.time.LocalDate;
+// import java.util.*;
+// import java.util.concurrent.ConcurrentHashMap;
 
-@Service
-public class ReportServiceImpl implements ReportService {
+// @Service
+// public class RepostServiceImpl implements ReportService {
 
-    // In-memory storage for demo purposes (replace with database in production)
-    private final Map<UUID, ReportStatusResponse> reportStatusMap = new ConcurrentHashMap<>();
-    private final Map<UUID, String> reportFileStorage = new ConcurrentHashMap<>();
-    private final Path reportsDirectory = Paths.get("reports").toAbsolutePath().normalize();
+//     // In-memory storage for demo purposes
+//     private final Map<UUID, ReportStatusResponse> reportStatusMap = new ConcurrentHashMap<>();
+//     private final Map<UUID, String> reportFileStorage = new ConcurrentHashMap<>();
+//     private final Path reportsDirectory = Paths.get("reports").toAbsolutePath().normalize();
 
-    @Override
-    public ReportStatusResponse requestStatement(String userId, StatementRequest request) {
-        UUID requestId = UUID.randomUUID();
-        ReportStatusResponse status = new ReportStatusResponse(
-                requestId,
-                "STATEMENT",
-                "PENDING",
-                LocalDateTime.now(),
-                null,
-                null);
-        reportStatusMap.put(requestId, status);
+//     @Override
+//     public ReportStatusResponse requestStatement(String userId, StatementRequest request) {
+//         UUID requestId = UUID.randomUUID();
+//         ReportStatusResponse status = ReportStatusResponse.pending(requestId, "STATEMENT");
+//         reportStatusMap.put(requestId, status);
 
-        // Simulate async report generation (in a real app, use @Async or a queue)
-        new Thread(() -> generateReport(requestId, userId, "STATEMENT")).start();
+//         // Simulate async report generation
+//         new Thread(() -> generateReport(requestId, userId, "STATEMENT")).start();
 
-        return status;
-    }
+//         return status;
+//     }
 
-    @Override
-    public ReportStatusResponse requestTransactionHistory(String userId, TransactionHistoryRequest request) {
-        UUID requestId = UUID.randomUUID();
-        ReportStatusResponse status = new ReportStatusResponse(
-                requestId,
-                "TRANSACTION_HISTORY",
-                "PENDING",
-                LocalDateTime.now(),
-                null,
-                null);
-        reportStatusMap.put(requestId, status);
+//     @Override
+//     public ReportStatusResponse requestTransactionHistory(String userId, TransactionHistoryRequest request) {
+//         UUID requestId = UUID.randomUUID();
+//         ReportStatusResponse status = ReportStatusResponse.pending(requestId, "TRANSACTION_HISTORY");
+//         reportStatusMap.put(requestId, status);
 
-        // Simulate async report generation
-        new Thread(() -> generateReport(requestId, userId, "TRANSACTION_HISTORY")).start();
+//         // Simulate async report generation
+//         new Thread(() -> generateReport(requestId, userId, "TRANSACTION_HISTORY")).start();
 
-        return status;
-    }
+//         return status;
+//     }
 
-    @Override
-    public ReportStatusResponse getReportStatus(UUID requestId, String userId) {
-        return reportStatusMap.getOrDefault(requestId,
-                new ReportStatusResponse(requestId, "UNKNOWN", "NOT_FOUND", null, null, null));
-    }
+//     @Override
+//     public ReportStatusResponse getReportStatus(UUID requestId, String userId) {
+//         return reportStatusMap.getOrDefault(requestId,
+//                 new ReportStatusResponse(
+//                         requestId,
+//                         "UNKNOWN",
+//                         "NOT_FOUND",
+//                         null,
+//                         null,
+//                         null));
+//     }
 
-    @Override
-    public List<ReportHistoryResponse> getReportHistory(String userId, int days) {
-        // Filter reports for the user and within the last 'days' days
-        LocalDateTime cutoffDate = LocalDateTime.now().minusDays(days);
-        return reportStatusMap.values().stream()
-                .filter(report -> userId.equals(report.userId()))
-                .filter(report -> report.requestedAt() != null && report.requestedAt().isAfter(cutoffDate))
-                .map(report -> new ReportHistoryResponse(
-                        report.requestId(),
-                        report.reportType(),
-                        report.status(),
-                        report.requestedAt(),
-                        report.completedAt()))
-                .toList();
-    }
+//     @Override
+//     public List<ReportHistoryResponse> getReportHistory(String userId, int days) {
+//         Instant cutoff = Instant.now().minus(days, ChronoUnit.DAYS);
+//         return reportStatusMap.values().stream()
+//                 .filter(report -> userId.equals(report.requestedBy()))
+//                 .filter(report -> report.requestedAt() != null && report.requestedAt().isAfter(cutoff))
+//                 .map(report -> ReportHistoryResponse.fromStatusResponse(
+//                         report,
+//                         null, // accountId would come from your actual data
+//                         "CUSTOM", // period would come from your actual data
+//                         LocalDate.now().minusDays(days), // startDate
+//                         LocalDate.now()) // endDate
+//                 )
+//                 .toList();
 
-    @Override
-    public ReportDownload downloadReport(UUID requestId, String userId) {
-        try {
-            // Check if report exists and belongs to the user
-            ReportStatusResponse reportStatus = reportStatusMap.get(requestId);
-            if (reportStatus == null || !reportStatus.userId().equals(userId)) {
-                throw new RuntimeException("Report not found or access denied");
-            }
+//     }
 
-            // Check if report is ready
-            if (!"COMPLETED".equals(reportStatus.status())) {
-                throw new RuntimeException("Report not yet generated");
-            }
+//     @Override
+//     public ReportDownload downloadReport(UUID requestId, String userId) {
+//         try {
+//             // Check if report exists
+//             ReportStatusResponse reportStatus = reportStatusMap.get(requestId);
+//             if (reportStatus == null) {
+//                 throw new RuntimeException("Report not found");
+//             }
 
-            // Get the file path from storage
-            String filename = reportFileStorage.get(requestId);
-            if (filename == null) {
-                throw new RuntimeException("Report file missing");
-            }
+//             // Check if report is ready
+//             if (!"COMPLETED".equals(reportStatus.status())) {
+//                 throw new RuntimeException("Report not yet generated");
+//             }
 
-            Path filePath = reportsDirectory.resolve(filename).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
+//             // Get the file path from storage
+//             String filename = reportFileStorage.get(requestId);
+//             if (filename == null) {
+//                 throw new RuntimeException("Report file missing");
+//             }
 
-            if (!resource.exists()) {
-                throw new RuntimeException("File not found: " + filename);
-            }
+//             Path filePath = reportsDirectory.resolve(filename).normalize();
+//             Resource resource = new UrlResource(filePath.toUri());
 
-            // Determine content type dynamically (or use a fixed type like
-            // "application/pdf")
-            String contentType = Files.probeContentType(filePath);
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
+//             if (!resource.exists()) {
+//                 throw new RuntimeException("File not found: " + filename);
+//             }
 
-            return new ReportDownload(resource, contentType, filename);
-        } catch (MalformedURLException ex) {
-            throw new RuntimeException("Invalid file path", ex);
-        } catch (IOException ex) {
-            throw new RuntimeException("Failed to read report file", ex);
-        }
-    }
+//             String contentType = Files.probeContentType(filePath);
+//             if (contentType == null) {
+//                 contentType = "application/octet-stream";
+//             }
 
-    // --- Helper Methods ---
-    private void generateReport(UUID requestId, String userId, String reportType) {
-        try {
-            // Simulate report generation delay
-            Thread.sleep(5000);
+//             return new ReportDownload(resource, contentType, filename);
+//         } catch (IOException ex) {
+//             throw new RuntimeException("Failed to read report file", ex);
+//         }
+//     }
 
-            // Update status to "COMPLETED"
-            ReportStatusResponse updatedStatus = new ReportStatusResponse(
-                    requestId,
-                    reportType,
-                    "COMPLETED",
-                    LocalDateTime.now().minusSeconds(5),
-                    LocalDateTime.now(),
-                    userId);
-            reportStatusMap.put(requestId, updatedStatus);
+//     private void generateReport(UUID requestId, String userId, String reportType) {
+//         try {
+//             // Simulate report generation delay
+//             Thread.sleep(5000);
 
-            // Generate a dummy file (replace with real report generation)
-            String filename = "report_" + requestId + ".pdf";
-            Path reportPath = reportsDirectory.resolve(filename);
-            Files.createDirectories(reportsDirectory);
-            Files.write(reportPath, ("Dummy Report - " + reportType + " for " + userId).getBytes());
+//             // Update status to "COMPLETED"
+//             ReportStatusResponse updatedStatus = new ReportStatusResponse(
+//                     requestId,
+//                     reportType,
+//                     "COMPLETED",
+//                     Instant.now().minusSeconds(5),
+//                     Instant.now(),
+//                     "/download/" + requestId);
+//             reportStatusMap.put(requestId, updatedStatus);
 
-            // Store the filename in the storage map
-            reportFileStorage.put(requestId, filename);
-        } catch (InterruptedException | IOException e) {
-            // Update status to "FAILED" if something goes wrong
-            ReportStatusResponse failedStatus = new ReportStatusResponse(
-                    requestId,
-                    reportType,
-                    "FAILED",
-                    LocalDateTime.now().minusSeconds(5),
-                    LocalDateTime.now(),
-                    userId);
-            reportStatusMap.put(requestId, failedStatus);
-        }
-    }
-}
+//             // Generate a dummy file
+//             String filename = "report_" + requestId + ".pdf";
+//             Files.createDirectories(reportsDirectory);
+//             Files.write(reportsDirectory.resolve(filename),
+//                     ("Dummy Report - " + reportType).getBytes());
+
+//             reportFileStorage.put(requestId, filename);
+//         } catch (Exception e) {
+//             // Update status to "FAILED"
+//             ReportStatusResponse failedStatus = new ReportStatusResponse(
+//                     requestId,
+//                     reportType,
+//                     "FAILED",
+//                     Instant.now().minusSeconds(5),
+//                     Instant.now(),
+//                     null);
+//             reportStatusMap.put(requestId, failedStatus);
+//         }
+//     }
+// }

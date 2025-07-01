@@ -66,6 +66,9 @@ public class Transaction {
     @Column(nullable = false)
     private Instant timestamp;
 
+    @Column(nullable = false)
+    private Instant date;
+
     private String description;
 
     @Column(name = "reference_id")

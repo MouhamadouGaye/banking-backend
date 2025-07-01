@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mgaye.banking_backend.model.Transaction;
+import com.mgaye.banking_backend.model.Transaction.TransactionDirection;
 import com.mgaye.banking_backend.model.Transaction.TransactionStatus;
 import com.mgaye.banking_backend.model.Transaction.TransactionType;
 
@@ -64,14 +65,18 @@ import jakarta.validation.constraints.Positive;
 // }
 
 public record StatementItem(
+        String id,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant date,
-        String description,
         String reference,
         @Positive BigDecimal amount,
-        BigDecimal balance,
-        Transaction.TransactionType type,
-        Transaction.TransactionStatus status,
-        Transaction.TransactionDirection direction) {
+        // BigDecimal balance,
+        String description,
+        TransactionType type,
+        TransactionStatus status,
+        TransactionDirection direction) {
+
+    // StatementItem(String, Instant, String, BigDecimal, String, String) is
+    // undefinedJava(134217858)
 
     public String getFormattedAmount() {
         String sign = direction == Transaction.TransactionDirection.INBOUND ? "+" : "-";
