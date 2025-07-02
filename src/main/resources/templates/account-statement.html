@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Account Statement</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Account Statement</h1>
+    <p>Account: <span th:text="${statement.accountNumber}"></span></p>
+    <p>
+      Account Holder: <span th:text="${statement.accountHolderName}"></span>
+    </p>
+    <p>
+      Period: <span th:text="${statement.startDate}"></span> to
+      <span th:text="${statement.endDate}"></span>
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="item : ${statement.items}">
+          <td
+            th:text="${#temporals.format(item.date, 'yyyy-MM-dd HH:mm')}"
+          ></td>
+          <td th:text="${item.description}"></td>
+          <td th:text="${item.type}"></td>
+          <td th:text="${item.amount}"></td>
+          <td th:text="${item.status}"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      Current Balance:
+      <span
+        th:text="${statement.currentBalance} + ' ' + ${statement.currency}"
+      ></span>
+    </p>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <p>Dear <span th:text="${user.firstName}">Customer</span>,</p>
+    <p>
+      We've received your loan application
+      <strong th:text="${loan.id}">ID</strong> on
+      <span th:text="${loan.applicationDate}">date</span>.
+    </p>
+    <p>You'll receive another email once your application is processed.</p>
+  </body>
+</html>
