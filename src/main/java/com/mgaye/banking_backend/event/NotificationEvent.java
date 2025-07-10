@@ -43,6 +43,7 @@ import java.util.Map;
 
 import com.mgaye.banking_backend.model.User;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -53,7 +54,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotificationEvent {
-    private String userId;
+
+    private String UserId;
     private NotificationType type; // Changed to use enum
     private NotificationChannel channel;
     private String title;

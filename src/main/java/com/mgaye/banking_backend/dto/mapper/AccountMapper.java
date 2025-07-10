@@ -10,10 +10,12 @@ import com.mgaye.banking_backend.model.BankAccount;
 public interface AccountMapper {
 
     @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "accountType", source = "type")
+    @Mapping(target = "accountType", source = "accountType") // Enum to String
+    @Mapping(target = "status", source = "status") // Enum to String
     AccountDto toDto(BankAccount bankAccount);
 
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "type", source = "accountType")
+    @Mapping(target = "user", ignore = true) // We assume you're setting this manually elsewhere
+    @Mapping(target = "accountType", source = "accountType")
+    @Mapping(target = "status", source = "status")
     BankAccount toEntity(AccountDto accountDto);
 }

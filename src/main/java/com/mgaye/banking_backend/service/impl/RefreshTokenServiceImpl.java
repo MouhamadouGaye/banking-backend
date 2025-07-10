@@ -1,6 +1,5 @@
 package com.mgaye.banking_backend.service.impl;
 
-import com.mgaye.banking_backend.dto.response.TokenRefreshResponse;
 import com.mgaye.banking_backend.exception.ResourceNotFoundException;
 import com.mgaye.banking_backend.exception.TokenRefreshException;
 import com.mgaye.banking_backend.model.RefreshToken;
@@ -38,8 +37,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public RefreshToken createRefreshToken(String userId) {
         RefreshToken refreshToken = new RefreshToken();
 
-        refreshToken.setUser(userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User not found with id: " + userId)));
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        refreshToken.setUser(user);
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
         refreshToken.setToken(UUID.randomUUID().toString());
 

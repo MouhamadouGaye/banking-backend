@@ -15,11 +15,11 @@ import com.mgaye.banking_backend.mock.MockSanctionCheckClient;
 @Configuration
 public class ClientConfig {
 
-    @Bean
-    @Profile("!prod")
-    public DocumentVerificationClient mockDocumentVerificationClient() {
-        return new MockDocumentVerificationClient();
-    }
+    // @Bean
+    // @Profile("!prod")
+    // public DocumentVerificationClient mockDocumentVerificationClient() {
+    // return new MockDocumentVerificationClient();
+    // }
 
     @Bean
     @Profile("prod")
@@ -27,11 +27,11 @@ public class ClientConfig {
         return new AcmeDocumentVerificationClient(restTemplate);
     }
 
-    @Bean
-    @Profile("!prod")
-    public SanctionCheckClient mockSanctionCheckClient() {
-        return new MockSanctionCheckClient();
-    }
+    // @Bean
+    // @Profile("!prod")
+    // public SanctionCheckClient mockSanctionCheckClient() {
+    // return new MockSanctionCheckClient();
+    // }
 
     @Bean
     @Profile("prod")

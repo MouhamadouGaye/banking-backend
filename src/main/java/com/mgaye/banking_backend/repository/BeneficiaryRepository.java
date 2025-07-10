@@ -6,12 +6,14 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import com.mgaye.banking_backend.model.AccountBeneficiary;
 import com.mgaye.banking_backend.model.Beneficiary;
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.model.Beneficiary.BeneficiaryType;
 
+@Repository
 public interface BeneficiaryRepository extends JpaRepository<Beneficiary, UUID> {
 
     Optional<Beneficiary> findById(UUID id);

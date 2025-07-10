@@ -1,13 +1,24 @@
 package com.mgaye.banking_backend.config;
 
 import com.mgaye.banking_backend.security.jwt.AuthTokenFilter;
+import com.mgaye.banking_backend.service.impl.UserDetailsServiceImpl;
 
 import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
 
-import com.mgaye.banking_backend.security.UserDetailsServiceImpl;
-import com.mgaye.banking_backend.security.jwt.AuthTokenFilter;
+import java.security.KeyFactory;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+
+import javax.sql.DataSource;
+
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -29,13 +40,14 @@ import org.springframework.validation.beanvalidation.MethodValidationPostProcess
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-    private final UserDetailsServiceImpl userDetailsService;
 
-    // private final AuthEntryPointJwt unauthorizedHandler;
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+    @Value("${jwt.public-key}")
+    private String publicKeyPem;
+
+    @Lazy
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -60,20 +72,46 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // @Bean
+    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    // http
+    // .csrf(AbstractHttpConfigurer::disable)
+    // // .exceptionHandling(exception ->
+    // // exception.authenticationEntryPoint(unauthorizedHandle))
+    // .sessionManagement(session ->
+    // session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    // .authorizeHttpRequests(auth -> auth
+    // .requestMatchers("/api/auth/**").permitAll()
+    // .requestMatchers("/api/public/**").permitAll()
+    // .requestMatchers("/api/test/**").permitAll()
+    // .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+    // .requestMatchers("/actuator/health").permitAll()
+    // .anyRequest().authenticated());
+
+    // http.authenticationProvider(authenticationProvider());
+    // http.addFilterBefore(authenticationJwtTokenFilter(),
+    // UsernamePasswordAuthenticationFilter.class);
+
+    // return http.build();
+    // }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                // .exceptionHandling(exception ->
-                // exception.authenticationEntryPoint(unauthorizedHandle))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/test/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/public/**",
+                                "/api/test/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/actuator/health")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.decoder(jwtDecoder())));
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -81,46 +119,90 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // @Bean
+    // SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+    // http
+    // .securityMatcher("/api/**")
+    // .authorizeHttpRequests(auth -> auth
+    // .requestMatchers("/api/public/**").permitAll()
+    // .requestMatchers("/api/auth/**").permitAll()
+    // .anyRequest().authenticated())
+    // .sessionManagement(session -> session
+    // .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    // .oauth2ResourceServer(oauth2 -> oauth2
+    // .jwt(jwt -> jwt
+    // .decoder(jwtDecoder())));
+    // return http.build();
+    // }
+
+    // JwtDecoder jwtDecoder() {
+    // java.security.PublicKey publicKey = loadPublicKey();
+    // if (!(publicKey instanceof java.security.interfaces.RSAPublicKey)) {
+    // throw new IllegalArgumentException("Public key must be an instance of
+    // RSAPublicKey");
+    // }
+    // return NimbusJwtDecoder.withPublicKey((java.security.interfaces.RSAPublicKey)
+    // publicKey).build();
+    // }
+
+    // private java.security.PublicKey loadPublicKey() {
+    // // TODO: Replace with your actual public key loading logic
+    // // Example: Load from a file, classpath, or environment variable
+    // // Here is a simple placeholder that throws an exception
+    // throw new UnsupportedOperationException("Public key loading not
+    // implemented");
+    // }
+
+    // @Bean
+    // public Validator validator() {
+    // return new LocalValidatorFactoryBean();
+    // }
+
+    // @Bean
+    // public MethodValidationPostProcessor methodValidationPostProcessor() {
+    // MethodValidationPostProcessor processor = new
+    // MethodValidationPostProcessor();
+    // processor.setValidator(validator());
+    // return processor;
+    // }
+
+    // Add this in your SecurityConfig class
     @Bean
-    SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/api/**")
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated())
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .decoder(jwtDecoder())));
-        return http.build();
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            EntityManagerFactoryBuilder builder,
+            DataSource dataSource) {
+        return builder
+                .dataSource(dataSource)
+                .packages("com.mgaye.banking_backend.model")
+                .persistenceUnit("default")
+                .build();
     }
 
     JwtDecoder jwtDecoder() {
-        java.security.PublicKey publicKey = loadPublicKey();
-        if (!(publicKey instanceof java.security.interfaces.RSAPublicKey)) {
-            throw new IllegalArgumentException("Public key must be an instance of RSAPublicKey");
+        RSAPublicKey publicKey = loadPublicKey();
+        return NimbusJwtDecoder.withPublicKey(publicKey).build();
+    }
+
+    // ADD THE METHOD HERE - INSIDE THE SecurityConfig CLASS
+    private RSAPublicKey loadPublicKey() {
+        // Replace this with your actual public key loading mechanism
+        String publicKeyPem = "-----BEGIN PUBLIC KEY-----\n" +
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...\n" +
+                "-----END PUBLIC KEY-----";
+
+        try {
+            String publicKeyContent = publicKeyPem
+                    .replace("-----BEGIN PUBLIC KEY-----", "")
+                    .replace("-----END PUBLIC KEY-----", "")
+                    .replaceAll("\\s", "");
+
+            byte[] keyBytes = Base64.getDecoder().decode(publicKeyContent);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+            return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load public key", e);
         }
-        return NimbusJwtDecoder.withPublicKey((java.security.interfaces.RSAPublicKey) publicKey).build();
     }
 
-    private java.security.PublicKey loadPublicKey() {
-        // TODO: Replace with your actual public key loading logic
-        // Example: Load from a file, classpath, or environment variable
-        // Here is a simple placeholder that throws an exception
-        throw new UnsupportedOperationException("Public key loading not implemented");
-    }
-
-    @Bean
-    public Validator validator() {
-        return new LocalValidatorFactoryBean();
-    }
-
-    @Bean
-    public MethodValidationPostProcessor methodValidationPostProcessor() {
-        MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
-        processor.setValidator(validator());
-        return processor;
-    }
 }

@@ -1,21 +1,28 @@
-// test/BankingServiceIntegrationTest.java
-package com.mgaye.banking_backend.integration;
+// // test/BankingServiceIntegrationTest.java
+// package com.mgaye.banking_backend.integration;
 
-import net.bytebuddy.utility.dispatcher.JavaDispatcher.Container;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-@Testcontainers
-class BankingServiceIntegrationTest {
+// import com.mgaye.banking_backend.service.TransactionService;
 
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");
+// import jakarta.transaction.Transactional;
+// import net.bytebuddy.utility.dispatcher.JavaDispatcher.Container;
 
-    @Autowired
-    private TransactionService txService;
+// @SpringBootTest
+// @Testcontainers
+// class BankingServiceIntegrationTest {
 
-    @Test
-    @Transactional
-    void whenValidTransfer_thenAccountsUpdated() {
-        // Test implementation
-    }
-}
+// @Container
+// static PostgreSQLContainer<?> postgres = new
+// PostgreSQLContainer<>("postgres:15-alpine");
+
+// @Autowired
+// private TransactionService txService;
+
+// @Test
+// @Transactional
+// void whenValidTransfer_thenAccountsUpdated() {
+// // Test implementation
+// }
+// }

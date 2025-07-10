@@ -7,10 +7,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.mgaye.banking_backend.model.UserSettings;
 
 // UserSettingsRepository.java
+@Repository
 public interface UserSettingsRepository extends JpaRepository<UserSettings, String> {
 
     @EntityGraph(attributePaths = { "notificationPreferences" })

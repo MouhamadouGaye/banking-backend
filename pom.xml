@@ -33,14 +33,14 @@
         <jwt.version>0.11.5</jwt.version>
     </properties> -->
 
-    <properties>
-        <java.version>21</java.version>
+    <!-- <properties>
+        <java.version>17</java.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.28</lombok.version>
         <jwt.version>0.11.5</jwt.version>
         <hibernate-types.version>2.21.1</hibernate-types.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
-    </properties>
+    </properties> -->
 
     <dependencies>
         <!-- Spring Boot Starters -->
@@ -146,7 +146,7 @@
         </dependency>
 
         <!-- Security -->
-        <dependency>
+        <!-- <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
             <version>${jwt.version}</version>
@@ -162,7 +162,7 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jwt.version}</version>
             <scope>runtime</scope>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
@@ -295,6 +295,12 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <properties>
+    <java.version>17</java.version>
+    <lombok.version>1.18.30</lombok.version>
+    <mapstruct.version>1.5.5.Final</mapstruct.version>
+</properties>
 
     <build>
         <plugins>

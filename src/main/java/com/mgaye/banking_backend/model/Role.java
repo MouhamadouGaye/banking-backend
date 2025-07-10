@@ -1,5 +1,8 @@
 package com.mgaye.banking_backend.model;
 
+import java.security.Permission;
+import java.util.Set;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +21,16 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private ERole name;
+
+    private Set<Permission> permissions;
+
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
+    }
 
     public enum ERole {
         ROLE_USER,

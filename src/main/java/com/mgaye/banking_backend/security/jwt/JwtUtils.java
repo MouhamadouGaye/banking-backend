@@ -5,12 +5,15 @@ package com.mgaye.banking_backend.security.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.mgaye.banking_backend.security.service.UserDetailsImpl;
 
@@ -122,6 +125,53 @@ public class JwtUtils {
         }
 
         return false;
+    }
+
+    public String parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7);
+        }
+        return null;
+    }
+
+    public boolean shouldRenew(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            Date expiration = claims.getExpiration();
+            long now = System.currentTimeMillis();
+            long timeRemaining = expiration.getTime() - now;
+
+            // Renew if token expires in less than 5 minutes (customizable)
+            return timeRemaining < 5 * 60 * 1000;
+
+        } catch (JwtException | IllegalArgumentException e) {
+            logger.error("Error while checking token expiration: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public String renewToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            String username = claims.getSubject();
+
+            return generateTokenFromUsername(username); // uses existing method
+
+        } catch (JwtException | IllegalArgumentException e) {
+            logger.error("Cannot renew token: {}", e.getMessage());
+            return null;
+        }
     }
 
 }

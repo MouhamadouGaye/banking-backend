@@ -1,27 +1,36 @@
-package com.mgaye.banking_backend.service.impl;
+// package com.mgaye.banking_backend.service.impl;
 
-import org.springframework.stereotype.Service;
+// import org.springframework.stereotype.Service;
 
-import com.mgaye.banking_backend.service.PushNotificationService;
+// import com.mgaye.banking_backend.dto.request.PushNotificationRequest;
+// import com.mgaye.banking_backend.service.PushNotificationService;
 
-import lombok.RequiredArgsConstructor;
+// import lombok.RequiredArgsConstructor;
 
-@Service
-@RequiredArgsConstructor
-public class PushNotificationServiceImpl implements PushNotificationService {
-    private final fcmService fcmService;
+// // Custom exception for push notification errors
+// class PushNotificationException extends RuntimeException {
+// public PushNotificationException(String message, Throwable cause) {
+// super(message, cause);
+// }
+// }
 
-    @Override
-    public void sendPushNotification(String deviceToken, String title, String message) {
-        if (deviceToken == null || deviceToken.isBlank()) {
-            throw new IllegalArgumentException("Device token cannot be null or empty");
-        }
+// @Service
+// @RequiredArgsConstructor
+// public class PushNotificationServiceImpl implements PushNotificationService {
+// private final fcmService fcmService;
 
-        try {
-            fcmService.sendPushNotification(
-                    new PushNotificationRequest(deviceToken, title, message));
-        } catch (Exception e) {
-            throw new PushNotificationException("Failed to send push notification", e);
-        }
-    }
-}
+// @Override
+// public void sendPushNotification(String deviceToken, String title, String
+// message) {
+// if (deviceToken == null || deviceToken.isBlank()) {
+// throw new IllegalArgumentException("Device token cannot be null or empty");
+// }
+
+// try {
+// fcmService.sendPushNotification(
+// new PushNotificationRequest(deviceToken, title, message));
+// } catch (Exception e) {
+// throw new PushNotificationException("Failed to send push notification", e);
+// }
+// }
+// }

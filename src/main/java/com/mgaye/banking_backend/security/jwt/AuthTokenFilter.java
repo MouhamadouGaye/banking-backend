@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.mgaye.banking_backend.security.UserDetailsServiceImpl;
+import com.mgaye.banking_backend.service.impl.UserDetailsServiceImpl;
 
 import java.io.IOException;
 

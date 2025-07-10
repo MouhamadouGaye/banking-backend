@@ -42,6 +42,8 @@ public class Merchant {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    private LocalDateTime updatedAt;
+
     public enum MerchantStatus {
         ACTIVE, SUSPENDED, BLACKLISTED
     }

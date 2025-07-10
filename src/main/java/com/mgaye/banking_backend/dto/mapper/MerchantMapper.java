@@ -19,6 +19,6 @@ public interface MerchantMapper {
 
     @Mapping(target = "createdAt", source = "createdAt", dateFormat = "yyyy-MM-dd HH:mm:ss")
     @Mapping(target = "updatedAt", source = "updatedAt", dateFormat = "yyyy-MM-dd HH:mm:ss")
-    @Mapping(target = "merchantCategory", source = "category")
+    @Mapping(target = "category", source = "category")
     MerchantDto mapMerchantToDto(Merchant merchant);
 }

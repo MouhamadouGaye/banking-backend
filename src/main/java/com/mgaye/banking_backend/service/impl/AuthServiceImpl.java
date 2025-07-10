@@ -64,6 +64,6 @@ public class AuthServiceImpl implements AuthService {
                             .refreshToken(refreshToken) // Optionally generate new refresh token
                             .build();
                 })
-                .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token not found"));
+                .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token notfound"));
     }
 }

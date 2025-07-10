@@ -1,10 +1,19 @@
-# application.yml
 spring:
+  application:
+    name: bsys
   datasource:
-    url: jdbc:postgresql://localhost:5433/bankingcore
+    url: jdbc:postgresql://localhost:5434/banking
     username: gaye
     password: Postgres.2424
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      isolation-level: READ_COMMITTED
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -12,6 +21,30 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  liquibase:
+    enabled: false
+
+app:
+  jwt:
+    secret: itrZjz8EfvXL+w+dxxhKygic2jH8sZ6fdUAJrj/GJNmdl8XfRXY0ZWGPAj6Sg1MGDcGJMKsYw1Dabaw7hv5GHA== # Use a strong secret in production
+    expiration-ms: 86400000 # 24 hours
+
+    public-key: -----BEGIN PUBLIC KEY-----\nYOUR_KEY_HERE\n-----END PUBLIC KEY-----
+
+
+    # Logging (optional for debugging)
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql: TRACE
 #   mail:
 #     host: smtp.example.com
 #     port: 587

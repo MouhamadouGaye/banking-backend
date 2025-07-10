@@ -3,6 +3,7 @@ package com.mgaye.banking_backend.repository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,4 +38,6 @@ public interface AccountRepository extends JpaRepository<BankAccount, String> {
             @Param("amount") BigDecimal amount);
 
     boolean existsByAccountNumberAndUser_Id(String accountNumber, String userId);
+
+    boolean existsByIdAndUserId(String accountId, String userId);
 }

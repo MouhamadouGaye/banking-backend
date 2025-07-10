@@ -45,6 +45,10 @@ public class User {
     @Column(nullable = false)
     private LocalDate dob;
 
+    private boolean emailVerified;
+
+    private boolean phoneVerified;
+
     @Embedded
     private Address address;
 

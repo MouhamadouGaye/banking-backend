@@ -9,7 +9,9 @@ import com.mgaye.banking_backend.model.ReportRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ReportRequestRepository extends JpaRepository<ReportRequest, UUID> {
     // Custom query methods can be added here if needed
     // For example, to find requests by userId or status

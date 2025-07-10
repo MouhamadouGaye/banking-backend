@@ -23,7 +23,7 @@ public class EmailServiceImpl implements EmailService {
     private final TemplateEngine templateEngine;
 
     // Set your sender email address here or inject via @Value
-    private final String senderEmail = "no-reply@example.com";
+    private final String senderEmail = "mgaayee@gmail.com";
 
     @Override
     public void sendSimpleMessage(String to, String subject, String text) {

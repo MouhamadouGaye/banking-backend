@@ -9,7 +9,6 @@ import java.util.Arrays;
 // model/CreditScore.java
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CreditScore {
@@ -31,6 +30,7 @@ public class CreditScore {
         CreditRating(int minScore, int maxScore) {
             this.minScore = minScore;
             this.maxScore = maxScore;
+
         }
 
         public static CreditRating fromScore(int score) {

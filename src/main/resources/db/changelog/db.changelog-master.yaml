@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1"
+      author: gaye
+      changes:
+        - createTable:
+            tableName: example
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(255)

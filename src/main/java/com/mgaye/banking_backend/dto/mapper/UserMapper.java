@@ -17,10 +17,11 @@ import com.mgaye.banking_backend.dto.response.UserResponse;
 import com.mgaye.banking_backend.model.User;
 
 // UserMapper.java
-@Mapper(componentModel = "spring", uses = { AddressMapper.class, UserSettingsMapper.class })
+@Mapper(componentModel = "spring", uses = { AddressMapper.class,
+        UserSettingsMapper.class })
 public interface UserMapper {
 
-    @org.mapstruct.Mapping(target = "kycStatus", expression = "java(user.getKycStatus().name())")
+    @Mapping(target = "kycStatus", expression = "java(user.getKycStatus().name())")
     UserDto toDto(User user);
 
     @Mapping(target = "password", ignore = true)

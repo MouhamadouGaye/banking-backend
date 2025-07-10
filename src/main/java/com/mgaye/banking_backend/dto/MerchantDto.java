@@ -1,5 +1,7 @@
 package com.mgaye.banking_backend.dto;
 
+import java.time.LocalDateTime;
+
 import com.mgaye.banking_backend.model.Merchant;
 
 import lombok.Builder;
@@ -12,6 +14,8 @@ public record MerchantDto(
         String merchant,
         String location,
         String merchantId,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
         Merchant.MerchantStatus status) {
     public static MerchantDto fromEntity(Merchant merchant) {
         return new MerchantDto(
@@ -21,6 +25,9 @@ public record MerchantDto(
                 merchant.getName(), // or replace with the correct method/field if different
                 merchant.getLocation(),
                 merchant.getMerchantId(),
+                merchant.getCreatedAt(),
+                merchant.getUpdatedAt(),
                 merchant.getStatus());
+
     }
 }
