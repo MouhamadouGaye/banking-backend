@@ -1,10 +1,16 @@
 HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-### STS ###
+# Build output
+target/
+build/
+
+# Ignore specific application config
+src/main/resources/application.yml
+
+# Maven wrapper JAR
+.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse/STS
 .apt_generated
 .classpath
 .factorypath
@@ -13,21 +19,25 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+# IntelliJ IDEA
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
+# VS Code
 .vscode/
+
+# Optional: Don't track nested target or build dirs in src
+# These lines are often not necessary unless you really need to include target/build in some submodules.
+# !**/src/main/**/target/
+# !**/src/test/**/target/
+# !**/src/main/**/build/
+# !**/src/test/**/build/
