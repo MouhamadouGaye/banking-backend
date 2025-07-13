@@ -2,6 +2,7 @@ package com.mgaye.banking_backend.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -85,7 +86,7 @@ public class Transaction {
     @Version
     private Long version;
 
-    @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
+    @Embedded
     private TransactionFee fee;
 
     // No need for extra dependency in newer versions:

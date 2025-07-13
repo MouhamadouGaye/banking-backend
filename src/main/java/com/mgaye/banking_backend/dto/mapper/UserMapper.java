@@ -17,8 +17,9 @@ import com.mgaye.banking_backend.dto.response.UserResponse;
 import com.mgaye.banking_backend.model.User;
 
 // UserMapper.java
-@Mapper(componentModel = "spring", uses = { AddressMapper.class,
-        UserSettingsMapper.class })
+// @Mapper(componentModel = "spring", uses = { AddressMapper.class,
+//         UserSettingsMapper.class })
+@Mapper(componentModel = "spring")
 public interface UserMapper {
 
     @Mapping(target = "kycStatus", expression = "java(user.getKycStatus().name())")

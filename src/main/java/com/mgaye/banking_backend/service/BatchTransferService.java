@@ -263,7 +263,7 @@ public class BatchTransferService {
                         BigDecimal feeAmount = calculateFee(request.amount());
                         TransactionFee fee = TransactionFee.builder()
                                         .amount(feeAmount)
-                                        .transaction(transaction)
+                                        .currency(transaction.getCurrency())
                                         .feeType("TRANSFER_FEE")
                                         .build();
                         transaction.setFee(fee);

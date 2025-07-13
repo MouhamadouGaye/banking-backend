@@ -27,7 +27,7 @@ public class ReportRequest {
     @Id
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
     @Column(nullable = false)

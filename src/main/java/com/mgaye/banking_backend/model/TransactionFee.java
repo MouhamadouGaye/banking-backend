@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToOne;
 @AllArgsConstructor
 @Builder
 public class TransactionFee {
+
     @Column(name = "fee_amount")
     private BigDecimal amount;
 
@@ -29,7 +30,4 @@ public class TransactionFee {
     @Column(name = "fee_description")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "transaction_id")
-    private Transaction transaction;
 }

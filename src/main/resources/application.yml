@@ -23,17 +23,59 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_schema: public
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+
 
   liquibase:
     enabled: false
 
+  # Allow circular references as fallback
+  # main:
+  #   allow-circular-references: true
+
 app:
   jwt:
     secret: itrZjz8EfvXL+w+dxxhKygic2jH8sZ6fdUAJrj/GJNmdl8XfRXY0ZWGPAj6Sg1MGDcGJMKsYw1Dabaw7hv5GHA== # Use a strong secret in production
-    expiration-ms: 86400000 # 24 hours
+    expirationMs: 86400000 # 24 hours
+    jwtRefreshExpirationMs: 604800000
+    public-key: -----BEGIN PUBLIC KEY-----
+                MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwRjuSvI2FwQ8Pg190c1h
+                Nu35a5he2p3ZsH5a5UjNEcBJE02rtFgKeb+Pud//0RYEod2yx4aoHtRV6juh/VkG
+                koOB628YfCZVF2KyXKnc9J1Xr0Edpt8RFqdRgKyARnVRWdRZxch9kQwWRIHCDmiy
+                A103iKJ9AGsbfFCR5qz0LmrduDR6FpnTJnyL4QHL5+ZFMF6P1dZ/Y71ZxHZ19DqY
+                tqncjuPBdY74OypU7kbxA2kTzxkuuTdW18vmeXGs7oWguf7xiKngSORQZxUEM90c
+                ABNHh3lu3EKrLTekyKNxgFiDBgy4YQ7MeDZA4rulvyFjubtFYkc/0b+nnIN9+/+L
+                4wIDAQAB
+                -----END PUBLIC KEY-----
+    private-key: -----BEGIN PRIVATE KEY-----
+                MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDBGO5K8jYXBDw+
+                DX3RzWE27flrmF7andmwflrlSM0RwEkTTau0WAp5v4+53//RFgSh3bLHhqge1FXq
+                O6H9WQaSg4Hrbxh8JlUXYrJcqdz0nVevQR2m3xEWp1GArIBGdVFZ1FnFyH2RDBZE
+                gcIOaLIDXTeIon0Aaxt8UJHmrPQuat24NHoWmdMmfIvhAcvn5kUwXo/V1n9jvVnE
+                dnX0Opi2qdyO48F1jvg7KlTuRvEDaRPPGS65N1bXy+Z5cazuhaC5/vGIqeBI5FBn
+                FQQz3RwAE0eHeW7cQqstN6TIo3GAWIMGDLhhDsx4NkDiu6W/IWO5u0ViRz/Rv6ec
+                g337/4vjAgMBAAECggEABY0N7KGh5G9+u9nvcASTctzMesdakrZO97/qJQU+v+/j
+                KebltL2DL5TOMO27kOstHuocpZe9ZYV9IsqsEXhps/SL25TKA2emspFnxzoq2+1a
+                A/O/QnjPKPOOaECNP3lH6WktW34z/eN3EGkahweDdo1Ld2YUadqqY5x9VUBLlLn4
+                9NKENiFOIXlakSthNAgUAYk1JMald/sZyAU3J2LxL6nYpOkSOhx5kzgSnyZJgrCk
+                ORUeMZmVv7c4ghrWoFy/oGlkOEM49AYidgH9Y1X1YF7twq2id5S5QdysE1kAe+7a
+                MFI3TInEHvYPtrp7GxU63R/u9CVx6cX5VrtGIXFY4QKBgQDh9FDjnQHYKgz+WAvd
+                E+DJqH6xjYmgFUl6ZXXwhye+Wk27J7ukIZr4k6ap47Sth269L1/W4nQbtrroTXLU
+                QPWeSldG3rn7DL0cOO+BL/ILM9bgahWAmnLz8p6JT2r1qL3W9N/tH5nv56SBODxE
+                zVjlbw2ezRfkhr4D0guQ16tA/QKBgQDaxiJ/A/x/OnezPSVwz3/FOxKYcRfYbVss
+                q8Z57iXMayqgwbEzLhUyPmPkwrPfV9AXV0DHb4XmtMX0wHdo0hBIZKVoIQtzMn5f
+                pJLXn/+fbZ8I3eFURkUAzAAdGfUcDgv6/Y2Xykeo1MHCRrwBEllZjj0haI/S+X46
+                QFR654aGXwKBgAPh1Ln0aqGyJ0L/dES6ILSWRob6bZDojLijoaEeUVp95rP+fMTX
+                Jvh6YPSuSt5oY0iw1a61eVU4kIGJQx3Od+neUR2QmhVsJJulhsfrcPcsTtbQO8pX
+                3P2//2VQjf/mhEx7LJXAYz6x9iuaMb7k4FAg1lUSJQTyI7WhGD3G1tRpAoGAPceT
+                +EBc7mTJZrFOwGOoVj8PSkMtk62WALBldQs+W1KsEAeCjcxmqfCabwBYoSqAFgdK
+                wMcKjhLgj/RGBDDF7luVpikmvZo1u7aSzRderVvcfDmEJzNMyyPQqGcrI4gH9BHk
+                CUhTIicqrD0jXD4dQz/6nVOUweQ4tCR0dtyozYsCgYEAjtjcOXyN+WdeSLB8dwKO
+                HP2Z4Tnl3NFJjIMWpRzhpCnog4bF4vY+lS75om6dk+fJpopI2dHo6Md8pAg+j/Ak
+                LJXr+7r3lGv2QLYARm/troEuszuEU2uhk5w3X7kB/7e3djLn+YsUiaZcGpzw1ZpK
+                iPygQhAGnecYky+tyjQR18E=
+                -----END PRIVATE KEY-----
 
-    public-key: -----BEGIN PUBLIC KEY-----\nYOUR_KEY_HERE\n-----END PUBLIC KEY-----
 
 
     # Logging (optional for debugging)
@@ -45,6 +87,9 @@ logging:
         type:
           descriptor:
             sql: TRACE
+
+
+
 #   mail:
 #     host: smtp.example.com
 #     port: 587
