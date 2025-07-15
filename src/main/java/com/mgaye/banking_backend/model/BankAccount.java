@@ -96,6 +96,9 @@ public class BankAccount {
     @Column(name = "daily_transfer_limit", precision = 19, scale = 4)
     private BigDecimal dailyTransferLimit;
 
+    @Column(name = "opening_balance", nullable = false, precision = 19, scale = 4)
+    private BigDecimal openingBalance;
+
     public User getUser() {
         return user;
     }

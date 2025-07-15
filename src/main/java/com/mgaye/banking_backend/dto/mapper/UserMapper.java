@@ -12,7 +12,6 @@ import com.mgaye.banking_backend.dto.request.TransactionRequest;
 import com.mgaye.banking_backend.model.Address;
 import com.mgaye.banking_backend.model.Transaction;
 import com.mgaye.banking_backend.dto.UserDto;
-import com.mgaye.banking_backend.dto.request.RegisterRequest;
 import com.mgaye.banking_backend.dto.response.UserResponse;
 import com.mgaye.banking_backend.model.User;
 

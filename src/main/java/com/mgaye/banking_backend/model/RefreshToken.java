@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.UUID;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "refresh_tokens")
@@ -13,9 +16,12 @@ import java.time.Instant;
 @AllArgsConstructor
 @Builder
 public class RefreshToken {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    private UUID id;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

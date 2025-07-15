@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +18,6 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 // model/AccountStatement.java
-
 @Entity
 @Table(name = "account_statements")
 public class AccountStatement {
@@ -28,7 +28,7 @@ public class AccountStatement {
     @Column(name = "account_id", nullable = false)
     private String accountId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private Instant generatedAt;
 
     @Column(nullable = false)
@@ -41,26 +41,26 @@ public class AccountStatement {
     @Column(nullable = false)
     private byte[] pdfContent;
 
-    @Column(length = 50)
+    @Column(length = 50, unique = true)
     private String statementNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatementStatus status = StatementStatus.GENERATED;
 
-    // Additional fields for statement details
-    private String accountNumber;
-    private String accountHolderName;
-    private LocalDate from;
-    private LocalDate to;
-    private List<com.mgaye.banking_backend.dto.StatementItem> items;
-    private BigDecimal balance;
+    // Reference to financial data (optional)
+    @Column(name = "bank_statement_id")
+    private UUID bankStatementId;
 
     // Constructors
     public AccountStatement() {
     }
 
-    public AccountStatement(String accountId, Instant periodStart, Instant periodEnd, byte[] pdfContent) {
+    public AccountStatement(
+            String accountId,
+            Instant periodStart,
+            Instant periodEnd,
+            byte[] pdfContent) {
         this.accountId = accountId;
         this.generatedAt = Instant.now();
         this.periodStart = periodStart;
@@ -77,7 +77,7 @@ public class AccountStatement {
         return accountId;
     }
 
-    public void setAccountId(String accountNumber) {
+    public void setAccountId(String accountId) {
         this.accountId = accountId;
     }
 
@@ -125,7 +125,15 @@ public class AccountStatement {
         this.status = status;
     }
 
-    // Enum for statement status
+    public UUID getBankStatementId() {
+        return bankStatementId;
+    }
+
+    public void setBankStatementId(UUID bankStatementId) {
+        this.bankStatementId = bankStatementId;
+    }
+
+    // Enum remains unchanged
     public enum StatementStatus {
         GENERATED,
         DELIVERED,
@@ -133,22 +141,12 @@ public class AccountStatement {
         ARCHIVED
     }
 
-    public AccountStatement(String accountNumber, String accountHolderName, LocalDate from, LocalDate to,
-            List<com.mgaye.banking_backend.dto.StatementItem> items, BigDecimal balance) {
-        this.accountNumber = accountNumber;
-        this.accountHolderName = accountHolderName;
-        this.from = from;
-        this.to = to;
-        this.items = items;
-        this.balance = balance;
-    }
-
     // equals and hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof AccountStatement))
             return false;
         AccountStatement that = (AccountStatement) o;
         return Objects.equals(id, that.id);
@@ -159,7 +157,7 @@ public class AccountStatement {
         return Objects.hash(id);
     }
 
-    // toString
+    // Updated toString
     @Override
     public String toString() {
         return "AccountStatement{" +
@@ -170,7 +168,7 @@ public class AccountStatement {
                 ", periodEnd=" + periodEnd +
                 ", statementNumber='" + statementNumber + '\'' +
                 ", status=" + status +
+                ", bankStatementId=" + bankStatementId +
                 '}';
     }
-
 }

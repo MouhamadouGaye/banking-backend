@@ -3,6 +3,7 @@ package com.mgaye.banking_backend.service.impl;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mgaye.banking_backend.dto.AccountStatementData;
 import com.mgaye.banking_backend.dto.ReportDownload;
 import com.mgaye.banking_backend.dto.StatementData;
 import com.mgaye.banking_backend.dto.StatementItem;
@@ -35,6 +37,7 @@ import com.mgaye.banking_backend.repository.AccountRepository;
 import com.mgaye.banking_backend.repository.ReportRequestRepository;
 import com.mgaye.banking_backend.repository.TransactionRepository;
 import com.mgaye.banking_backend.repository.UserRepository;
+import com.mgaye.banking_backend.service.PdfGenerationService;
 import com.mgaye.banking_backend.service.ReportService;
 import com.mgaye.banking_backend.service.StorageService;
 import com.mgaye.banking_backend.util.PdfGenerator;
@@ -58,6 +61,7 @@ public class ReportServiceImpl implements ReportService {
         private final UserRepository userRepo;
         private final StorageService storageService;
         private final TaskExecutor taskExecutor;
+        private final PdfGenerationService pdfGenerationService;
 
         @Override
         @Transactional
@@ -384,15 +388,50 @@ public class ReportServiceImpl implements ReportService {
                                 .toList();
         }
 
+        // @Override
+        // @Transactional(readOnly = true)
+        // public AccountStatement generateStatement(String accountId, LocalDate from,
+        // LocalDate to) {
+        // BankAccount account = accountRepo.findById(accountId)
+        // .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+
+        // List<Transaction> transactions =
+        // txRepo.findByAccountIdAndDateBetweenAndStatus(
+        // accountId, from, to, TransactionStatus.COMPLETED);
+
+        // List<StatementItem> items = transactions.stream()
+        // .map(tx -> new StatementItem(
+        // tx.getId(),
+        // tx.getDate(),
+        // tx.getReferenceNumber(),
+        // tx.getAmount(),
+        // tx.getDescription(),
+        // tx.getType(),
+        // tx.getStatus(),
+        // tx.getDirection()))
+        // .toList();
+
+        // return new AccountStatement(
+        // account.getAccountNumber(),
+        // account.getUser().getFullName(),
+        // from,
+        // to,
+        // items,
+        // account.getBalance());
+        // }
+
         @Override
         @Transactional(readOnly = true)
         public AccountStatement generateStatement(String accountId, LocalDate from, LocalDate to) {
+                // 1. Get account data
                 BankAccount account = accountRepo.findById(accountId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
 
+                // 2. Get transactions
                 List<Transaction> transactions = txRepo.findByAccountIdAndDateBetweenAndStatus(
                                 accountId, from, to, TransactionStatus.COMPLETED);
 
+                // 3. Convert to DTO items
                 List<StatementItem> items = transactions.stream()
                                 .map(tx -> new StatementItem(
                                                 tx.getId(),
@@ -405,13 +444,28 @@ public class ReportServiceImpl implements ReportService {
                                                 tx.getDirection()))
                                 .toList();
 
-                return new AccountStatement(
+                // 4. Create financial data DTO
+                AccountStatementData data = new AccountStatementData(
                                 account.getAccountNumber(),
                                 account.getUser().getFullName(),
                                 from,
                                 to,
                                 items,
                                 account.getBalance());
+
+                // 5. Generate PDF content (implement this)
+                byte[] pdfContent = pdfGenerationService.generatePdf(data);
+
+                // 6. Convert LocalDate to Instant
+                Instant startInstant = from.atStartOfDay(ZoneId.systemDefault()).toInstant();
+                Instant endInstant = to.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant();
+
+                // 7. Create and return AccountStatement entity
+                return new AccountStatement(
+                                accountId,
+                                startInstant,
+                                endInstant,
+                                pdfContent);
         }
 
 }

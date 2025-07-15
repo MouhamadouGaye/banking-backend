@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
@@ -25,95 +26,100 @@ import jakarta.persistence.LockModeType;
 // repository/TransactionRepository.java
 @Repository
 public interface TransactionRepository
-                extends JpaRepository<Transaction, String> {
+        extends JpaRepository<Transaction, String> {
 
-        @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId ORDER BY t.timestamp DESC")
-        Page<Transaction> findByAccountId(@Param("accountId") String accountId, Pageable pageable);
+    @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId ORDER BY t.timestamp DESC")
+    Page<Transaction> findByAccountId(@Param("accountId") String accountId, Pageable pageable);
 
-        @Query("""
-                        SELECT new com.mgaye.banking_backend.dto.TransactionSummaryDto(
-                            DATE(t.timestamp),
-                            COUNT(t),
-                            SUM(t.amount))
-                        FROM Transaction t
-                        WHERE t.account.id = :accountId
-                        AND t.timestamp BETWEEN :start AND :end
-                        GROUP BY DATE(t.timestamp)
-                        """)
-        List<TransactionSummaryDto> getDailySummary(
-                        @Param("accountId") String accountId,
-                        @Param("start") Instant start,
-                        @Param("end") Instant end);
+    @Query("""
+            SELECT new com.mgaye.banking_backend.dto.TransactionSummaryDto(
+                DATE(t.timestamp),
+                COUNT(t),
+                SUM(t.amount))
+            FROM Transaction t
+            WHERE t.account.id = :accountId
+            AND t.timestamp BETWEEN :start AND :end
+            GROUP BY DATE(t.timestamp)
+            """)
+    List<TransactionSummaryDto> getDailySummary(
+            @Param("accountId") String accountId,
+            @Param("start") Instant start,
+            @Param("end") Instant end);
 
-        @Lock(LockModeType.PESSIMISTIC_WRITE)
-        @Query("SELECT t FROM Transaction t WHERE t.id = :id")
-        Optional<Transaction> findByIdForUpdate(@Param("id") String id);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT t FROM Transaction t WHERE t.id = :id")
+    Optional<Transaction> findByIdForUpdate(@Param("id") String id);
 
-        @Modifying
-        @Query("UPDATE Transaction t SET t.status = 'FAILED' WHERE t.id IN :ids AND t.status = 'PENDING'")
-        void markFailedTransactions(@Param("ids") List<String> transactionIds);
+    @Modifying
+    @Query("UPDATE Transaction t SET t.status = 'FAILED' WHERE t.id IN :ids AND t.status = 'PENDING'")
+    void markFailedTransactions(@Param("ids") List<String> transactionIds);
 
-        Optional<Transaction> findByIdAndUserId(String id, String userId);
+    Optional<Transaction> findByIdAndUserId(String id, String userId);
 
-        @Lock(LockModeType.PESSIMISTIC_READ)
-        @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId " +
-                        "AND t.timestamp BETWEEN :start AND :end " +
-                        "ORDER BY t.timestamp DESC")
-        List<Transaction> findByAccountIdAndTimestampBetween(
-                        @Param("accountId") String accountId,
-                        @Param("start") Instant start,
-                        @Param("end") Instant end);
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId " +
+            "AND t.timestamp BETWEEN :start AND :end " +
+            "ORDER BY t.timestamp DESC")
+    List<Transaction> findByAccountIdAndTimestampBetween(
+            @Param("accountId") String accountId,
+            @Param("start") Instant start,
+            @Param("end") Instant end);
 
-        // Alternative version that uses BankAccount entity
-        @Lock(LockModeType.PESSIMISTIC_READ)
-        List<Transaction> findByAccountAndTimestampBetweenOrderByTimestampDesc(
-                        BankAccount account,
-                        Instant start,
-                        Instant end);
+    // Alternative version that uses BankAccount entity
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    List<Transaction> findByAccountAndTimestampBetweenOrderByTimestampDesc(
+            BankAccount account,
+            Instant start,
+            Instant end);
 
-        @Lock(LockModeType.PESSIMISTIC_READ)
-        @Query("SELECT t FROM Transaction t WHERE t.account = :account " +
-                        "AND t.timestamp BETWEEN :start AND :end " +
-                        "ORDER BY t.timestamp DESC")
-        List<Transaction> findByAccountAndTimestampBetweenWithLock(
-                        @Param("account") BankAccount account,
-                        @Param("start") Instant start,
-                        @Param("end") Instant end);
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    @Query("SELECT t FROM Transaction t WHERE t.account = :account " +
+            "AND t.timestamp BETWEEN :start AND :end " +
+            "ORDER BY t.timestamp DESC")
+    List<Transaction> findByAccountAndTimestampBetweenWithLock(
+            @Param("account") BankAccount account,
+            @Param("start") Instant start,
+            @Param("end") Instant end);
 
-        @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId " +
-                        "AND t.date BETWEEN :start AND :end " +
-                        "AND t.status = :status")
-        List<Transaction> findByAccountIdAndDateBetweenAndStatus(
-                        @Param("accountId") String accountId,
-                        @Param("start") LocalDate start,
-                        @Param("end") LocalDate end,
-                        @Param("status") TransactionStatus status);
+    @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId " +
+            "AND t.date BETWEEN :start AND :end " +
+            "AND t.status = :status")
+    List<Transaction> findByAccountIdAndDateBetweenAndStatus(
+            @Param("accountId") String accountId,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end,
+            @Param("status") TransactionStatus status);
 
-        @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId " +
-                        "AND t.date BETWEEN :start AND :end " +
-                        "AND t.status = :status " +
-                        "AND t.type = :type")
-        List<Transaction> findByAccountIdAndDateBetweenAndStatusAndType(
-                        @Param("accountId") String accountId,
-                        @Param("start") LocalDate start,
-                        @Param("end") LocalDate end,
-                        @Param("status") TransactionStatus status,
-                        @Param("type") String type);
+    @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId " +
+            "AND t.date BETWEEN :start AND :end " +
+            "AND t.status = :status " +
+            "AND t.type = :type")
+    List<Transaction> findByAccountIdAndDateBetweenAndStatusAndType(
+            @Param("accountId") String accountId,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end,
+            @Param("status") TransactionStatus status,
+            @Param("type") String type);
 
-        @Query("SELECT t FROM Transaction t WHERE t.user.id = :userId " +
-                        "AND t.date BETWEEN :start AND :end " +
-                        "AND t.status = :status " +
-                        "AND t.type = :type")
-        List<Transaction> findByUserIdAndDateBetweenAndStatusAndType(
-                        @Param("userId") String userId,
-                        @Param("start") LocalDate start,
-                        @Param("end") LocalDate end,
-                        @Param("status") TransactionStatus status,
-                        @Param("type") String type);
+    @Query("SELECT t FROM Transaction t WHERE t.user.id = :userId " +
+            "AND t.date BETWEEN :start AND :end " +
+            "AND t.status = :status " +
+            "AND t.type = :type")
+    List<Transaction> findByUserIdAndDateBetweenAndStatusAndType(
+            @Param("userId") String userId,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end,
+            @Param("status") TransactionStatus status,
+            @Param("type") String type);
 
-        List<Transaction> findByAccountAndTimestampBetween(BankAccount account, Instant startInstant,
-                        Instant endInstant);
+    List<Transaction> findByAccountAndTimestampBetween(BankAccount account, Instant startInstant,
+            Instant endInstant);
 
-        long countByAccountAndTimestampAfter(BankAccount account, Instant timestamp);
+    long countByAccountAndTimestampAfter(BankAccount account, Instant timestamp);
+
+    List<Transaction> findByAccountIdAndDateBeforeAndStatus(
+            UUID accountId,
+            LocalDate startDate,
+            TransactionStatus status);
 
 }

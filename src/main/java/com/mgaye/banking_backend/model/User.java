@@ -61,7 +61,7 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @Column(name = "bank_account")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BankAccount> accounts;
 
     @Column(nullable = false)
