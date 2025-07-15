@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 @Configuration
 public class JwtConfig {
 
-    @Value("${jwt.public-key}")
+    @Value("${app.jwt.public-key}")
     private String publicKeyPem;
 
     @Bean

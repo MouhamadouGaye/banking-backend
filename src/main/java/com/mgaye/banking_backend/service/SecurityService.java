@@ -1,5 +1,7 @@
 package com.mgaye.banking_backend.service;
 
+import java.util.UUID;
+
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.mgaye.banking_backend.dto.request.SecurityUpdateRequest;
@@ -7,17 +9,17 @@ import com.mgaye.banking_backend.dto.response.CurrentUser;
 import com.mgaye.banking_backend.model.User;
 
 public interface SecurityService {
-    void updatePassword(String userId, String currentPassword, String newPassword);
+    void updatePassword(UUID userId, String currentPassword, String newPassword);
 
-    void enableTwoFactorAuth(String userId);
+    void enableTwoFactorAuth(UUID userId);
 
-    void disableTwoFactorAuth(String userId);
+    void disableTwoFactorAuth(UUID userId);
 
-    void updateSecurityQuestions(String userId, SecurityUpdateRequest request);
+    void updateSecurityQuestions(UUID userId, SecurityUpdateRequest request);
 
-    CurrentUser getCurrentUserDetails(String userId);
+    CurrentUser getCurrentUserDetails(UUID userId);
 
-    void logSecurityEvent(String userId, String eventType, String description);
+    void logSecurityEvent(UUID userId, String eventType, String description);
 
-    User getUserById(String userId);
+    User getUserById(UUID userId);
 }

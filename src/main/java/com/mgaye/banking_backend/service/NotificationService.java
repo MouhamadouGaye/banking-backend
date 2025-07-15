@@ -17,11 +17,11 @@ public interface NotificationService {
 
     boolean shouldSendNotification(NotificationEvent event, UserSettings settings);
 
-    void updateNotificationPreferences(String userId, NotificationPreferencesDto preferencesDto);
+    void updateNotificationPreferences(UUID userId, NotificationPreferencesDto preferencesDto);
 
-    NotificationPreferencesDto getPreferences(String userId);
+    NotificationPreferencesDto getPreferences(UUID userId);
 
-    void updateSinglePreference(String userId, String preferenceType, boolean enabled);
+    void updateSinglePreference(UUID userId, String preferenceType, boolean enabled);
 
     void sendEmailNotification(User user, NotificationEvent event);
 
@@ -35,6 +35,6 @@ public interface NotificationService {
         return context;
     }
 
-    void sendLoanApplicationConfirmation(String userId, UUID loanId);
+    void sendLoanApplicationConfirmation(UUID userId, UUID loanId);
 
 }

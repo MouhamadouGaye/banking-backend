@@ -91,7 +91,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public NotificationPreferencesDto getPreferences(String userId) {
+    public NotificationPreferencesDto getPreferences(UUID userId) {
         return preferencesRepository.findByUserId(userId)
                 .map(preferencesMapper::toDto)
                 .orElseGet(preferencesMapper::toDefaultDto);
@@ -99,7 +99,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public void updateNotificationPreferences(String userId, NotificationPreferencesDto preferencesDto) {
+    public void updateNotificationPreferences(UUID userId, NotificationPreferencesDto preferencesDto) {
         NotificationPreferences preferences = preferencesRepository.findByUserId(userId)
                 .orElseGet(() -> createDefaultPreferences(userId));
 
@@ -109,7 +109,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public void updateSinglePreference(String userId, String preferenceType, boolean enabled) {
+    public void updateSinglePreference(UUID userId, String preferenceType, boolean enabled) {
         switch (preferenceType.toLowerCase()) {
             case "transaction_emails" ->
                 preferencesRepository.updateTransactionEmailsPreference(userId, enabled);
@@ -125,7 +125,7 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    private NotificationPreferences createDefaultPreferences(String userId) {
+    private NotificationPreferences createDefaultPreferences(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -212,9 +212,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional(readOnly = true)
-    public void sendLoanApplicationConfirmation(String userId, UUID loanId) {
+    public void sendLoanApplicationConfirmation(UUID userId, UUID loanId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+                .orElseThrow(() -> new UserNotFoundException("USER NOT FOUND"));
 
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new LoanNotFoundException(loanId));

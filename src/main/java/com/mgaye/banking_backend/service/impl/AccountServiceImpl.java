@@ -45,34 +45,26 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Transactional(readOnly = true)
-    public boolean hasAccountType(String userId, BankAccount.AccountType type) {
+    public boolean hasAccountType(UUID userId, BankAccount.AccountType type) {
         return accountRepository.existsByUserAndAccountType(userId, type);
     }
 
     @Transactional(readOnly = true)
-    public BigDecimal getBalance(UUID accountId, String userId) {
-        BankAccount account = accountRepository.findByIdAndUserId(accountId, userId);
-        return account != null ? account.getBalance() : null;
-    }
-
-    // @Override
-    // @Transactional(readOnly = true)
-    // public BigDecimal getAccountBalance(UUID accountId, String userId) {
-    // return accountRepository.findByIdAndUserId(accountId, userId)
-    // .map(BankAccount::getBalance)
-    // .orElse(null);
-    // }
-
-    @Override
-    @Transactional(readOnly = true)
-    public BigDecimal getAccountBalance(UUID accountId, String userId) {
+    public BigDecimal getBalance(UUID accountId, UUID userId) {
         BankAccount account = accountRepository.findByIdAndUserId(accountId, userId);
         return account != null ? account.getBalance() : null;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public AccountResponse getAccountDetails(UUID accountId, String userId) {
+    public BigDecimal getAccountBalance(UUID accountId, UUID userId) {
+        BankAccount account = accountRepository.findByIdAndUserId(accountId, userId);
+        return account != null ? account.getBalance() : null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AccountResponse getAccountDetails(UUID accountId, UUID userId) {
         BankAccount account = accountRepository.findByIdAndUserId(accountId, userId);
         if (account == null) {
             throw new AccountNotFoundException("Account not found: " + accountId);
@@ -96,7 +88,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public void validateAccountOwnership(UUID accountId, String userId) {
+    public void validateAccountOwnership(UUID accountId, UUID userId) {
         if (!accountRepository.existsByIdAndUserId(accountId, userId)) {
             throw new AccountOwnershipException(accountId, userId);
         }
@@ -116,7 +108,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Transactional
-    public BankAccount createAccount(String userId, AccountCreateRequest request) {
+    public BankAccount createAccount(UUID userId, AccountCreateRequest request) {
         validateAccountCreation(userId, request);
 
         BankAccount account = buildNewAccount(userId, request);
@@ -164,7 +156,7 @@ public class AccountServiceImpl implements AccountService {
                 account.getFeatures());
     }
 
-    public void validateAccountCreation(String userId, AccountCreateRequest request) {
+    public void validateAccountCreation(UUID userId, AccountCreateRequest request) {
         if (request.initialDeposit().compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidAccountRequestException("Initial deposit cannot be negative");
         }
@@ -175,9 +167,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public BankAccount buildNewAccount(String userId, AccountCreateRequest request) {
+    public BankAccount buildNewAccount(UUID userId, AccountCreateRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+                .orElseThrow(() -> new UserNotFoundException("USER NOT FOUND" + userId));
 
         return BankAccount.builder()
                 .user(user)

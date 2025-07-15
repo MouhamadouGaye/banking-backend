@@ -152,7 +152,7 @@ public class AdminServiceImpl implements AdminService {
     private String resolveUserEmail(FraudReviewRequest request) {
         try {
             if (request.userId() != null) {
-                return userRepository.findById(request.userId().toString()) // Remove toString() conversion
+                return userRepository.findById(request.userId()) // Remove toString() conversion
                         .map(User::getEmail)
                         .orElse("unknown@example.com");
             }

@@ -9,12 +9,13 @@ import java.time.LocalDate;
 import java.util.Collection;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class UserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
 
-    private String id;
+    private UUID id;
     private String firstName;
     private String lastName;
     private String email;
@@ -27,7 +28,7 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(String id, String firstName, String lastName, String email,
+    public UserDetailsImpl(UUID id, String firstName, String lastName, String email,
             String phone, LocalDate dob, User.KycStatus kycStatus,
             String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
@@ -58,7 +59,7 @@ public class UserDetailsImpl implements UserDetails {
                 authorities);
     }
 
-    public String getUserId() {
+    public UUID getUserId() {
         return this.id; // Assuming your ID field is named 'id'
     }
 
@@ -67,7 +68,7 @@ public class UserDetailsImpl implements UserDetails {
         return authorities;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 

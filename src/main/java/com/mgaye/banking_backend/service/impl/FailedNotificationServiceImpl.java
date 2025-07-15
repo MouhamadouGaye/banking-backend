@@ -24,7 +24,7 @@ public class FailedNotificationServiceImpl implements FailedNotificationService 
         NotificationEvent event = exception.getFailedEvent();
 
         FailedNotification failed = FailedNotification.builder()
-                .userId(event.getUserId())
+                .userId(event.getUserId().toString())
                 .eventType(event.getType().name())
                 .channel(event.getChannel().name())
                 .errorMessage(exception.getMessage())

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
@@ -40,7 +41,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     @Transactional
-    public void updatePassword(String userId, String currentPassword, String newPassword) {
+    public void updatePassword(UUID userId, String currentPassword, String newPassword) {
         User user = getUserById(userId);
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
@@ -71,7 +72,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     @Transactional
-    public void enableTwoFactorAuth(String userId) {
+    public void enableTwoFactorAuth(UUID userId) {
         User user = getUserById(userId);
         SecuritySettings settings = user.getSecuritySettings();
         if (settings == null) {
@@ -86,7 +87,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     @Transactional
-    public void disableTwoFactorAuth(String userId) {
+    public void disableTwoFactorAuth(UUID userId) {
         User user = getUserById(userId);
         SecuritySettings settings = user.getSecuritySettings();
         if (settings == null) {
@@ -101,7 +102,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     @Transactional
-    public void updateSecurityQuestions(String userId, SecurityUpdateRequest request) {
+    public void updateSecurityQuestions(UUID userId, SecurityUpdateRequest request) {
         User user = getUserById(userId);
 
         // Verify current password if required
@@ -115,7 +116,7 @@ public class SecurityServiceImpl implements SecurityService {
 
         List<SecurityQuestion> questions = request.getQuestions().stream()
                 .map(q -> SecurityQuestion.builder()
-                        .userId(userId)
+                        .userId(userId.toString())
                         .question(q.getQuestion())
                         .answer(q.getAnswer())
                         .build())
@@ -126,18 +127,18 @@ public class SecurityServiceImpl implements SecurityService {
         logSecurityEvent(userId, "SECURITY_QUESTIONS_UPDATED", "Security questions updated");
     }
 
-    public User getUserById(String userId) {
+    public User getUserById(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
     }
 
     @Override
-    public void logSecurityEvent(String userId, String eventType, String description) {
+    public void logSecurityEvent(UUID userId, String eventType, String description) {
         auditService.logSecurityEvent(userId, eventType, description);
     }
 
     @Override
-    public CurrentUser getCurrentUserDetails(String userId) {
+    public CurrentUser getCurrentUserDetails(UUID userId) {
         // Verify authentication
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {

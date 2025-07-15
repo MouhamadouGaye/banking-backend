@@ -2,6 +2,7 @@ package com.mgaye.banking_backend.service.impl;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,13 +18,19 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mgaye.banking_backend.dto.ReportDownload;
 import com.mgaye.banking_backend.dto.TicketSearchCriteria;
 import com.mgaye.banking_backend.dto.request.AddMessageRequest;
 import com.mgaye.banking_backend.dto.request.CreateTicketRequest;
+import com.mgaye.banking_backend.dto.request.StatementRequest;
+import com.mgaye.banking_backend.dto.request.TransactionHistoryRequest;
+import com.mgaye.banking_backend.dto.response.ReportHistoryResponse;
+import com.mgaye.banking_backend.dto.response.ReportStatusResponse;
 import com.mgaye.banking_backend.dto.response.SupportTicketResponse;
 import com.mgaye.banking_backend.exception.AuthorizationException;
 import com.mgaye.banking_backend.exception.FileStorageException;
 import com.mgaye.banking_backend.exception.ResourceNotFoundException;
+import com.mgaye.banking_backend.model.AccountStatement;
 import com.mgaye.banking_backend.model.SupportTicket;
 import com.mgaye.banking_backend.model.TicketMessage;
 import com.mgaye.banking_backend.model.User;
@@ -51,7 +58,7 @@ public class SupportServiceImpl implements SupportService {
         @Override
         public SupportTicketResponse.TicketMessageResponse addMessage(
                         UUID ticketId,
-                        String userId,
+                        UUID userId,
                         AddMessageRequest request) {
 
                 SupportTicket ticket = ticketRepository.findByIdAndUserId(ticketId, userId)
@@ -115,7 +122,7 @@ public class SupportServiceImpl implements SupportService {
         }
 
         @Override
-        public SupportTicketResponse createTicket(String userId, CreateTicketRequest request) {
+        public SupportTicketResponse createTicket(UUID userId, CreateTicketRequest request) {
                 User user = userRepository.findById(userId)
                                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -135,14 +142,14 @@ public class SupportServiceImpl implements SupportService {
         }
 
         @Override
-        public SupportTicketResponse getTicket(UUID ticketId, String userId) {
+        public SupportTicketResponse getTicket(UUID ticketId, UUID userId) {
                 SupportTicket ticket = ticketRepository.findByIdAndUserId(ticketId, userId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
                 return mapToTicketResponse(ticket);
         }
 
         @Override
-        public Page<SupportTicketResponse> searchTickets(TicketSearchCriteria criteria, String userId) {
+        public Page<SupportTicketResponse> searchTickets(TicketSearchCriteria criteria, UUID userId) {
                 Specification<SupportTicket> spec = specificationBuilder.build(criteria, userId);
                 Pageable pageable = PageRequest.of(criteria.page(), criteria.size(),
                                 Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -181,7 +188,7 @@ public class SupportServiceImpl implements SupportService {
                 SupportTicket ticket = ticketRepository.findById(ticketId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
 
-                User assignee = userRepository.findById(assigneeId.toString())
+                User assignee = userRepository.findById(assigneeId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Assignee not found"));
 
                 if (!hasSupportRole(assigneeId)) {
@@ -266,7 +273,7 @@ public class SupportServiceImpl implements SupportService {
                                 .build();
         }
 
-        private boolean hasSupportRole(String userId) {
+        private boolean hasSupportRole(UUID userId) {
                 User user = userRepository.findById(userId)
                                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
                 return user.getRoles().stream()
@@ -274,7 +281,4 @@ public class SupportServiceImpl implements SupportService {
                                                 || role.getName().equals("ADMIN"));
         }
 
-        private boolean hasSupportRole(UUID userId) {
-                return hasSupportRole(userId.toString());
-        }
 }

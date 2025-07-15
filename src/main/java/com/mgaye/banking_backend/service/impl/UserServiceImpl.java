@@ -3,6 +3,7 @@ package com.mgaye.banking_backend.service.impl;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getUserDtoById(String userId) {
+    public UserResponse getUserDtoById(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return userMapper.toUserResponse(user);
@@ -63,13 +64,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
 
-    public UserResponse getCurrentUser(String userId) {
+    public UserResponse getCurrentUser(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return userMapper.toUserResponse(user);
     }
 
-    public Optional<User> findById(String userId) {
+    public Optional<User> findById(UUID userId) {
         return userRepository.findById(userId);
     }
 

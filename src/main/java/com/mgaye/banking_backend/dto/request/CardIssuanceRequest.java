@@ -1,6 +1,7 @@
 package com.mgaye.banking_backend.dto.request;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +10,7 @@ import jakarta.validation.constraints.Pattern;
 
 // dto/request/CardIssuanceRequest.java
 public record CardIssuanceRequest(
-        @NotBlank String userId,
+        @NotBlank UUID userId,
         @NotBlank String accountId,
         @NotBlank String username,
 

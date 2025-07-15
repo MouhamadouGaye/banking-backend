@@ -57,7 +57,7 @@ public interface SupportTicketRepository
 
         // ------This-implementation-above-is-not-taken-into-account-for-this-moment--------//
 
-        Optional<SupportTicket> findByIdAndUserId(UUID ticketId, String userId);
+        Optional<SupportTicket> findByIdAndUserId(UUID ticketId, UUID userId);
 
         @Query("SELECT t FROM SupportTicket t WHERE t.user.id = :userId ORDER BY t.createdAt DESC")
         List<SupportTicket> findByUserId(@Param("userId") String userId);

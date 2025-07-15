@@ -32,7 +32,7 @@ public record ReportHistoryResponse(
         String status,
         Instant requestedAt,
         Instant completedAt,
-        String accountId,
+        UUID accountId,
         String period,
         LocalDate startDate,
         LocalDate endDate) {
@@ -40,7 +40,7 @@ public record ReportHistoryResponse(
     // Helper method for converting from status response
     public static ReportHistoryResponse fromStatusResponse(
             ReportStatusResponse status,
-            String accountId,
+            UUID accountId,
             String period,
             LocalDate startDate,
             LocalDate endDate) {

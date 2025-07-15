@@ -28,10 +28,10 @@ public class ReportRequest {
     private UUID id;
 
     @Column(name = "user_id", nullable = false)
-    private String userId;
+    private UUID userId;
 
     @Column(nullable = false)
-    private String accountId;
+    private UUID accountId;
 
     @Column(nullable = false)
     private String reportType;
@@ -58,7 +58,7 @@ public class ReportRequest {
     private String downloadUrl;
     private String errorMessage;
 
-    public ReportRequest(UUID id, String userId, String accountId, String reportType, String period,
+    public ReportRequest(UUID id, UUID userId, UUID accountId, String reportType, String period,
             LocalDate startDate, LocalDate endDate, String format, String timezone, Instant requestedAt, String status,
             Instant completedAt, String storageKey, String downloadUrl) {
         this.id = id;

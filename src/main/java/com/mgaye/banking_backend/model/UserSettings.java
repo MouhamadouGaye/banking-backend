@@ -27,7 +27,7 @@ public class UserSettings {
     private String id;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "UUID")
     private User user;
 
     @Column(nullable = false, length = 5)

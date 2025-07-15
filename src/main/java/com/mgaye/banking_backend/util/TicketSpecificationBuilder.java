@@ -3,6 +3,7 @@ package com.mgaye.banking_backend.util;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class TicketSpecificationBuilder {
     private final UserRepository userRepository;
 
-    public Specification<SupportTicket> build(TicketSearchCriteria criteria, String userId) {
+    public Specification<SupportTicket> build(TicketSearchCriteria criteria, UUID userId) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -62,7 +63,7 @@ public class TicketSpecificationBuilder {
         };
     }
 
-    private boolean hasSupportRole(String userId) {
+    private boolean hasSupportRole(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return user.getRoles().stream()

@@ -209,4 +209,11 @@ CREATE TABLE beneficiaries (
 CREATE INDEX idx_account_beneficiaries_account ON account_beneficiaries(account_id);
 CREATE INDEX idx_beneficiaries_user ON beneficiaries(user_id);
 CREATE INDEX idx_beneficiaries_account ON beneficiaries(account_number);
--- -------------------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------------------- this one is for changing the data type of a column
+ALTER TABLE report_requests
+ALTER COLUMN account_id
+SET DATA TYPE uuid;
+--------------------------------------- If getting this error: [ERROR: column "account_id" cannot be cast automatically to type uuid
+ALTER TABLE report_requests
+ALTER COLUMN account_id
+SET DATA TYPE uuid USING account_id::uuid;

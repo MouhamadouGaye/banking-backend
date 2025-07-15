@@ -34,7 +34,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return refreshTokenRepository.findByToken(token);
     }
 
-    public RefreshToken createRefreshToken(String userId) {
+    public RefreshToken createRefreshToken(UUID userId) {
         RefreshToken refreshToken = new RefreshToken();
 
         User user = userRepository.findById(userId).orElseThrow(
@@ -58,7 +58,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Transactional
-    public void deleteByUserId(String userId) {
+    public void deleteByUserId(UUID userId) {
         refreshTokenRepository.deleteByUser(userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User not found with id: " + userId)));
     }

@@ -14,6 +14,8 @@ import com.mgaye.banking_backend.service.SettingsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 import org.springdoc.core.SecurityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,14 +36,14 @@ public class SettingsController {
     @GetMapping("/user")
     @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<UserSettingsDto> getUserSettings(
-            @RequestParam String userId) {
+            @RequestParam UUID userId) {
         return ResponseEntity.ok(settingsService.getUserSettings(userId));
     }
 
     @PutMapping("/user")
     @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<UserSettingsDto> updateUserSettings(
-            @RequestParam String userId,
+            @RequestParam UUID userId,
             @Valid @RequestBody UserSettingsDto userSettingsDto) {
         return ResponseEntity.ok(settingsService.updateUserSettings(userId, userSettingsDto));
     }
@@ -49,14 +51,14 @@ public class SettingsController {
     @GetMapping("/security")
     @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<SecuritySettingsDto> getSecuritySettings(
-            @RequestParam String userId) {
+            @RequestParam UUID userId) {
         return ResponseEntity.ok(settingsService.getSecuritySettings(userId));
     }
 
     @PutMapping("/security")
     @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<SecuritySettingsDto> updateSecuritySettings(
-            @RequestParam String userId,
+            @RequestParam UUID userId,
             @Valid @RequestBody UpdateSecuritySettingsRequest request) {
         return ResponseEntity.ok(settingsService.updateSecuritySettings(userId, request));
     }
@@ -64,7 +66,7 @@ public class SettingsController {
     @PutMapping("/notifications")
     @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<Void> updateNotificationPreferences(
-            @RequestParam String userId,
+            @RequestParam UUID userId,
             @Valid @RequestBody NotificationPreferencesDto preferences) {
         notificationService.updateNotificationPreferences(userId, preferences);
         return ResponseEntity.noContent().build();

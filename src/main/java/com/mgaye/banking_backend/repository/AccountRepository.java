@@ -17,9 +17,9 @@ import com.mgaye.banking_backend.model.BankAccount;
 import jakarta.persistence.LockModeType;
 
 // repository/AccountRepository.java
-public interface AccountRepository extends JpaRepository<BankAccount, String> {
+public interface AccountRepository extends JpaRepository<BankAccount, UUID> {
 
-    List<BankAccount> findByUserId(String userId);
+    List<BankAccount> findByUserId(UUID userId);
 
     @EntityGraph(attributePaths = { "user" })
     Optional<BankAccount> findByAccountNumber(String accountNumber);
@@ -34,10 +34,10 @@ public interface AccountRepository extends JpaRepository<BankAccount, String> {
     @Modifying
     @Query("UPDATE BankAccount a SET a.balance = a.balance + :amount WHERE a.id = :accountId")
     void updateBalance(
-            @Param("accountId") String accountId,
+            @Param("accountId") UUID accountId,
             @Param("amount") BigDecimal amount);
 
-    boolean existsByAccountNumberAndUser_Id(String accountNumber, String userId);
+    boolean existsByAccountNumberAndUser_Id(String accountNumber, UUID userId);
 
-    boolean existsByIdAndUserId(String accountId, String userId);
+    boolean existsByIdAndUserId(UUID accountId, UUID userId);
 }

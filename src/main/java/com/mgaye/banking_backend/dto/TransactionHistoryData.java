@@ -2,14 +2,15 @@ package com.mgaye.banking_backend.dto;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public record TransactionHistoryData(
-                String userId,
-                String accountId,
-                LocalDate startDate,
-                LocalDate endDate,
-                List<TransactionItem> transactions,
-                String type) {
+        UUID userId,
+        UUID accountId,
+        LocalDate startDate,
+        LocalDate endDate,
+        List<TransactionItem> transactions,
+        String type) {
 }
 
 // (String, String, LocalDate, LocalDate, List<TransactionItem>, String) is

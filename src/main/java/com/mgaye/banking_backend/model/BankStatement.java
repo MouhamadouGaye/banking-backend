@@ -39,7 +39,7 @@ public class BankStatement {
     private UUID id;
 
     @Column(name = "account_id", nullable = false)
-    private String accountId;
+    private UUID accountId;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;

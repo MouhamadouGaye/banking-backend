@@ -1,5 +1,7 @@
 package com.mgaye.banking_backend.service.impl;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +32,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserSettingsDto getUserSettings(String userId) {
+    public UserSettingsDto getUserSettings(UUID userId) {
         UserSettings settings = userSettingsRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User settings not found"));
         return userSettingsMapper.toDto(settings);
@@ -38,7 +40,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     @Transactional
-    public UserSettingsDto updateUserSettings(String userId, UserSettingsDto userSettingsDto) {
+    public UserSettingsDto updateUserSettings(UUID userId, UserSettingsDto userSettingsDto) {
         UserSettings settings = userSettingsRepository.findByUserId(userId)
                 .orElseGet(() -> UserSettings.builder().user(userRepository.getReferenceById(userId)).build());
 
@@ -49,7 +51,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     @Transactional(readOnly = true)
-    public SecuritySettingsDto getSecuritySettings(String userId) {
+    public SecuritySettingsDto getSecuritySettings(UUID userId) {
         SecuritySettings settings = securitySettingsRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Security settings not found"));
         return securitySettingsMapper.toDto(settings);
@@ -57,7 +59,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     @Transactional
-    public SecuritySettingsDto updateSecuritySettings(String userId, UpdateSecuritySettingsRequest request) {
+    public SecuritySettingsDto updateSecuritySettings(UUID userId, UpdateSecuritySettingsRequest request) {
         SecuritySettings settings = securitySettingsRepository.findByUserId(userId)
                 .orElseGet(() -> SecuritySettings.builder().user(userRepository.getReferenceById(userId)).build());
 

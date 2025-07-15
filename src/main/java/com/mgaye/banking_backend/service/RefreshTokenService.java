@@ -5,14 +5,18 @@ import com.mgaye.banking_backend.exception.TokenRefreshException;
 import com.mgaye.banking_backend.model.RefreshToken;
 
 import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.transaction.annotation.Transactional;
 
 public interface RefreshTokenService {
     Optional<RefreshToken> findByToken(String token);
 
     RefreshToken verifyExpiration(RefreshToken token);
+
     // ... other methods ...
+    RefreshToken createRefreshToken(UUID userId);
 
-    public RefreshToken createRefreshToken(String userId);
+    void deleteByUserId(UUID userId);
 
-    public void deleteByUserId(String userId);
 }

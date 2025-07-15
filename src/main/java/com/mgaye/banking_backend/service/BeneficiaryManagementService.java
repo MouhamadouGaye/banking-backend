@@ -31,7 +31,7 @@ public class BeneficiaryManagementService {
     public Beneficiary addBeneficiary(UUID userId, BeneficiaryCreateRequest request) {
         // Create the global beneficiary record
         Beneficiary beneficiary = Beneficiary.builder()
-                .user(userRepository.getReferenceById(userId.toString()))
+                .user(userRepository.getReferenceById(userId))
                 .name(request.name())
                 .accountNumber(request.accountNumber())
                 .routingNumber(request.routingNumber())

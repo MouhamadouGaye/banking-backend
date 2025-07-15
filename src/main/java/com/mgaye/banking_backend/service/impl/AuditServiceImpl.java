@@ -85,9 +85,9 @@ public class AuditServiceImpl implements AuditService {
 
     @Override
     @Transactional
-    public void logSecurityEvent(String userId, String eventType, String description) {
+    public void logSecurityEvent(UUID userId, String eventType, String description) {
         AuditLog log = AuditLog.builder()
-                .userId(userId)
+                .userId(userId.toString())
                 .eventType(eventType)
                 .description(description)
                 .timestamp(Instant.now())

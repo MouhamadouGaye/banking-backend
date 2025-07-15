@@ -39,7 +39,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    public Beneficiary addBeneficiary(String userId, BeneficiaryCreateRequest request) {
+    public Beneficiary addBeneficiary(UUID userId, BeneficiaryCreateRequest request) {
         // Validate request
         beneficiaryValidator.validateCreateRequest(request);
 
@@ -79,14 +79,14 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Beneficiary> getUserBeneficiaries(String userId) {
-        return beneficiaryRepository.findByUserId(UUID.fromString(userId));
+    public List<Beneficiary> getUserBeneficiaries(UUID userId) {
+        return beneficiaryRepository.findByUserId(userId);
     }
 
     @Override
     @Transactional
-    public void removeBeneficiary(UUID beneficiaryId, String userId) {
-        Beneficiary beneficiary = beneficiaryRepository.findByIdAndUserId(beneficiaryId, UUID.fromString(userId))
+    public void removeBeneficiary(UUID beneficiaryId, UUID userId) {
+        Beneficiary beneficiary = beneficiaryRepository.findByIdAndUserId(beneficiaryId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Beneficiary not found"));
 
         // Check if beneficiary is used in any pending transactions
@@ -105,8 +105,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional(readOnly = true)
-    public ValidationResponse validateBeneficiary(UUID beneficiaryId, String userId) {
-        Beneficiary beneficiary = beneficiaryRepository.findByIdAndUserId(beneficiaryId, UUID.fromString(userId))
+    public ValidationResponse validateBeneficiary(UUID beneficiaryId, UUID userId) {
+        Beneficiary beneficiary = beneficiaryRepository.findByIdAndUserId(beneficiaryId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Beneficiary not found"));
 
         return beneficiaryValidator.validateBeneficiaryDetails(beneficiary);
@@ -114,8 +114,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    public Beneficiary updateLimits(UUID beneficiaryId, String userId, BeneficiaryLimitsRequest limits) {
-        Beneficiary beneficiary = beneficiaryRepository.findByIdAndUserId(beneficiaryId, UUID.fromString(userId))
+    public Beneficiary updateLimits(UUID beneficiaryId, UUID userId, BeneficiaryLimitsRequest limits) {
+        Beneficiary beneficiary = beneficiaryRepository.findByIdAndUserId(beneficiaryId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Beneficiary not found"));
 
         // Validate new limits

@@ -87,7 +87,7 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> 
         @EntityGraph(attributePaths = { "user" })
         Optional<BankAccount> findById(UUID accountId);
 
-        boolean existsByIdAndUserId(UUID accountId, String userId);
+        boolean existsByIdAndUserId(UUID accountId, UUID userId);
 
         @EntityGraph(attributePaths = { "user" })
         Optional<BankAccount> findByAccountNumber(String accountNumber);
@@ -95,7 +95,7 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> 
         // // Security-sensitive queries
         // Optional<BankAccount> findByIdAndUserId(UUID accountId, String userId);
 
-        BankAccount findByIdAndUserId(UUID accountId, String userId);
+        BankAccount findByIdAndUserId(UUID accountId, UUID userId);
 
         @EntityGraph(attributePaths = { "user" })
         Optional<BankAccount> findByIdAndUser(UUID accountId, User user);
@@ -126,7 +126,7 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> 
         @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
                         "FROM BankAccount a WHERE a.user.id = :userId AND a.accountType = :accountType")
         boolean existsByUserAndAccountType(
-                        @Param("userId") String userId,
+                        @Param("userId") UUID userId,
                         @Param("accountType") BankAccount.AccountType accountType);
 
         @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +

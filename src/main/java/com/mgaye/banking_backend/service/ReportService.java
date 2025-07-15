@@ -13,16 +13,23 @@ import com.mgaye.banking_backend.model.AccountStatement;
 
 public interface ReportService {
 
-    ReportStatusResponse requestStatement(String userId, StatementRequest request);
+    // ReportStatusResponse requestStatement(String userName, StatementRequest
+    // request);
+    ReportStatusResponse requestStatement(UUID userId, StatementRequest request);
 
-    ReportStatusResponse requestTransactionHistory(String userId, TransactionHistoryRequest request);
+    // ReportStatusResponse requestTransactionHistory(String userName,
+    // TransactionHistoryRequest request);
+    ReportStatusResponse requestTransactionHistory(UUID userId, TransactionHistoryRequest request);
 
-    ReportStatusResponse getReportStatus(UUID requestId, String userId);
+    // ReportStatusResponse getReportStatus(UUID requestId, String userName);
+    ReportStatusResponse getReportStatus(UUID requestId, UUID userId);
 
-    List<ReportHistoryResponse> getReportHistory(String userId, int days);
+    // List<ReportHistoryResponse> getReportHistory(String userName, int days);
+    List<ReportHistoryResponse> getReportHistory(UUID userId, int days);
 
-    ReportDownload downloadReport(UUID requestId, String userId);
+    // ReportDownload downloadReport(UUID requestId, String userName);
+    ReportDownload downloadReport(UUID requestId, UUID userId);
 
-    AccountStatement generateStatement(String accountId, LocalDate from, LocalDate to);
+    AccountStatement generateStatement(UUID accountId, LocalDate from, LocalDate to);
 
 }

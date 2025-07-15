@@ -14,42 +14,38 @@ import com.mgaye.banking_backend.model.User;
 
 public interface AccountService {
 
-    BankAccount createAccount(String userId, AccountCreateRequest request);
-
-    void validateAccountCreation(String userId, AccountCreateRequest request);
-
-    void validateAccountOwnership(UUID accountId, String userId);
-
-    BankAccount.AccountFeatures mergeFeatures(BankAccount.AccountFeatures requestFeatures);
-
-    AccountResponse convertToResponse(BankAccount account);
-
-    void creditAccount(UUID accountId, BigDecimal amount);
-
-    void debitAccount(UUID accountId, BigDecimal amount);
-
-    // List<BankAccount> getUserAccounts(String userId);
-
-    BigDecimal getBalance(UUID accountId, String userId);
-
-    boolean hasAccountType(String userId, BankAccount.AccountType type);
-
     BankAccount getAccountForUpdate(UUID accountId);
 
-    BigDecimal getAccountBalance(UUID accountId, String userId);
+    boolean hasAccountType(UUID userId, BankAccount.AccountType type);
 
-    AccountResponse getAccountDetails(UUID accountId, String userId);
+    BigDecimal getBalance(UUID accountId, UUID userId);
+
+    BigDecimal getAccountBalance(UUID accountId, UUID userId);
+
+    AccountResponse getAccountDetails(UUID accountId, UUID userId);
 
     void freezeAccount(UUID accountId, String reason);
 
+    void validateAccountOwnership(UUID accountId, UUID userId);
+
     void applyMonthlyInterest(UUID accountId);
 
-    // BankAccount findEmailByAccountNumber(String accountNumber);
-
-    BankAccount findByAccountNumber(String accountNumber);
+    BankAccount createAccount(UUID userId, AccountCreateRequest request);
 
     List<BankAccount> getUserAccounts(UUID userId);
 
-    BankAccount buildNewAccount(String userId, AccountCreateRequest request);
+    void debitAccount(UUID accountId, BigDecimal amount);
+
+    void creditAccount(UUID accountId, BigDecimal amount);
+
+    AccountResponse convertToResponse(BankAccount account);
+
+    void validateAccountCreation(UUID userId, AccountCreateRequest request);
+
+    BankAccount buildNewAccount(UUID userId, AccountCreateRequest request);
+
+    BankAccount.AccountFeatures mergeFeatures(BankAccount.AccountFeatures requestFeatures);
+
+    BankAccount findByAccountNumber(String accountNumber);
 
 }

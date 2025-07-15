@@ -258,71 +258,69 @@ import org.springframework.security.core.userdetails.*;
 @EnableMethodSecurity
 public class SecurityConfig { // Remove @RequiredArgsConstructor
 
-    private final AuthTokenFilter authTokenFilter;
+        private final AuthTokenFilter authTokenFilter;
 
-    @Autowired
-    public SecurityConfig(
-            AuthTokenFilter authTokenFilter) {
+        @Autowired
+        @Lazy
+        public SecurityConfig(
+                        AuthTokenFilter authTokenFilter) {
+                this.authTokenFilter = authTokenFilter;
+        }
 
-        this.authTokenFilter = authTokenFilter;
-    }
+        // 1. Remove direct dependency on UserDetailsServiceImpl
 
-    @Value("${jwt.public-key}")
-    private String publicKeyPem;
+        // 2. Change to use UserDetailsService interface
+        @Bean
+        public DaoAuthenticationProvider authenticationProvider(
+                        UserDetailsService userDetailsService // Interface injection
+        ) {
+                DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+                authProvider.setUserDetailsService(userDetailsService);
+                authProvider.setPasswordEncoder(passwordEncoder());
+                return authProvider;
+        }
 
-    // 1. Remove direct dependency on UserDetailsServiceImpl
+        @Bean
+        public AuthenticationManager authenticationManager(
+                        AuthenticationConfiguration authConfig) throws Exception {
+                return authConfig.getAuthenticationManager();
+        }
 
-    // 2. Change to use UserDetailsService interface
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider(
-            UserDetailsService userDetailsService // Interface injection
-    ) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
+        // 4. Simplified security configuration
+        @Bean
+        public SecurityFilterChain filterChain(
+                        HttpSecurity http,
+                        AuthenticationProvider authenticationProvider,
+                        JwtDecoder jwtDecoder // Injected decoder
+        ) throws Exception {
+                http
+                                .csrf(AbstractHttpConfigurer::disable)
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(
+                                                                "/api/auth/**",
+                                                                "/api/public/**",
+                                                                "/api/test/**",
+                                                                "/swagger-ui/**",
+                                                                "/v3/api-docs/**",
+                                                                "/actuator/health")
+                                                .permitAll()
+                                                .anyRequest().authenticated())
+                                .oauth2ResourceServer(oauth2 -> oauth2
+                                                .jwt(jwt -> jwt.decoder(jwtDecoder))); // Use injected decoder
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+                http.authenticationProvider(authenticationProvider);
+                http.addFilterBefore(
+                                authTokenFilter,
+                                UsernamePasswordAuthenticationFilter.class);
 
-    // 4. Simplified security configuration
-    @Bean
-    public SecurityFilterChain filterChain(
-            HttpSecurity http,
-            AuthenticationProvider authenticationProvider,
-            JwtDecoder jwtDecoder // Injected decoder
-    ) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/api/public/**",
-                                "/api/test/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/actuator/health")
-                        .permitAll()
-                        .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.decoder(jwtDecoder))); // Use injected decoder
-
-        http.authenticationProvider(authenticationProvider);
-        http.addFilterBefore(
-                authTokenFilter,
-                UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
+                return http.build();
+        }
 
 }

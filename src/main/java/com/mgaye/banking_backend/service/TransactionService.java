@@ -49,7 +49,7 @@ public interface TransactionService {
 
     Transaction processTransaction(TransactionRequest request, User user);
 
-    Transaction getTransactionForUser(String transactionId, String userId);
+    Transaction getTransactionForUser(String transactionId, UUID userId);
     // ... rest of the methods remain the same ...
 
     Transaction buildTransaction(TransactionRequest request, BankAccount account);
@@ -58,7 +58,7 @@ public interface TransactionService {
 
     void processTransfer(Transaction tx);
 
-    void cancelTransaction(String transactionId, String userId);
+    void cancelTransaction(String transactionId, UUID userId);
 
     List<String> getAccountNumbersForTransactions(List<String> transactionIds);
 

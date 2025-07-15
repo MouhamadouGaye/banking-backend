@@ -40,6 +40,7 @@
 package com.mgaye.banking_backend.event;
 
 import java.util.Map;
+import java.util.UUID;
 
 import com.mgaye.banking_backend.model.User;
 
@@ -55,7 +56,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class NotificationEvent {
 
-    private String UserId;
+    private UUID UserId;
     private NotificationType type; // Changed to use enum
     private NotificationChannel channel;
     private String title;

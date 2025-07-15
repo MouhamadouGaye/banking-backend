@@ -1,5 +1,7 @@
 package com.mgaye.banking_backend.service;
 
+import java.util.UUID;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mgaye.banking_backend.dto.NotificationPreferencesDto;
@@ -22,13 +24,13 @@ public interface SettingsService {
     // void updateNotificationPreferences(Long userId, NotificationPreferencesDto
     // preferences);
 
-    UserSettingsDto getUserSettings(String userId);
+    UserSettingsDto getUserSettings(UUID userId);
 
-    UserSettingsDto updateUserSettings(String userId, UserSettingsDto userSettingsDto);
+    UserSettingsDto updateUserSettings(UUID userId, UserSettingsDto userSettingsDto);
 
-    SecuritySettingsDto getSecuritySettings(String userId);
+    SecuritySettingsDto getSecuritySettings(UUID userId);
 
-    SecuritySettingsDto updateSecuritySettings(String userId, UpdateSecuritySettingsRequest request);
+    SecuritySettingsDto updateSecuritySettings(UUID userId, UpdateSecuritySettingsRequest request);
 }
 // public interface SettingsService {
 // UserSettingsDto getUserSettings(String userId);

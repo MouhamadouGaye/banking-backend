@@ -2,14 +2,12 @@ package com.mgaye.banking_backend.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-
+import java.util.UUID;
 import com.mgaye.banking_backend.model.Role;
-
 import lombok.Data;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -17,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
-    private Long id;
+    private UUID id;
     private String username;
     private String email;
     private String firstName;

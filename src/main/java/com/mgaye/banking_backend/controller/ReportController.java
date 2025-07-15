@@ -21,6 +21,9 @@ import com.mgaye.banking_backend.dto.request.StatementRequest;
 import com.mgaye.banking_backend.dto.request.TransactionHistoryRequest;
 import com.mgaye.banking_backend.dto.response.ReportHistoryResponse;
 import com.mgaye.banking_backend.dto.response.ReportStatusResponse;
+import com.mgaye.banking_backend.exception.ResourceNotFoundException;
+import com.mgaye.banking_backend.model.User;
+import com.mgaye.banking_backend.repository.UserRepository;
 import com.mgaye.banking_backend.service.ReportService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -32,15 +35,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReportController {
         private final ReportService reportService;
+        private final UserRepository userRepository; // Add this dependency
+
+        // Helper method to get UUID from authentication
+        private UUID getUserIdFromAuthentication(Authentication authentication) {
+                User user = userRepository.findByEmail(authentication.getName())
+                                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                return user.getId();
+        }
 
         @PostMapping("/statements")
         @PreAuthorize("hasRole('USER')")
         public ResponseEntity<ReportStatusResponse> generateStatement(
                         @Valid @RequestBody StatementRequest request,
                         Authentication authentication) {
+                UUID userId = getUserIdFromAuthentication(authentication);
+
                 return ResponseEntity.accepted()
                                 .body(reportService.requestStatement(
-                                                authentication.getName(),
+                                                userId,
                                                 request));
         }
 
@@ -49,9 +62,10 @@ public class ReportController {
         public ResponseEntity<ReportStatusResponse> generateTransactionHistory(
                         @Valid @RequestBody TransactionHistoryRequest request,
                         Authentication authentication) {
+                UUID userId = getUserIdFromAuthentication(authentication);
                 return ResponseEntity.accepted()
                                 .body(reportService.requestTransactionHistory(
-                                                authentication.getName(),
+                                                userId,
                                                 request));
         }
 
@@ -60,10 +74,11 @@ public class ReportController {
         public ResponseEntity<ReportStatusResponse> getReportStatus(
                         @PathVariable UUID requestId,
                         Authentication authentication) {
+                UUID userId = getUserIdFromAuthentication(authentication);
                 return ResponseEntity.ok(
                                 reportService.getReportStatus(
                                                 requestId,
-                                                authentication.getName()));
+                                                userId));
         }
 
         @GetMapping("/history")
@@ -71,9 +86,10 @@ public class ReportController {
         public ResponseEntity<List<ReportHistoryResponse>> getReportHistory(
                         @RequestParam(defaultValue = "30") int days,
                         Authentication authentication) {
+                UUID userId = getUserIdFromAuthentication(authentication);
                 return ResponseEntity.ok(
                                 reportService.getReportHistory(
-                                                authentication.getName(),
+                                                userId,
                                                 days));
         }
 
@@ -82,9 +98,10 @@ public class ReportController {
         public ResponseEntity<Resource> downloadReport(
                         @PathVariable UUID requestId,
                         Authentication authentication) {
+                UUID userId = getUserIdFromAuthentication(authentication);
                 ReportDownload download = reportService.downloadReport(
                                 requestId,
-                                authentication.getName());
+                                userId);
 
                 return ResponseEntity.ok()
                                 .contentType(MediaType.parseMediaType(download.contentType()))

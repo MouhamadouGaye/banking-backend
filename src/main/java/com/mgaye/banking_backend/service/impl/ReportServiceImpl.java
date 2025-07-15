@@ -65,7 +65,7 @@ public class ReportServiceImpl implements ReportService {
 
         @Override
         @Transactional
-        public ReportStatusResponse requestStatement(String userId, StatementRequest request) {
+        public ReportStatusResponse requestStatement(UUID userId, StatementRequest request) {
                 User user = userRepo.findById(userId)
                                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -138,7 +138,7 @@ public class ReportServiceImpl implements ReportService {
                 }
         }
 
-        private byte[] generateStatementContent(String accountId, LocalDate start, LocalDate end, ZoneId zoneId) {
+        private byte[] generateStatementContent(UUID accountId, LocalDate start, LocalDate end, ZoneId zoneId) {
                 BankAccount account = accountRepo.findById(accountId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
 
@@ -181,7 +181,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         @Override
-        public ReportDownload downloadReport(UUID requestId, String userId) {
+        public ReportDownload downloadReport(UUID requestId, UUID userId) {
                 ReportRequest request = reportRequestRepo.findByIdAndUserId(requestId, userId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Report not found"));
 
@@ -235,7 +235,7 @@ public class ReportServiceImpl implements ReportService {
 
         @Override
         @Transactional
-        public ReportStatusResponse requestTransactionHistory(String userId, TransactionHistoryRequest request) {
+        public ReportStatusResponse requestTransactionHistory(UUID userId, TransactionHistoryRequest request) {
                 User user = userRepo.findById(userId)
                                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -308,7 +308,7 @@ public class ReportServiceImpl implements ReportService {
                 }
         }
 
-        private byte[] generateTransactionHistoryContent(String userId, String accountId,
+        private byte[] generateTransactionHistoryContent(UUID userId, UUID accountId,
                         LocalDate start, LocalDate end, ZoneId zoneId, String filterType) {
 
                 List<Transaction> transactions;
@@ -356,7 +356,7 @@ public class ReportServiceImpl implements ReportService {
 
         @Override
         @Transactional(readOnly = true)
-        public ReportStatusResponse getReportStatus(UUID requestId, String userId) {
+        public ReportStatusResponse getReportStatus(UUID requestId, UUID userId) {
                 ReportRequest request = reportRequestRepo.findByIdAndUserId(requestId, userId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Report request not found"));
 
@@ -371,7 +371,7 @@ public class ReportServiceImpl implements ReportService {
 
         @Override
         @Transactional(readOnly = true)
-        public List<ReportHistoryResponse> getReportHistory(String userId, int days) {
+        public List<ReportHistoryResponse> getReportHistory(UUID userId, int days) {
                 Instant cutoff = Instant.now().minus(days, ChronoUnit.DAYS);
                 return reportRequestRepo.findByUserIdAndRequestedAtAfter(userId, cutoff)
                                 .stream()
@@ -422,7 +422,7 @@ public class ReportServiceImpl implements ReportService {
 
         @Override
         @Transactional(readOnly = true)
-        public AccountStatement generateStatement(String accountId, LocalDate from, LocalDate to) {
+        public AccountStatement generateStatement(UUID accountId, LocalDate from, LocalDate to) {
                 // 1. Get account data
                 BankAccount account = accountRepo.findById(accountId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
@@ -434,7 +434,7 @@ public class ReportServiceImpl implements ReportService {
                 // 3. Convert to DTO items
                 List<StatementItem> items = transactions.stream()
                                 .map(tx -> new StatementItem(
-                                                tx.getId(),
+                                                tx.getId().toString(),
                                                 tx.getDate(),
                                                 tx.getReferenceNumber(),
                                                 tx.getAmount(),
@@ -462,7 +462,7 @@ public class ReportServiceImpl implements ReportService {
 
                 // 7. Create and return AccountStatement entity
                 return new AccountStatement(
-                                accountId,
+                                accountId.toString(),
                                 startInstant,
                                 endInstant,
                                 pdfContent);

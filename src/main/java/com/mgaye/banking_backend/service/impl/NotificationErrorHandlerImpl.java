@@ -29,7 +29,7 @@ public class NotificationErrorHandlerImpl implements NotificationErrorHandler {
         FailedNotification failedNotification = FailedNotification.builder()
                 .eventType(event.getType().name())
                 .channel(event.getChannel().name())
-                .userId(event.getUserId())
+                .userId(event.getUserId().toString())
                 .errorMessage(exception.getMessage())
                 .timestamp(Instant.now())
                 .retryCount(0)

@@ -15,15 +15,15 @@ import org.springframework.stereotype.Repository;
 public interface ReportRequestRepository extends JpaRepository<ReportRequest, UUID> {
     // Custom query methods can be added here if needed
     // For example, to find requests by userId or status
-    List<ReportRequest> findByUserId(String userId);
+    List<ReportRequest> findByUserId(UUID userId);
 
     List<ReportRequest> findByStatus(String status);
 
-    Optional<ReportRequest> findByIdAndUserId(UUID id, String userId);
+    Optional<ReportRequest> findByIdAndUserId(UUID id, UUID userId);
 
     @Query("SELECT r FROM ReportRequest r WHERE r.userId = :userId AND r.requestedAt >= :cutoff")
     List<ReportRequest> findByUserIdAndRequestedAtAfter(
-            @Param("userId") String userId,
+            @Param("userId") UUID userId,
             @Param("cutoff") Instant cutoff);
 
 }

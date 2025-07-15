@@ -2,6 +2,7 @@ package com.mgaye.banking_backend.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.cglib.core.Local;
 
@@ -14,7 +15,7 @@ import lombok.Data;
 @Data
 @Builder
 public class CurrentUser {
-    private String id;
+    private UUID id;
     private String email; // Using as username
     private String firstName;
     private String lastName;

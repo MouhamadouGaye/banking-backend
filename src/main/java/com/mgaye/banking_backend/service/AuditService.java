@@ -17,7 +17,7 @@ import com.mgaye.banking_backend.model.User;
 // }
 
 public interface AuditService {
-    void logSecurityEvent(String userId, String eventType, String description);
+    void logSecurityEvent(UUID userId, String eventType, String description);
 
     void logTransaction(Transaction transaction, User user);
 

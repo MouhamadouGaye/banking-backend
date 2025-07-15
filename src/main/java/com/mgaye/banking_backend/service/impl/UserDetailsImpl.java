@@ -2,6 +2,7 @@ package com.mgaye.banking_backend.service.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -11,12 +12,12 @@ import com.mgaye.banking_backend.model.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class UserDetailsImpl implements UserDetails {
-    private String id;
+    private UUID id;
     private String email;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(String id, String email, String password,
+    public UserDetailsImpl(UUID id, String email, String password,
             Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
@@ -74,7 +75,7 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     // Getters
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 }

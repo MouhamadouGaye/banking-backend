@@ -1,5 +1,7 @@
 package com.mgaye.banking_backend.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -86,7 +88,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     @PreAuthorize("#userId == authentication.principal.id or hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> getUser(@PathVariable String userId) {
+    public ResponseEntity<UserResponse> getUser(@PathVariable UUID userId) {
         return ResponseEntity.ok(userService.getUserDtoById(userId));
     }
 }

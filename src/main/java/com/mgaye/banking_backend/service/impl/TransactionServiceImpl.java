@@ -124,7 +124,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         @Override // Add @Override annotation
-        public Transaction getTransactionForUser(String transactionId, String userId) {
+        public Transaction getTransactionForUser(String transactionId, UUID userId) {
                 return transactionRepo.findByIdAndUserId(transactionId, userId)
                                 .orElseThrow(() -> new TransactionNotFoundException(transactionId));
         }
@@ -217,7 +217,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         @Override
-        public void cancelTransaction(String transactionId, String userId) {
+        public void cancelTransaction(String transactionId, UUID userId) {
                 Transaction transaction = transactionRepo.findByIdAndUserId(transactionId, userId)
                                 .orElseThrow(() -> new TransactionNotFoundException(transactionId));
 

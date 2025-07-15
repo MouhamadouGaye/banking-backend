@@ -76,9 +76,9 @@ public class RoleService {
     // }
 
     @Transactional
-    public void assignRoleToUser(String userId, ERole roleName) {
+    public void assignRoleToUser(UUID userId, ERole roleName) {
         // 1. Validate input
-        if (userId == null || userId.isBlank()) {
+        if (userId == null) {
             throw new IllegalArgumentException("User ID cannot be null or empty");
         }
         if (roleName.name() == null || roleName.name().isBlank()) {
@@ -96,7 +96,7 @@ public class RoleService {
 
         // 3. Find the user (assuming you have a UserRepository)
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         // 4. Check if user already has this role
         if (user.getRoles().contains(role)) {
