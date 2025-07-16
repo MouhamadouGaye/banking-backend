@@ -67,6 +67,7 @@ public class TransactionServiceImpl implements TransactionService {
                                         e.getMessage(),
                                         HttpStatus.BAD_REQUEST,
                                         e);
+
                 }
 
                 // Step 3: Build and process the transaction

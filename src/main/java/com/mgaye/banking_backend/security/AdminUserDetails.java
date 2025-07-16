@@ -6,10 +6,14 @@ import java.util.UUID;
 
 public class AdminUserDetails implements UserDetails {
     private final UUID userId;
+    private final String email;
+    private final String password;
     // ... other UserDetails implementations ...
 
-    public AdminUserDetails(UUID userId) {
+    public AdminUserDetails(UUID userId, String email, String password) {
         this.userId = userId;
+        this.email = email;
+        this.password = password;
     }
 
     public UUID getUserId() {
@@ -18,14 +22,12 @@ public class AdminUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        // TODO: return the actual username
-        return null;
+        return email; // You should add this field
     }
 
     @Override
     public String getPassword() {
-        // TODO: return the actual password
-        return null;
+        return password; // And this too
     }
 
     @Override

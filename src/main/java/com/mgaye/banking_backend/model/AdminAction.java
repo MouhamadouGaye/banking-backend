@@ -32,7 +32,7 @@ import lombok.Setter;
 @Builder
 public class AdminAction {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)

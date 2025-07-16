@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.mapstruct.control.MappingControl.Use;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,21 +29,26 @@ import jakarta.persistence.LockModeType;
 public interface TransactionRepository
                 extends JpaRepository<Transaction, String> {
 
-        @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId ORDER BY t.timestamp DESC")
-        Page<Transaction> findByAccountId(@Param("accountId") String accountId, Pageable pageable);
+        // @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId ORDER BY
+        // t.timestamp DESC")
+        // Page<Transaction> findByAccountId(@Param("accountId") String accountId,
+        // // Pageable pageable);
+        // @Query("SELECT t FROM Transaction t " +
+        // "WHERE t.accountId = :accountId " +
+        // "AND t.date BETWEEN :startDate AND :endDate " +
+        // "ORDER BY t.date")
+        // List<TransactionSummaryDto> getDailySummary(
+        // @Param("accountId") UUID accountId,
+        // @Param("start") Instant start,
+        // @Param("end") Instant end);
 
-        @Query("""
-                        SELECT new com.mgaye.banking_backend.dto.TransactionSummaryDto(
-                            DATE(t.timestamp),
-                            COUNT(t),
-                            SUM(t.amount))
-                        FROM Transaction t
-                        WHERE t.account.id = :accountId
-                        AND t.timestamp BETWEEN :start AND :end
-                        GROUP BY DATE(t.timestamp)
-                        """)
+        @Query("SELECT new com.mgaye.banking_backend.dto.DailySummaryDTO(t.date, SUM(t.amount)) " +
+                        "FROM Transaction t " +
+                        "WHERE t.accountId = :accountId " +
+                        "AND t.date BETWEEN :startDate AND :endDate " +
+                        "GROUP BY t.date")
         List<TransactionSummaryDto> getDailySummary(
-                        @Param("accountId") String accountId,
+                        @Param("accountId") UUID accountId,
                         @Param("start") Instant start,
                         @Param("end") Instant end);
 
@@ -120,6 +126,37 @@ public interface TransactionRepository
         List<Transaction> findByAccountIdAndDateBeforeAndStatus(
                         UUID accountId,
                         LocalDate startDate,
+                        TransactionStatus status);
+
+        // @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
+        // "FROM Transaction t WHERE t.beneficiaryAccountNumber = :accountNumber " +
+        // "AND t.status = 'PENDING'")
+        // boolean existsPendingTransactionsForBeneficiary(@Param("accountNumber")
+        // String accountNumber);
+        // ---------------------------------------------------------------------------------------------
+        // @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
+        // "FROM Transaction t WHERE t.beneficiaryAccountNumber = :accountNumber " +
+        // "AND t.status =
+        // com.mgaye.banking_backend.enumeration.TransactionStatus.PENDING")
+        // boolean existsPendingTransactionsForBeneficiary(@Param("accountNumber")
+        // String accountNumber);
+        // ------------------------------------------------------------------------------------------------
+
+        // Option 2: Use Enum Parameter (Alternative)
+
+        // @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
+        // "FROM Transaction t WHERE t.beneficiaryAccountNumber = :accountNumber " +
+        // "AND t.status = :status")
+        // boolean existsPendingTransactionsForBeneficiary(
+        // @Param("accountNumber") String accountNumber,
+        // @Param("status") TransactionStatus status);
+
+        // ---------------------------------------
+
+        @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
+                        "FROM Transaction t WHERE t.destinationAccountId = :accountNumber " +
+                        "AND t.status = com.mgaye.banking_backend.enumeration.TransactionStatus.PENDING")
+        boolean existsPendingTransactionsForBeneficiary(@Param("accountNumber") String accountNumber,
                         TransactionStatus status);
 
 }

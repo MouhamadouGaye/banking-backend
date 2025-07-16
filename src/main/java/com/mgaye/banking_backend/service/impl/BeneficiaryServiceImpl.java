@@ -16,8 +16,10 @@ import com.mgaye.banking_backend.exception.UserNotFoundException;
 import com.mgaye.banking_backend.model.Beneficiary;
 import com.mgaye.banking_backend.model.User;
 import com.mgaye.banking_backend.model.Beneficiary.BeneficiaryType;
+import com.mgaye.banking_backend.model.Transaction.TransactionStatus;
 import com.mgaye.banking_backend.repository.BankAccountRepository;
 import com.mgaye.banking_backend.repository.BeneficiaryRepository;
+import com.mgaye.banking_backend.repository.TransactionRepository;
 import com.mgaye.banking_backend.repository.UserRepository;
 import com.mgaye.banking_backend.service.BeneficiaryService;
 import com.mgaye.banking_backend.service.BeneficiaryValidator;
@@ -34,6 +36,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final BeneficiaryRepository beneficiaryRepository;
     private final UserRepository userRepository;
     private final BankAccountRepository bankAccountRepository;
+    private final TransactionRepository transactionRepository;
     private final BeneficiaryValidator beneficiaryValidator;
     private final NotificationService notificationService;
 
@@ -90,7 +93,11 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Beneficiary not found"));
 
         // Check if beneficiary is used in any pending transactions
-        if (bankAccountRepository.existsPendingTransactionsForBeneficiary(beneficiary.getAccountNumber())) {
+        // if
+        // (transactionRepository.existsPendingTransactionsForBeneficiary(beneficiary.getAccountNumber()))
+        if (transactionRepository.existsPendingTransactionsForBeneficiary(
+                beneficiary.getAccountNumber(),
+                TransactionStatus.PENDING)) {
             throw new BusinessRuleException("Cannot delete beneficiary with pending transactions");
         }
 

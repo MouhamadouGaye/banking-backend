@@ -19,7 +19,7 @@ import com.mgaye.banking_backend.model.Loan.LoanType;
 public class LoanProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     private String name;
     private String description;
