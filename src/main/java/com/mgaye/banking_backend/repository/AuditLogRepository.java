@@ -1,27 +1,3 @@
-// package com.mgaye.banking_backend.repository;
-
-// import java.util.List;
-
-// import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
-// import org.springframework.data.domain.Page;
-// import org.springframework.data.jpa.repository.JpaRepository;
-// import org.springframework.data.jpa.repository.Query;
-// import org.springframework.data.repository.query.Param;
-
-// import com.mgaye.banking_backend.model.AuditLog;
-// import com.mgaye.banking_backend.model.BankAccount.AccountStatus;
-// import com.mgaye.banking_backend.model.BankAccount.AccountType;
-
-// // repository/AuditLogRepository.java
-// public interface AuditLogRepository extends JpaRepository<AuditLog, String> {
-
-//     @Query("SELECT a FROM AuditLog a WHERE a.entityType = 'ACCOUNT' AND a.entityId IN " +
-//             "(SELECT acc.id FROM BankAccount acc WHERE acc.accountType IN :types AND acc.status = :status)")
-//     Page<AuditLog> findByAccountTypeInAndStatus(
-//             @Param("types") List<AccountType> types,
-//             @Param("status") AccountStatus status,
-//             Pageable pageable);
-// }
 
 package com.mgaye.banking_backend.repository;
 
@@ -33,20 +9,27 @@ import org.springframework.stereotype.Repository;
 import com.mgaye.banking_backend.model.AuditLog;
 import com.mgaye.banking_backend.model.AuditLogEntry;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
+public interface AuditLogRepository extends JpaRepository<AuditLog, String> {
 
-    List<AuditLog> findByUserId(Long userId);
+    // List<AuditLog> findByUserId(UUID userId);
 
-    Page<AuditLog> findByActionTimeBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
+    // // Changed to use 'timestamp' field with Instant parameters
+    // Page<AuditLog> findByTimestampBetween(Instant start, Instant end, Pageable
+    // pageable);
 
-    List<AuditLog> findByActionType(String actionType);
+    // // Changed to use 'action' field instead of non-existent 'actionType'
+    // List<AuditLog> findByAction(String action);
 
-    List<AuditLogEntry> findByAccountIdOrderByTimestampDesc(long accountId);
+    // List<AuditLogEntry> findByAccountIdOrderByTimestampDesc(UUID accountId);
 
-    List<AuditLog> findByEventTypeAndUserIdOrderByTimestampDesc(String eventType, String userId);
+    // // Changed to use 'eventType' and 'timestamp'
+    // List<AuditLog> findByEventTypeAndUserIdOrderByTimestampDesc(String eventType,
+    // UUID userId);
 
 }

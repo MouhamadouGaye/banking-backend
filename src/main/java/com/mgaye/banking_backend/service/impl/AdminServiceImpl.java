@@ -38,7 +38,6 @@ public class AdminServiceImpl implements AdminService {
     private final List<FraudCaseResponse> fraudCases = new ArrayList<>();
     private final List<SystemAlertResponse> activeAlerts = new ArrayList<>();
     private final UserRepository userRepository;
-
     private final AccountService accountService;
 
     public AdminServiceImpl(UserRepository userRepository, AccountService accountService) {

@@ -2,6 +2,7 @@ package com.mgaye.banking_backend.model;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.UUID;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -26,7 +27,11 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String userId;
+    @Column(name = "user_id")
+    private UUID userId;
+
+    @Column(name = "account_id")
+    private UUID accountId;
 
     @Column(nullable = false)
     private String action;
@@ -62,4 +67,5 @@ public class AuditLog {
 
     @Column(name = "user_agent")
     private String userAgent;
+
 }

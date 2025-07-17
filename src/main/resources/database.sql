@@ -403,3 +403,8 @@ ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE admin_actions
 ALTER COLUMN id DROP DEFAULT;
 -------------------------------------------------------------------------------------------- to undo the 2
+ALTER TABLE audit_logs
+ADD CONSTRAINT fk_audit_logs_user_id FOREIGN KEY (user_id) REFERENCES users(id);
+--------------------------------------------------------------------------------------------
+-- Consider adding an index for better performance:
+CREATE INDEX idx_audit_logs_timestamp ON audit_logs(timestamp);

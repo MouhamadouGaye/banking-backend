@@ -37,17 +37,28 @@ public interface TransactionRepository
         // "WHERE t.accountId = :accountId " +
         // "AND t.date BETWEEN :startDate AND :endDate " +
         // "ORDER BY t.date")
+        // List<TransactionSummaryDto> (
+        // @Param("accountId") UUID accountId,
+        // @Param("start") Instant start,
+        // @Param("end") Instant end);
+
+        // @Query("SELECT new com.mgaye.banking_backend.dto.DailySummaryDTO(t.date,
+        // SUM(t.amount)) " +
+        // "FROM Transaction t " +
+        // "WHERE t.accountId = :accountId " +
+        // "AND t.date BETWEEN :startDate AND :endDate " +
+        // "GROUP BY t.date")
         // List<TransactionSummaryDto> getDailySummary(
         // @Param("accountId") UUID accountId,
         // @Param("start") Instant start,
         // @Param("end") Instant end);
 
-        @Query("SELECT new com.mgaye.banking_backend.dto.DailySummaryDTO(t.date, SUM(t.amount)) " +
+        @Query("SELECT FUNCTION('DATE', t.date) AS transactionDate, SUM(t.amount) AS totalAmount " +
                         "FROM Transaction t " +
-                        "WHERE t.accountId = :accountId " +
-                        "AND t.date BETWEEN :startDate AND :endDate " +
-                        "GROUP BY t.date")
-        List<TransactionSummaryDto> getDailySummary(
+                        "WHERE t.account.id = :accountId " + // Changed to account.id
+                        "AND t.date BETWEEN :start AND :end " +
+                        "GROUP BY FUNCTION('DATE', t.date)")
+        List<Object[]> getDailySummary(
                         @Param("accountId") UUID accountId,
                         @Param("start") Instant start,
                         @Param("end") Instant end);
@@ -153,10 +164,27 @@ public interface TransactionRepository
 
         // ---------------------------------------
 
-        @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
-                        "FROM Transaction t WHERE t.destinationAccountId = :accountNumber " +
-                        "AND t.status = com.mgaye.banking_backend.enumeration.TransactionStatus.PENDING")
-        boolean existsPendingTransactionsForBeneficiary(@Param("accountNumber") String accountNumber,
-                        TransactionStatus status);
+        // @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
+        // "FROM Transaction t WHERE t.destinationAccountId = :accountNumber " +
+        // "AND t.status =
+        // com.mgaye.banking_backend.enumeration.TransactionStatus.PENDING")
+        // boolean existsPendingTransactionsForBeneficiary(
+        // @Param("accountNumber") String accountNumber,
+        // @Param("status") TransactionStatus status);
+
+        // @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
+        // "FROM Transaction t WHERE t.destinationAccountId = :accountNumber " +
+        // "AND t.status = :status")
+        // boolean existsPendingTransactionsForBeneficiary(
+        // @Param("accountNumber") UUID accountNumber,
+        // @Param("status") TransactionStatus status);
+
+        // @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
+        // "FROM Transaction t " +
+        // "WHERE t.destinationAccountId = :accountNumber " +
+        // "AND t.status =
+        // com.mgaye.banking_backend.model.Transaction.TransactionStatus.PENDING")
+        // boolean existsPendingTransactionsForBeneficiary(
+        // @Param("accountNumber") UUID accountNumber);
 
 }

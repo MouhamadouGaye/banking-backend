@@ -29,7 +29,7 @@ public class AuditServiceImpl implements AuditService {
         params.put("currency", transaction.getCurrency());
 
         AuditLog log = AuditLog.builder()
-                .userId(user.getId().toString())
+                .userId(user.getId())
                 .action("TRANSACTION_PROCESSED")
                 .principal(user.getFirstName() + user.getLastName())
                 .eventType("TRANSACTION")
@@ -49,7 +49,7 @@ public class AuditServiceImpl implements AuditService {
         params.put("newStatus", newStatus);
 
         AuditLog log = AuditLog.builder()
-                .userId(user.getId().toString())
+                .userId(user.getId())
                 .action("ACCOUNT_STATUS_CHANGE")
                 .principal(user.getFirstName() + user.getLastName())
                 .eventType("ACCOUNT")
@@ -70,7 +70,7 @@ public class AuditServiceImpl implements AuditService {
         params.put("currency", transaction.getCurrency());
 
         AuditLog log = AuditLog.builder()
-                .userId(user.getId().toString())
+                .userId(user.getId())
                 .action("TRANSACTION_CANCELLED")
                 .principal(user.getFirstName() + user.getLastName())
                 .eventType("TRANSACTION")
@@ -87,7 +87,7 @@ public class AuditServiceImpl implements AuditService {
     @Transactional
     public void logSecurityEvent(UUID userId, String eventType, String description) {
         AuditLog log = AuditLog.builder()
-                .userId(userId.toString())
+                .userId(userId)
                 .eventType(eventType)
                 .description(description)
                 .timestamp(Instant.now())
