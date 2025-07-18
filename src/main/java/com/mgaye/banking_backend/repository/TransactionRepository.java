@@ -186,5 +186,8 @@ public interface TransactionRepository
         // com.mgaye.banking_backend.model.Transaction.TransactionStatus.PENDING")
         // boolean existsPendingTransactionsForBeneficiary(
         // @Param("accountNumber") UUID accountNumber);
+        boolean existsByDestinationAccountAccountNumberAndStatus(
+                        String accountNumber,
+                        TransactionStatus status);
 
 }

@@ -63,8 +63,7 @@ public class BankCodeServiceImpl implements BankCodeService {
             return restTemplate.postForObject(url, request, ValidationResponse.class);
         } catch (Exception e) {
             log.error("Detailed validation failed for account: {}", maskSensitive(accountNumber), e);
-            return new ValidationResponse(false, null, null,
-                    "Validation service unavailable");
+            return new ValidationResponse(false, null, null, "Validation service unavailable");
         }
     }
 

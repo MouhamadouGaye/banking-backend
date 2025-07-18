@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.mgaye.banking_backend.model.AccountBeneficiary;
@@ -26,8 +27,9 @@ public interface BeneficiaryRepository extends JpaRepository<Beneficiary, UUID> 
 
     List<Beneficiary> findByUserId(UUID userId);
 
-    @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
-            "FROM Transaction t WHERE t.beneficiaryAccount = :accountNumber " +
-            "AND t.status = 'PENDING'")
-    boolean existsPendingTransactionsForBeneficiary(String accountNumber);
+    // @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
+    // "FROM Transaction t " +
+    // "WHERE t.destinationAccount.accountNumber = :accountNumber " +
+    // "AND t.status = 'PENDING'")
+    // boolean existsPendingTransactionsForBeneficiary(String accountNumber);
 }

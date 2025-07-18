@@ -28,7 +28,6 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtils jwtUtils;
     private final RefreshTokenService refreshTokenService;
     private final UserMapper userMapper;
-    private final UserRepository userRepository;
 
     @Override
     public Authentication authenticate(String email, String password) {

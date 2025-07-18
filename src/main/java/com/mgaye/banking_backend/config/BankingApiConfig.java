@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 
 import lombok.Data;
 
-@Configuration
 @ConfigurationProperties(prefix = "banking.api")
 @Data
 public class BankingApiConfig {

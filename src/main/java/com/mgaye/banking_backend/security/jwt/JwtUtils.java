@@ -24,16 +24,17 @@ import java.util.Date;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${banking.app.jwtSecret}")
+    @Value("${app.jwt.secret}")
     private String jwtSecret;
 
-    @Value("${banking.app.jwtExpirationMs}")
+    @Value("${app.jwt.expirationMs}")
     private int jwtExpirationMs;
 
-    @Value("${banking.app.jwtRefreshExpirationMs}")
+    @Value("${app.jwt.refreshExpirationMs}")
     private int jwtRefreshExpirationMs;
 
     public String generateJwtToken(Object principal) {
+
         String username;
 
         if (principal instanceof UserDetailsImpl) {

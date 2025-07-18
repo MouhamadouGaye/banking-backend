@@ -61,9 +61,11 @@ public class NotificationEvent {
     private NotificationChannel channel;
     private String title;
     private Map<String, Object> parameters;
+    private String phoneNumber;
     private User recipient;
     private String message;
     private Map<String, Object> metadata;
+    private String subject;
     private String templateName; // Optional, for email or push templates
 
     public enum NotificationType {

@@ -37,7 +37,7 @@ app:
   jwt:
     secret: itrZjz8EfvXL+w+dxxhKygic2jH8sZ6fdUAJrj/GJNmdl8XfRXY0ZWGPAj6Sg1MGDcGJMKsYw1Dabaw7hv5GHA== # Use a strong secret in production
     expirationMs: 86400000 # 24 hours
-    jwtRefreshExpirationMs: 604800000
+    refreshExpirationMs: 604800000
     public-key: -----BEGIN PUBLIC KEY-----
                 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwRjuSvI2FwQ8Pg190c1h
                 Nu35a5he2p3ZsH5a5UjNEcBJE02rtFgKeb+Pud//0RYEod2yx4aoHtRV6juh/VkG
@@ -87,6 +87,12 @@ logging:
         type:
           descriptor:
             sql: TRACE
+
+banking:
+  api:
+    baseUrl: http://localhost:8089  # Set your actual API base URL
+    api-key: your-api-key-here
+    timeout-millis: 5000  # Optional, but good to have
 
 
 

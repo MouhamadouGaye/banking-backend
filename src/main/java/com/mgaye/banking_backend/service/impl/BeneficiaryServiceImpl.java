@@ -93,8 +93,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Beneficiary not found"));
 
         // Check if beneficiary is used in any pending transactions
-        if (beneficiaryRepository
-                .existsPendingTransactionsForBeneficiary(beneficiary.getAccountNumber()))
+        if (transactionRepository
+                .existsByDestinationAccountAccountNumberAndStatus(beneficiary.getAccountNumber(),
+                        TransactionStatus.PENDING))
         // if (transactionRepository.existsPendingTransactionsForBeneficiary(
         // beneficiary.getAccountNumber(),
         // TransactionStatus.PENDING))

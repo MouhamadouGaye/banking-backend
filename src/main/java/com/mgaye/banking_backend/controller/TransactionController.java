@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mgaye.banking_backend.dto.TransactionDto;
 import com.mgaye.banking_backend.dto.mapper.TransactionMapper;
+import com.mgaye.banking_backend.dto.request.TransactionNotificationRequest;
 import com.mgaye.banking_backend.dto.request.TransactionRequest;
 import com.mgaye.banking_backend.model.Transaction;
 import com.mgaye.banking_backend.model.User;
@@ -32,57 +33,61 @@ import com.mgaye.banking_backend.security.CurrentUser;
 @RequestMapping("/api/transactions")
 @RequiredArgsConstructor
 public class TransactionController {
-    private final TransactionService transactionService;
-    private final TransactionMapper transactionMapper;
-    private final AccountService accountService;
+        private final TransactionService transactionService;
+        private final TransactionMapper transactionMapper;
+        private final AccountService accountService;
+        private final TransactionNotificationController notificationController;
 
-    @PostMapping
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<TransactionDto> createTransaction(
-            @Valid @RequestBody TransactionRequest request,
-            @CurrentUser User user) {
-        Transaction transaction = transactionService.processTransaction(request, user);
-        return ResponseEntity
-                .created(URI.create("/api/transactions/" + transaction.getId()))
-                .body(transactionMapper.toDto(transaction));
-    }
+        @PostMapping
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<TransactionDto> createTransaction(
+                        @Valid @RequestBody TransactionRequest request,
+                        @CurrentUser User user) {
+                Transaction transaction = transactionService.processTransaction(request, user);
+                notificationController.notifyTransaction(
+                                new TransactionNotificationRequest(transaction.getId()),
+                                user);
+                return ResponseEntity
+                                .created(URI.create("/api/transactions/" + transaction.getId()))
+                                .body(transactionMapper.toDto(transaction));
+        }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<TransactionDto> getTransaction(
-            @PathVariable String id,
-            @CurrentUser User user) {
-        return ResponseEntity.ok(transactionMapper.toDto(
-                transactionService.getTransactionForUser(id, user.getId())));
-    }
+        @GetMapping("/{id}")
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<TransactionDto> getTransaction(
+                        @PathVariable String id,
+                        @CurrentUser User user) {
+                return ResponseEntity.ok(transactionMapper.toDto(
+                                transactionService.getTransactionForUser(id, user.getId())));
+        }
 
-    @GetMapping("/account/{accountId}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<TransactionDto>> getAccountTransactions(
-            @PathVariable UUID accountId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @CurrentUser User user) {
+        @GetMapping("/account/{accountId}")
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<List<TransactionDto>> getAccountTransactions(
+                        @PathVariable UUID accountId,
+                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                        @CurrentUser User user) {
 
-        accountService.validateAccountOwnership(accountId, user.getId());
+                accountService.validateAccountOwnership(accountId, user.getId());
 
-        List<Transaction> transactions = transactionService.getAccountTransactions(
-                accountId,
-                startDate,
-                endDate);
+                List<Transaction> transactions = transactionService.getAccountTransactions(
+                                accountId,
+                                startDate,
+                                endDate);
 
-        return ResponseEntity.ok(
-                transactions.stream()
-                        .map(transactionMapper::toDto)
-                        .toList());
-    }
+                return ResponseEntity.ok(
+                                transactions.stream()
+                                                .map(transactionMapper::toDto)
+                                                .toList());
+        }
 
-    @PostMapping("/{id}/cancel")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> cancelTransaction(
-            @PathVariable String id,
-            @CurrentUser User user) {
-        transactionService.cancelTransaction(id, user.getId());
-        return ResponseEntity.noContent().build();
-    }
+        @PostMapping("/{id}/cancel")
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<Void> cancelTransaction(
+                        @PathVariable String id,
+                        @CurrentUser User user) {
+                transactionService.cancelTransaction(id, user.getId());
+                return ResponseEntity.noContent().build();
+        }
 }

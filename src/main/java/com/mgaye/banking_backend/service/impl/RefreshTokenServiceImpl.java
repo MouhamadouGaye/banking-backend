@@ -22,13 +22,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
-    @Value("${app.jwt.refreshExpiration-ms}")
-    private Long refreshTokenDurationMs;
+    @Value("${app.jwt.refreshExpirationMs}")
+    private int refreshTokenDurationMs;
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
-    private final JwtUtils jwtUtils;
 
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);

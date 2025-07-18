@@ -49,7 +49,6 @@ public class TransactionServiceImpl implements TransactionService {
         private final MerchantRepository merchantRepo;
         private final AuditService auditService;
         private final TransactionValidator transactionValidator;
-        private final TransactionNotificationController notificationController;
 
         @Override
         public Transaction create(TransactionRequest request, User user) {
@@ -117,11 +116,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         @Override // Add @Override annotation
         public Transaction processTransaction(TransactionRequest request, User user) {
-                Transaction transaction = create(request, user);
-                notificationController.notifyTransaction(
-                                new TransactionNotificationRequest(transaction.getId()),
-                                user);
-                return transaction;
+                return create(request, user);
+
         }
 
         @Override // Add @Override annotation
