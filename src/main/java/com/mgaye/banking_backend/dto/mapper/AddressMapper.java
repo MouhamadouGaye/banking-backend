@@ -12,8 +12,13 @@ import com.mgaye.banking_backend.model.Address;
 public interface AddressMapper {
     AddressDto toDto(Address address);
 
-    @Mapping(source = "countryCode", target = "country") // Add this mapping
-    Address fromRequest(AddressRequest request);
+    @Mapping(target = "street", source = "street")
+    @Mapping(target = "city", source = "city")
+    @Mapping(target = "state", source = "state")
+    @Mapping(target = "zipCode", source = "zipCode")
+    @Mapping(target = "country", source = "countryCode")
+    Address toAddress(AddressRequest request);
+
 }
 
 // // *********** If we want do it manually, We ll do it like that belo

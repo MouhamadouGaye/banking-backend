@@ -21,12 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class SmsServiceImpl implements SmsService {
+
     private final SmsProvider smsProvider;
     private final TemplateEngine templateEngine; // Directly using TemplateEngine
     private final NotificationProperties properties;
 
     @Override
     public void sendSms(String phoneNumber, String message) {
+
         try {
             smsProvider.sendSms(
                     formatPhoneNumber(phoneNumber),

@@ -24,6 +24,25 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_schema: public
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD} # Use app-specific password for Gmail
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+          
+
+
 
 
   liquibase:
@@ -87,12 +106,34 @@ logging:
         type:
           descriptor:
             sql: TRACE
+      # springframework: 
+      #   web: DEBUG
 
 banking:
   api:
-    baseUrl: http://localhost:8089  # Set your actual API base URL
+    baseUrl: http://localhost:8080  # Set your actual API base URL
     api-key: your-api-key-here
     timeout-millis: 5000  # Optional, but good to have
+
+
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+
+notification:
+  sms:
+    sender-id: BANK_ALERTS
+    default-country-code: "+1234567890"
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
+  
+
+
+  
+
 
 
 

@@ -301,8 +301,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationPreferencesMapper preferencesMapper;
     private final UserRepository userRepository;
 
-    @Qualifier("notificationSenderImpl") // choose your default sender here
-    private final NotificationSender notificationSender;
+    // @Qualifier("notificationSenderImpl") // choose your default sender here
+    private final NotificationSender notificationSender; // NotificationSenderImpl that's coming from
     private final TemplateEngine templateEngine;
     private final LoanRepository loanRepository;
 

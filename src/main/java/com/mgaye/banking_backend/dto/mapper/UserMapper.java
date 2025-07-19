@@ -18,22 +18,45 @@ import com.mgaye.banking_backend.model.User;
 // // UserMapper.java
 // @Mapper(componentModel = "spring", uses = { AddressMapper.class,
 //         UserSettingsMapper.class })
+// @Mapper(componentModel = "spring")
+// public interface UserMapper {
+
+//     @Mapping(target = "kycStatus", expression = "java(user.getKycStatus().name())")
+//     UserDto toDto(User user);
+
+//     @Mapping(target = "password", ignore = true)
+//     @Mapping(target = "roles", ignore = true)
+
+//     @Mapping(target = "kycStatus", expression = "java(com.mgaye.banking_backend.model.User.KycStatus.PENDING)")
+//     User fromRegisterRequest(RegisterRequest request);
+
+//     // Add this new mapping method
+//     @Mapping(target = "phoneNumber", source = "phone")
+//     @Mapping(target = "emailVerified", expression = "java(user.isEmailVerified())")
+//     @Mapping(target = "phoneVerified", expression = "java(user.isPhoneVerified())")
+//     UserResponse toUserResponse(User user);
+
+// }
+
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "kycStatus", expression = "java(user.getKycStatus().name())")
+    @Mapping(target = "kycStatus", source = "user.kycStatus")
     UserDto toDto(User user);
+
+    default String mapKycStatus(User.KycStatus status) {
+        return status != null ? status.name() : null;
+    }
 
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "roles", ignore = true)
-
     @Mapping(target = "kycStatus", expression = "java(com.mgaye.banking_backend.model.User.KycStatus.PENDING)")
     User fromRegisterRequest(RegisterRequest request);
 
-    // Add this new mapping method
     @Mapping(target = "phoneNumber", source = "phone")
-    @Mapping(target = "emailVerified", expression = "java(user.isEmailVerified())")
-    @Mapping(target = "phoneVerified", expression = "java(user.isPhoneVerified())")
     UserResponse toUserResponse(User user);
 
+    default Boolean mapEmailVerified(boolean verified) {
+        return verified;
+    }
 }

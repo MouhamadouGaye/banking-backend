@@ -90,4 +90,5 @@ public class NotificationEvent {
     public User getRecipient() {
         return recipient;
     }
+
 }
