@@ -51,7 +51,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(request.password()));
 
         Set<Role> roles = new HashSet<>();
-
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role not found."));
         roles.add(userRole);

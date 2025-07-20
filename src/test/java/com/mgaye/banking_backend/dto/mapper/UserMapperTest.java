@@ -6,6 +6,7 @@ import com.mgaye.banking_backend.dto.request.RegisterRequest;
 import com.mgaye.banking_backend.dto.response.UserResponse;
 import com.mgaye.banking_backend.model.User;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,10 +16,12 @@ import java.util.UUID;
 
 public class UserMapperTest {
 
-    // private final UserMapper mapper = new UserMapperImpl();
+    // private final UserMapper mapper = new UbserMapperImpl();
 
-    @Autowired
-    private UserMapper userMapper;
+    // @Autowired
+    // private UserMapper userMapper;
+
+    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @Test
     void testToDto() {
@@ -32,19 +35,6 @@ public class UserMapperTest {
         assertEquals("VERIFIED", dto.kycStatus());
         assertEquals("test@example.com", dto.email());
     }
-
-    // @Test
-    // void testFromRegisterRequest() {
-    // RegisterRequest request = new RegisterRequest();
-    // request.setEmail("new@example.com");
-    // request.setPhone("123456789");
-
-    // User user = mapper.fromRegisterRequest(request);
-
-    // assertEquals("new@example.com", user.getEmail());
-    // assertEquals(User.KycStatus.PENDING, user.getKycStatus());
-    // assertNull(user.getPassword()); // Since it's ignored
-    // }
 
     @Test
     void testFromRegisterRequestWithRecord() {
@@ -66,12 +56,12 @@ public class UserMapperTest {
     @Test
     void testToUserResponse() {
         User user = new User();
-        user.setPhone("555-1234");
+        user.setPhone("+1555-1234");
         user.setEmail("user@bank.com");
 
         UserResponse response = userMapper.toUserResponse(user);
 
-        assertEquals("555-1234", response.getPhoneNumber());
+        assertEquals("+1555-1234", response.getPhoneNumber());
         assertEquals("user@bank.com", response.getEmail());
     }
 }

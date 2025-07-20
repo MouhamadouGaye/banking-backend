@@ -119,10 +119,16 @@ banking:
 twilio:
   account-sid: ${TWILIO_ACCOUNT_SID}
   auth-token: ${TWILIO_AUTH_TOKEN}
+# SMS Configuration
+sms:
+  provider: twilio # or "log" 
+  sender-id: +33664741506
+
+
 
 notification:
   sms:
-    sender-id: BANK_ALERTS
+    sender-id: +33664741506
     default-country-code: "+1234567890"
 server:
   error:
