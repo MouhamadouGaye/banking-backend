@@ -24,7 +24,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtils jwtUtils;
-
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
@@ -36,9 +35,25 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+    // private final JwtUtils jwtUtils;
+    // private final UserDetailsService userDetailsService; // Use interface not
+    // implementation
+
+    // public AuthTokenFilter(JwtUtils jwtUtils, UserDetailsService
+    // userDetailsService) {
+    // this.jwtUtils = jwtUtils;
+    // this.userDetailsService = userDetailsService;
+    // }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        if (isPublicEndpoint(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
@@ -65,6 +80,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             return headerAuth.substring(7);
         }
         return null;
+    }
+
+    private boolean isPublicEndpoint(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/api/auth") ||
+                path.startsWith("/api/public") ||
+                path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs") ||
+                path.equals("/actuator/health");
     }
 
 }

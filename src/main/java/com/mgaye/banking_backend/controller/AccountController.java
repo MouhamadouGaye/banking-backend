@@ -69,14 +69,13 @@
 // user.getId()));
 // }
 
-// @Operation(summary = "Get account balance", security =
-// @SecurityRequirement(name = "bearerAuth"))
-// @ApiResponses(value = {
-// @ApiResponse(responseCode = "200", description = "Successfully retrieved
-// balance"),
-// @ApiResponse(responseCode = "404", description = "Account not found"),
-// @ApiResponse(responseCode = "403", description = "Unauthorized access")
+// @Operation(summary="Get account
+// balance",security=@SecurityRequirement(name="bearerAuth"))@ApiResponses(value={@ApiResponse(responseCode="200",description="Successfully
+// retrievedbalance"),@ApiResponse(responseCode="404",description="Account not
+// found"),@ApiResponse(responseCode="403",description="Unauthorized access")
+
 // })
+
 // @GetMapping("/{accountId}/balance")
 // @PreAuthorize("hasRole('USER')")
 // public ResponseEntity<BalanceResponse> getAccountBalance(

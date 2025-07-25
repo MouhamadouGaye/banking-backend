@@ -20,7 +20,7 @@ public interface UserSettingsRepository extends JpaRepository<UserSettings, Stri
     Optional<UserSettings> findByUserId(UUID userId);
 
     @Modifying
-    @Query("UPDATE UserSettings us SET us.language = :language WHERE us.userId = :userId")
+    @Query("UPDATE UserSettings us SET us.language = :language WHERE us.user.id = :userId")
     void updateLanguage(@Param("userId") UUID userId, @Param("language") String language);
 
 }

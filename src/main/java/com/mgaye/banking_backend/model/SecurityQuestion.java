@@ -1,5 +1,9 @@
 package com.mgaye.banking_backend.model;
 
+import java.util.UUID;
+
+import org.springframework.security.access.method.P;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +30,7 @@ public class SecurityQuestion {
     private String id;
 
     @Column(nullable = false)
-    private String userId;
+    private UUID userId;
 
     @Column(nullable = false)
     private String question;

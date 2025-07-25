@@ -17,11 +17,11 @@ public interface SecuritySettingsRepository extends JpaRepository<SecuritySettin
 
     Optional<SecuritySettings> findByUserId(UUID userId);
 
-    @Query("SELECT ss FROM SecuritySettings ss JOIN FETCH ss.devices WHERE ss.userId = :userId")
-    Optional<SecuritySettings> findByUserIdWithDevices(@Param("userId") String userId);
+    @Query("SELECT ss FROM SecuritySettings ss JOIN FETCH ss.devices WHERE ss.user.id = :userId")
+    Optional<SecuritySettings> findByUserIdWithDevices(@Param("userId") UUID userId);
 
     @Modifying
-    @Query("UPDATE SecuritySettings ss SET ss.twoFactorEnabled = :enabled WHERE ss.userId = :userId")
+    @Query("UPDATE SecuritySettings ss SET ss.twoFactorEnabled = :enabled WHERE ss.user.id = :userId")
     void updateTwoFactorStatus(@Param("userId") UUID userId, @Param("enabled") boolean enabled);
 
 }

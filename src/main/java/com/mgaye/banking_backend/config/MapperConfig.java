@@ -12,10 +12,10 @@ import com.mgaye.banking_backend.dto.mapper.UserMapper;
 @Configuration
 public class MapperConfig {
 
-    @Bean
-    public UserMapper userMapper() {
-        return Mappers.getMapper(UserMapper.class);
-    }
+    // @Bean
+    // public UserMapper userMapper() {
+    // return Mappers.getMapper(UserMapper.class);
+    // }
 
     @Bean
     public TransactionMapper transactionMapper() {

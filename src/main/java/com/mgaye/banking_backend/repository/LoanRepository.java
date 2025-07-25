@@ -19,15 +19,15 @@ public interface LoanRepository extends JpaRepository<Loan, String> {
 
         @Query("""
                         SELECT l FROM Loan l
-                        WHERE l.userId = :userId
+                        WHERE l.user.id = :userId
                         AND l.status IN ('ACTIVE', 'DEFAULTED')
-                        ORDER BY l.dueDate ASC
+                        ORDER BY l.endDate ASC
                         """)
         List<Loan> findActiveLoans(@Param("userId") String userId);
 
         @Query(value = """
                         SELECT l FROM Loan l
-                        WHERE l.dueDate BETWEEN :start AND :end
+                        WHERE l.endDate BETWEEN :start AND :end
                         AND l.status = 'ACTIVE'
                         """, nativeQuery = false)
         List<Loan> findLoansDueBetween(@Param("start") LocalDate start,
@@ -35,7 +35,7 @@ public interface LoanRepository extends JpaRepository<Loan, String> {
 
         @Modifying
         @Query("UPDATE Loan l SET l.status = 'DEFAULTED' " +
-                        "WHERE l.status = 'ACTIVE' AND l.dueDate < CURRENT_DATE")
+                        "WHERE l.status = 'ACTIVE' AND l.endDate < CURRENT_DATE")
         void markDefaultedLoans();
 
         Optional<Loan> findById(UUID loanId);

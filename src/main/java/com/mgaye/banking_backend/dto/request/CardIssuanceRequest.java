@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Pattern;
 // dto/request/CardIssuanceRequest.java
 public record CardIssuanceRequest(
         @NotBlank UUID userId,
-        @NotBlank String accountId,
+        @NotBlank UUID accountId,
         @NotBlank String username,
 
         @NotNull CardType cardType,

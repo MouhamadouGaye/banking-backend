@@ -230,6 +230,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -245,15 +246,19 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.security.core.userdetails.*;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig { // Remove @RequiredArgsConstructor
@@ -291,15 +296,47 @@ public class SecurityConfig { // Remove @RequiredArgsConstructor
                 return new BCryptPasswordEncoder();
         }
 
-        // 4. Simplified security configuration
+        // // 4. Simplified security configuration
+        // @Bean
+        // public SecurityFilterChain filterChain(
+        // HttpSecurity http,
+        // AuthenticationProvider authenticationProvider,
+        // JwtDecoder jwtDecoder // Injected decoder
+        // ) throws Exception {
+        // http
+        // .csrf(AbstractHttpConfigurer::disable)
+        // .sessionManagement(session -> session
+        // .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        // .authorizeHttpRequests(auth -> auth
+        // .requestMatchers(
+        // "/api/auth/**",
+        // "/api/public/**",
+        // "/api/test/**",
+        // "/swagger-ui/**",
+        // "/swagger-ui.html",
+        // "/v3/api-docs/**",
+        // "/actuator/health")
+        // .permitAll()
+        // .anyRequest().authenticated())
+        // .oauth2ResourceServer(oauth2 -> oauth2
+        // .jwt(jwt -> jwt.decoder(jwtDecoder))); // Use injected decoder
+
+        // http.authenticationProvider(authenticationProvider);
+        // http.addFilterBefore(
+        // authTokenFilter,
+        // UsernamePasswordAuthenticationFilter.class);
+
+        // return http.build();
+        // }
+
         @Bean
         public SecurityFilterChain filterChain(
                         HttpSecurity http,
                         AuthenticationProvider authenticationProvider,
-                        JwtDecoder jwtDecoder // Injected decoder
-        ) throws Exception {
+                        JwtDecoder jwtDecoder) throws Exception {
                 http
                                 .csrf(AbstractHttpConfigurer::disable)
+                                .cors(Customizer.withDefaults()) // Enable CORS
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
@@ -312,15 +349,34 @@ public class SecurityConfig { // Remove @RequiredArgsConstructor
                                                                 "/actuator/health")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
-                                .oauth2ResourceServer(oauth2 -> oauth2
-                                                .jwt(jwt -> jwt.decoder(jwtDecoder))); // Use injected decoder
+                                .authenticationProvider(authenticationProvider)
+                                .addFilterBefore(
+                                                authTokenFilter,
+                                                UsernamePasswordAuthenticationFilter.class);
 
-                http.authenticationProvider(authenticationProvider);
-                http.addFilterBefore(
-                                authTokenFilter,
-                                UsernamePasswordAuthenticationFilter.class);
+                // // Only enable OAuth2 for authenticated requests
+                // http.oauth2ResourceServer(oauth2 -> oauth2
+                // .jwt(jwt -> jwt.decoder(jwtDecoder))
+                // .authorizeHttpRequest(auth -> auth
+                // .anyRequest().authenticated()));
+                // Only enable OAuth2 for authenticated requests
+                http.oauth2ResourceServer(oauth2 -> oauth2
+                                .jwt(jwt -> jwt.decoder(jwtDecoder)));
 
                 return http.build();
+        }
+
+        @Bean
+        CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(List.of("http://localhost:3000")); // Frontend URL
+                configuration.setAllowedMethods(List.of("*"));
+                configuration.setAllowedHeaders(List.of("*"));
+                configuration.setAllowCredentials(true);
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
         }
 
 }

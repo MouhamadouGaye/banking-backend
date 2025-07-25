@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -87,7 +88,7 @@ public class CardController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<CardResponse>> getUserCards() {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(cardService.getUserCards(userId));
+        return ResponseEntity.ok(cardService.getUserCards(UUID.fromString(userId)));
     }
 
     @PutMapping("/{cardId}/pin")

@@ -116,7 +116,7 @@ public class SecurityServiceImpl implements SecurityService {
 
         List<SecurityQuestion> questions = request.getQuestions().stream()
                 .map(q -> SecurityQuestion.builder()
-                        .userId(userId.toString())
+                        .userId(userId)
                         .question(q.getQuestion())
                         .answer(q.getAnswer())
                         .build())

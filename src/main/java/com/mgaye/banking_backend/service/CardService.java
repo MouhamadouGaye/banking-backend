@@ -1,6 +1,7 @@
 package com.mgaye.banking_backend.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.mgaye.banking_backend.dto.request.CardIssuanceRequest;
 import com.mgaye.banking_backend.dto.response.CardResponse;
@@ -16,7 +17,7 @@ public interface CardService {
     // Card Information
     CardResponse getCardDetails(String cardId);
 
-    List<CardResponse> getUserCards(String userId);
+    List<CardResponse> getUserCards(UUID userId);
 
     // PIN Management
     void updatePin(String cardId, String currentPin, String newPin);
@@ -24,5 +25,5 @@ public interface CardService {
     // Security Utilities
     String maskCardNumber(String number);
 
-    boolean verifyCardOwnership(String userId, String cardId);
+    boolean verifyCardOwnership(UUID userId, String cardId);
 }

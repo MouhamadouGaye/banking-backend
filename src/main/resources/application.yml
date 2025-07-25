@@ -43,8 +43,6 @@ spring:
           
 
 
-
-
   liquibase:
     enabled: false
 
@@ -95,17 +93,25 @@ app:
                 iPygQhAGnecYky+tyjQR18E=
                 -----END PRIVATE KEY-----
 
+  storage:
+    local:
+      path: /Users/${USER}/banking-storage
 
 
+      
     # Logging (optional for debugging)
 logging:
   level:
     org:
       hibernate:
         SQL: DEBUG
+      springframework:
+        web: DEBUG
+        security: DEBUG
         type:
           descriptor:
             sql: TRACE
+      
       # springframework: 
       #   web: DEBUG
 

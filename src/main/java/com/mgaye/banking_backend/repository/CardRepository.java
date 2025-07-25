@@ -2,6 +2,7 @@ package com.mgaye.banking_backend.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,14 +19,14 @@ import com.mgaye.banking_backend.model.enums.CardStatus;
 @Repository
 public interface CardRepository extends JpaRepository<Card, String> {
 
-    List<Card> findByUserId(String userId);
+    List<Card> findByUserId(UUID userId);
 
     Optional<Card> findById(String cardId);
 
-    Boolean existsByIdAndUserId(String cardId, String userId);
+    Boolean existsByIdAndUserId(String cardId, UUID userId);
 
     @EntityGraph(attributePaths = { "linkedAccount" })
-    List<Card> findByUserIdAndStatus(String userId, CardStatus status);
+    List<Card> findByUserIdAndStatus(UUID userId, CardStatus status);
 
     @Query("SELECT c FROM Card c WHERE c.user.id = :userId AND c.expirationDate > CURRENT_DATE")
     List<Card> findActiveCardsByUser(@Param("userId") String userId);
